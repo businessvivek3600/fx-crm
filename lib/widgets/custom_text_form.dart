@@ -6,8 +6,12 @@ class CustomTextFormField extends StatelessWidget {
   final bool readOnly;
   final bool isDate;
   final TextEditingController? controller;
-  final String? initialValue; // 🛑 Add this
+  final String? initialValue;
   final VoidCallback? onTap;
+  final TextStyle? textStyle;
+  final Icon? icon;
+  final String? Function(String?)? validator;       // 🛑 validator callback
+  final void Function(String)? onChanged;
 
   const CustomTextFormField({
     super.key,
@@ -16,8 +20,12 @@ class CustomTextFormField extends StatelessWidget {
     this.readOnly = false,
     this.isDate = false,
     this.controller,
-    this.initialValue, // 🛑 Add this
+    this.initialValue,
     this.onTap,
+    this.validator,    // 🛑 initialize
+    this.onChanged,
+    this.textStyle,
+    this.icon
   });
 
   @override
@@ -31,15 +39,19 @@ class CustomTextFormField extends StatelessWidget {
           controller: controller,
           initialValue: controller == null ? initialValue : null, // 🛑 Important
           readOnly: readOnly || isDate,
-          onTap: isDate ? onTap : null,
+          onTap:  onTap,
+          validator: validator, // 🛑 attach validator
+          onChanged: onChanged,
           decoration: InputDecoration(
+            prefixIcon: icon,
             hintText: hint,
-            hintStyle: const TextStyle(color: Colors.grey),
+            hintStyle: textStyle ?? const TextStyle(color: Colors.grey),
             filled: true,
             fillColor: Colors.grey.shade100,
             suffixIcon: isDate
                 ? const Icon(Icons.calendar_today, color: Colors.grey, size: 20)
                 : null,
+
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: Colors.grey.shade400),

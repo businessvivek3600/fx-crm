@@ -37,7 +37,7 @@ class SessionController extends GetxController {
     }
   }
 
-  void clearSession({bool redirectToLogin = true}) {
+  void clearSession({bool redirectToLogin = true,}) {
     token.value = '';
     isLoggedIn.value = false;
     customer.value = null;

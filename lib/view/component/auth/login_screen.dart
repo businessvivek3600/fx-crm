@@ -2,8 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/component/auth/signup_screen.dart';
 import 'package:get/get.dart';
+import '../../../constant/api_constants.dart';
 import '../../../controller/auth_controller.dart';
 import '../../../main.dart';
+import '../../../models/country_model.dart';
 import '../../../widgets/bg_container.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,7 +19,42 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthController authController = Get.put(
     AuthController(dioClient: dioClient),
   );
+  @override
+  void initState() {
+    super.initState();
+    getCountryList();
+  }
+  Future<void> getCountryList() async {
+    try {
 
+      final response = await dioClient.get(ApiConst.country); // Replace with actual endpoint
+
+      print("response Country ----${response.data}");
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final List countriesData = response.data['countries'] ?? [];
+
+        authController.countryList.value = countriesData
+            .map((countryJson) => Country.fromJson(countryJson))
+            .toList();
+      } else {
+        Get.snackbar(
+          'Failed to Fetch Countries',
+          response.data['message'] ?? 'Something went wrong',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
@@ -47,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
 
                 // Username field
+
                 textField(
                   hint: 'Username',
                   controller: authController.usernameController,
@@ -55,12 +93,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
 
                 // Password field
-            Obx(() => textField(
-                  controller: authController.passwordController,
-                  hint: 'Password',
-                  icon: Icons.lock_outline,
-                  isPassword: true,
-                ),),
+                Obx(
+                  () => textField(
+                    controller: authController.passwordController,
+                    hint: 'Password',
+                    icon: Icons.lock_outline,
+                    isPassword: true,
+                  ),
+                ),
                 const SizedBox(height: 8),
 
                 // Forgot Password link
@@ -108,11 +148,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 authController.login();
                               },
                       child:
-                          authController.isLoading.value
-                              ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                              : const Text(
+                      authController.isLoading.value
+                          ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                          : const Text(
                                 'Sign in',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -194,22 +234,21 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: icon != null ? Icon(icon) : null,
-        suffixIcon: isPassword
-            ? IconButton(
-          icon: Icon(
-            authController.isPasswordHidden.value
-                ? Icons.visibility_off
-                : Icons.visibility,
-            color: Colors.grey,
-          ),
-          onPressed: () {
-            authController.isPasswordHidden.toggle();
-          },
-        )
-            : null,
+        suffixIcon:
+            isPassword
+                ? IconButton(
+                  icon: Icon(
+                    authController.isPasswordHidden.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    authController.isPasswordHidden.toggle();
+                  },
+                )
+                : null,
       ),
     );
   }
-
-
 }
