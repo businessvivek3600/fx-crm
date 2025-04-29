@@ -11,6 +11,7 @@ class WalletAccountScreen extends StatelessWidget {
       child:  Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           title: const Text("Wallet Account" ,style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 1.2),
           ),
           elevation: 0,

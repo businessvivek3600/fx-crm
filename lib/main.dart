@@ -8,8 +8,10 @@ import 'package:get_storage/get_storage.dart';
 
 import 'constant/app_constant.dart';
 import 'controller/app_controller.dart';
+import 'controller/session_controller.dart';
 import 'database/dio/dio/dio_client.dart';
 import 'database/dio/dio/logging_interceptor.dart';
+import 'view/dashboard_screen.dart';
 late DioClient dioClient;
 
 void main() async{
@@ -20,8 +22,9 @@ void main() async{
   dioClient = DioClient(AppConst.baseUrl, null,
       loggingInterceptor: LoggingInterceptor());
   Get.put<DioClient>(dioClient);
-
   Get.put(AppController());
+  Get.put(SessionController());
+  SessionController.to.loadSession();
   runApp(const MyApp());
 }
 
@@ -42,7 +45,11 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeUtils.lightTheme,
       title: 'FXCRM',
-      home: LoginScreen(),
+      home:  Obx(() {
+        return SessionController.to.isLoggedIn.value
+            ? DashboardScreen()
+            : LoginScreen();
+      }),
     );
   }
 }

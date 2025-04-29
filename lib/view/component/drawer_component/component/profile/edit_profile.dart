@@ -12,11 +12,11 @@ class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final customer = AppController.to.customer;
-print("customer name -----${customer?.firstName}");
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           title: const Text(
@@ -38,7 +38,7 @@ print("customer name -----${customer?.firstName}");
               const Text(
                 'Personal Details',
                 style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),

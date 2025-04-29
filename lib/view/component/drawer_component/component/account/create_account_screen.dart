@@ -78,6 +78,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       child:  Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           title: const Text(
             "Create Account",
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),

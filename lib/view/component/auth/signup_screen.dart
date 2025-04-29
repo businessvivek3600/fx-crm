@@ -99,7 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onSelect: (Country country) {
                         setState(() {
                           selectedCountryName = country.name;
-                          selectedCountryCode = country.countryCode;
+                          selectedCountryCode = country.phoneCode;
                         });
                         print('Selected Country: $selectedCountryName, Code: $selectedCountryCode');
                       },

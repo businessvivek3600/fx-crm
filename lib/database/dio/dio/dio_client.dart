@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fx_crm/constant/app_constant.dart';
-import '../../../controller/app_controller.dart';
+import '../../../controller/session_controller.dart';
 import 'logging_interceptor.dart';
 
 
@@ -53,6 +53,12 @@ class DioClient {
         ifAbsent: () => 'Bearer $_userToken');
     log('updateUserToken : ${dio.options.headers}');
   }
+  void _checkSessionExpired(Response response) {
+    if (response.data is Map<String, dynamic> &&
+        response.data['is_login'] == 0) {
+      SessionController.to.clearSession();
+    }
+  }
 
   Future<Response> get(
     String uri, {
@@ -65,7 +71,9 @@ class DioClient {
     try {
       CancelToken cancelToken = CancelToken();
       // pl('get : ${dio.options.headers} ${appStore.token}', 'DIO CLIENT');
-
+      if (token) {
+        updateUserToken(SessionController.to.token.value);
+      }
       var response = await dio.get(
         uri,
         queryParameters: queryParameters,
@@ -73,6 +81,7 @@ class DioClient {
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
       );
+      _checkSessionExpired(response);
       return response;
     } on SocketException catch (err) {
       throw SocketException(err.toString());
@@ -95,9 +104,6 @@ class DioClient {
   }) async {
     try {
       CancelToken cancelToken = CancelToken();
-      print('🔵 POST URL: $uri');
-      print('🔵 POST BODY: $data');
-      print('🔵 POST HEADERS: ${dio.options.headers}');
       FormData formData = FormData();
       if (data is Map<String, dynamic>) {
         formData.fields
@@ -110,8 +116,9 @@ class DioClient {
         }
       }
       if (token) {
-        formData.fields.add(MapEntry('login_token', AppController.to.token.value));
-
+        formData.fields.add(
+            MapEntry('login_token', SessionController.to.token.value));
+        updateUserToken(SessionController.to.token.value);
       }
 
       log('🟢 FormData fields: ${formData.fields} Headers: ${dio.options.headers}');
@@ -124,6 +131,7 @@ class DioClient {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
+      _checkSessionExpired(response);
       return response;
     } catch (e) {
       rethrow;
@@ -140,6 +148,7 @@ class DioClient {
     ProgressCallback? onSendProgress,
   }) async {
     try {
+      updateUserToken(SessionController.to.token.value);
       var response = await dio.put(
         uri,
         data: data,
@@ -149,7 +158,7 @@ class DioClient {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-
+      _checkSessionExpired(response);
       return response;
     } on FormatException catch (_) {
       throw const FormatException("Unable to process the data");
@@ -166,6 +175,8 @@ class DioClient {
     CancelToken? cancelToken,
   }) async {
     try {
+      updateUserToken(SessionController.to.token.value);
+
       var response = await dio.delete(
         uri,
         data: data,
@@ -173,6 +184,7 @@ class DioClient {
         options: options,
         cancelToken: cancelToken,
       );
+      _checkSessionExpired(response);
       return response;
     } on FormatException catch (_) {
       throw const FormatException("Unable to process the data");

@@ -9,14 +9,14 @@ class BackgroundContainer extends StatelessWidget {
   final double opacity;
 
   const BackgroundContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.useAlternateBackground = false,
     this.opacity = 0.7,
-  }) : super(key: key);
+  });
   double getPlatformOpacity() {
     if (kIsWeb) return 0.3;
-    if (Platform.isAndroid) return 0.3;
+    if (Platform.isAndroid) return 0.7;
     if (Platform.isIOS) return 0.7;
     return 0.6;
   }
