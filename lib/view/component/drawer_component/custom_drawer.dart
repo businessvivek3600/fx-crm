@@ -47,7 +47,7 @@ class CustomDrawer extends StatelessWidget {
               icon: Icons.account_circle_outlined,
               submenus: [
                 {
-                  'title': 'Demo Account',
+                  'title': 'Accounts',
                   'icon': Icons.school_outlined,
                   'onTap': () {
                     Navigator.push(
