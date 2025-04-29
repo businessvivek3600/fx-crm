@@ -55,12 +55,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
 
                 // Password field
-                textField(
+            Obx(() => textField(
                   controller: authController.passwordController,
                   hint: 'Password',
                   icon: Icons.lock_outline,
-                  obscureText: true,
-                ),
+                  isPassword: true,
+                ),),
                 const SizedBox(height: 8),
 
                 // Forgot Password link
@@ -185,16 +185,31 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget textField({
     required String hint,
     IconData? icon,
-    bool obscureText = false,
     required TextEditingController controller,
+    bool isPassword = false,
   }) {
     return TextFormField(
       controller: controller,
-      obscureText: obscureText,
+      obscureText: isPassword ? authController.isPasswordHidden.value : false,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: icon != null ? Icon(icon) : null,
+        suffixIcon: isPassword
+            ? IconButton(
+          icon: Icon(
+            authController.isPasswordHidden.value
+                ? Icons.visibility_off
+                : Icons.visibility,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            authController.isPasswordHidden.toggle();
+          },
+        )
+            : null,
       ),
     );
   }
+
+
 }

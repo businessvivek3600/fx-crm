@@ -16,6 +16,7 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
       child:  Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: const Text(
             "Withdraw Fund",

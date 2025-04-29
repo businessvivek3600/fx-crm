@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
+import '../../../../../controller/dashboard_controller.dart';
+import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
@@ -12,7 +15,14 @@ class TransactionHistoryScreen extends StatefulWidget {
 }
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
-
+  // late final DashBoardController dashBoardController;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   dashBoardController = Get.put(DashBoardController(dioClient: dioClient)); // Provide dioClient
+  //   dashBoardController.getDashboardData();
+  //
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +30,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
       child:  Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           title: const Text('Transaction History',style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 1.2),
           ),
           elevation: 0,

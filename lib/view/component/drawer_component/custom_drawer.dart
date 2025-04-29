@@ -5,6 +5,9 @@ import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_le
 import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/change_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/transaction_history.dart';
+import 'package:get/get.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import '../../../controller/session_controller.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
 import 'component/account/create_account_screen.dart';
@@ -242,7 +245,28 @@ class CustomDrawer extends StatelessWidget {
             ),
 
             // Logout
-            _buildListTile(icon: Icons.logout, title: 'Logout', onTap: () {}),
+            _buildListTile(
+              icon: Icons.logout,
+              title: 'Logout',
+              onTap: () {
+                AwesomeDialog(
+                  context: Get.context!,
+                  dialogType: DialogType.warning,
+                  animType: AnimType.rightSlide,
+                  title: 'Logout',
+                  customHeader: Icon(Icons.question_mark_outlined, size: 50, color: Colors.orange),
+                  headerAnimationLoop: true,
+                  titleTextStyle: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
+                  desc: 'Are you sure you want to logout?',
+                  btnCancelOnPress: () {},
+                  btnOkText: 'Logout',
+                  btnOkOnPress: () {
+                    SessionController.to.clearSession(); // Clears session and navigates to login
+                  },
+                ).show();
+              },
+            ),
+
           ],
         ),
       ),

@@ -16,6 +16,7 @@ class _WalletLedgerState extends State<WalletLedger> {
       child:  Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: const Text(
             "Ledger Wallet",

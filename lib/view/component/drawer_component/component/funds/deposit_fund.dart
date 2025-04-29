@@ -33,6 +33,7 @@ class DepositFundScreen extends StatelessWidget {
       child:  Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           title: const Text("Deposit Funds" ,style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 1.2),
         ),
           elevation: 0,

@@ -1,5 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/dashboard_controller.dart';
+import '../main.dart';
 import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
@@ -12,6 +15,14 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  // late final DashBoardController dashBoardController;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   dashBoardController = Get.put(DashBoardController(dioClient: dioClient)); // Provide dioClient
+  //   dashBoardController.getDashboardData();
+  //
+  // }
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
