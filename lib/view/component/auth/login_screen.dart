@@ -1,12 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:fx_crm/view/dashboard_screen.dart';
 import 'package:fx_crm/view/component/auth/signup_screen.dart';
 import 'package:get/get.dart';
-
 import '../../../controller/auth_controller.dart';
 import '../../../main.dart';
-import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,13 +14,15 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final AuthController authController = Get.put(AuthController(dioClient: dioClient));
+  final AuthController authController = Get.put(
+    AuthController(dioClient: dioClient),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return  BackgroundContainer(
+    return BackgroundContainer(
       useAlternateBackground: true,
-      child:  Scaffold(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
           child: SingleChildScrollView(
@@ -92,31 +91,37 @@ class _LoginScreenState extends State<LoginScreen> {
                 // const SizedBox(height: 20),
 
                 // Sign In Button
-                Obx(() => SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    onPressed: authController.isLoading.value
-                        ? null
-                        : () {
-                      authController.login();
-                    },
-                    child: authController.isLoading.value
-                        ? const CircularProgressIndicator(
-                      color: Colors.white,
-                    )
-                        : const Text(
-                      'Sign in',
-                      style:
-                      TextStyle(color: Colors.white, fontSize: 16),
+                      onPressed:
+                          authController.isLoading.value
+                              ? null
+                              : () {
+                                authController.login();
+                              },
+                      child:
+                          authController.isLoading.value
+                              ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                              : const Text(
+                                'Sign in',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
                     ),
                   ),
-                )),
+                ),
 
                 const SizedBox(height: 20),
 
@@ -134,11 +139,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignupScreen(),));
-                              },
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SignupScreen(),
+                                      ),
+                                    );
+                                  },
                           ),
                         ],
                       ),
@@ -172,6 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   Widget textField({
     required String hint,
     IconData? icon,
