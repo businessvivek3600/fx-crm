@@ -1,0 +1,45 @@
+name: fx_crm
+description: "A MT5 Trading project."
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0-323.2.beta
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.8
+  country_picker: ^2.0.27
+  #Flutter data table
+  syncfusion_flutter_datagrid: ^29.1.39
+  fl_chart: ^0.71.0
+  dio: ^5.8.0+1
+  toast: ^0.3.0
+  fluttertoast: ^8.2.12
+  nb_utils: ^7.1.4
+  go_router:
+  get: ^4.7.2
+  get_storage: ^2.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+     - assets/images/
+
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic

@@ -1,0 +1,190 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:fx_crm/view/dashboard_screen.dart';
+import 'package:fx_crm/view/component/auth/signup_screen.dart';
+import 'package:get/get.dart';
+
+import '../../../controller/auth_controller.dart';
+import '../../../main.dart';
+import '../../../utils/theme.dart';
+import '../../../widgets/bg_container.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final AuthController authController = Get.put(AuthController(dioClient: dioClient));
+
+  @override
+  Widget build(BuildContext context) {
+    return  BackgroundContainer(
+      useAlternateBackground: true,
+      child:  Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 40),
+
+                // Login title
+                Text(
+                  "LOGIN",
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+
+                    color: Colors.white, // or any custom color
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+
+                // Username field
+                textField(
+                  hint: 'Username',
+                  controller: authController.usernameController,
+                  icon: Icons.person_outline,
+                ),
+                const SizedBox(height: 16),
+
+                // Password field
+                textField(
+                  controller: authController.passwordController,
+                  hint: 'Password',
+                  icon: Icons.lock_outline,
+                  obscureText: true,
+                ),
+                const SizedBox(height: 8),
+
+                // Forgot Password link
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      // TODO: Navigate to forgot password page
+                    },
+                    child: Text(
+                      'Forgot password?',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Or sign in with
+                // Text(
+                //   'Or sign in with',
+                //   style: Theme.of(context).textTheme.bodyMedium,
+                // ),
+                //
+                // const SizedBox(height: 20),
+
+                // Sign In Button
+                Obx(() => SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: authController.isLoading.value
+                        ? null
+                        : () {
+                      authController.login();
+                    },
+                    child: authController.isLoading.value
+                        ? const CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                        : const Text(
+                      'Sign in',
+                      style:
+                      TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                )),
+
+                const SizedBox(height: 20),
+
+                // Register and Forgot User Id Links
+                Column(
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: "Don't have an account? ",
+                        style: const TextStyle(color: Colors.white70),
+                        children: [
+                          TextSpan(
+                            text: "Register here",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignupScreen(),));
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                    // const SizedBox(height: 6),
+                    // RichText(
+                    //   text: TextSpan(
+                    //     text: "Forgot User Id? ",
+                    //     style: const TextStyle(color: Colors.black87),
+                    //     children: [
+                    //       TextSpan(
+                    //         text: "Forgot User Id",
+                    //         style: TextStyle(
+                    //           color: ThemeUtils.primaryColor,
+                    //           fontWeight: FontWeight.bold,
+                    //         ),
+                    //         recognizer: TapGestureRecognizer()
+                    //           ..onTap = () {
+                    //             // TODO: Navigate to forgot user id page
+                    //           },
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget textField({
+    required String hint,
+    IconData? icon,
+    bool obscureText = false,
+    required TextEditingController controller,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixIcon: icon != null ? Icon(icon) : null,
+      ),
+    );
+  }
+}
