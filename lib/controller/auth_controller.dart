@@ -293,7 +293,6 @@ print(formData.fields);
         data: formData,
         token: false,
       );
-print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(
           'Success',

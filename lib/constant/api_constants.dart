@@ -9,4 +9,7 @@ class ApiConst {
 
   /// Country
   static const String country = "countries";
+
+  /// Banks api
+static const String getBankDetails = "bank";
 }
