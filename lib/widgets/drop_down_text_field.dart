@@ -8,6 +8,7 @@ class DropDownTextFormField extends StatelessWidget {
   final String hint;
   final bool readOnly;
   final bool isDate;
+  final Color? colors;
   final TextEditingController? controller;
   final VoidCallback? onTap;
 
@@ -19,6 +20,7 @@ class DropDownTextFormField extends StatelessWidget {
     this.isDate = false,
     this.controller,
     this.onTap,
+    this.colors
   });
 
   @override
@@ -26,7 +28,7 @@ class DropDownTextFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.black87, fontSize: 14)),
+        Text(label, style: TextStyle(color: colors ?? Colors.black87, fontSize: 14)),
         const SizedBox(height: 6),
         TextFormField(
           controller: controller,

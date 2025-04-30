@@ -287,7 +287,6 @@ class AuthController extends GetxController {
       dio.FormData formData = dio.FormData.fromMap({
         'username': usernameController.text,
       });
-print(formData.fields);
       final response = await dioClient.post(
         ApiConst.verifyEmail,
         data: formData,
