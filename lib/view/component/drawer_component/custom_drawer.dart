@@ -14,6 +14,7 @@ import 'component/account/create_account_screen.dart';
 import 'component/account/wallet_account.dart';
 import 'component/profile/bank_wallet_screen.dart';
 import 'component/profile/edit_profile.dart';
+import 'component/profile/kyc_verification.dart';
 import 'component/promotions/monthly_reward.dart';
 import 'component/promotions/terms_condition.dart';
 
@@ -110,6 +111,16 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => WalletScreen()),
+                    );
+                  },
+                },
+                {
+                  'title': 'KYC',
+                  'icon': Icons.badge_outlined,
+                  'onTap': () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => KycUploadScreen()),
                     );
                   },
                 },

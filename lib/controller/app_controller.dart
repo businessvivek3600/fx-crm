@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../models/customer_model.dart';
 
 class AppController extends GetxController {
-  static AppController get to => Get.find(); // easy access with AppController.to
+  static AppController get to => Get.find();
 
   RxString token = ''.obs;
   RxBool isLoggedIn = false.obs;
