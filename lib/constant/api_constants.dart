@@ -12,4 +12,7 @@ class ApiConst {
 
   /// Banks api
 static const String getBankDetails = "bank";
+
+///Profile
+  static const String updateProfile = "update_profile";
 }
