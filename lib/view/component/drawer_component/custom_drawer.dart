@@ -23,9 +23,9 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  BackgroundContainer(
+    return BackgroundContainer(
       useAlternateBackground: true,
-      child:   Drawer(
+      child: Drawer(
         elevation: 5,
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
@@ -38,7 +38,7 @@ class CustomDrawer extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color:Colors.transparent),
+              decoration: BoxDecoration(color: Colors.transparent),
               child: CircleAvatar(
                 radius: 40,
                 child: Text("V", style: TextStyle(fontSize: 24)),
@@ -57,7 +57,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>CreateAccountScreen(),
+                        builder: (context) => CreateAccountScreen(),
                       ),
                     );
                   },
@@ -120,7 +120,8 @@ class CustomDrawer extends StatelessWidget {
                   'onTap': () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => KycUploadScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => KycUploadScreen()),
                     );
                   },
                 },
@@ -265,19 +266,23 @@ class CustomDrawer extends StatelessWidget {
                   dialogType: DialogType.warning,
                   animType: AnimType.rightSlide,
                   title: 'Logout',
-                  customHeader: Icon(Icons.question_mark_outlined, size: 50, color: Colors.orange),
+                  customHeader: Icon(Icons.question_mark_outlined,
+                      size: 50, color: Colors.orange),
                   headerAnimationLoop: true,
-                  titleTextStyle: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
+                  titleTextStyle: Theme.of(context)
+                      .textTheme
+                      .headlineLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
                   desc: 'Are you sure you want to logout?',
                   btnCancelOnPress: () {},
                   btnOkText: 'Logout',
                   btnOkOnPress: () {
-                    SessionController.to.clearSession(); // Clears session and navigates to login
+                    SessionController.to
+                        .clearSession(); // Clears session and navigates to login
                   },
                 ).show();
               },
             ),
-
           ],
         ),
       ),
@@ -290,7 +295,16 @@ class CustomDrawer extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
   }) {
-    return ListTile(leading: Icon(icon,color: Colors.white,), title: Text(title,style: TextStyle(color: Colors.white),), onTap: onTap);
+    return ListTile(
+        leading: Icon(
+          icon,
+          color: Colors.white,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(color: Colors.white),
+        ),
+        onTap: onTap);
   }
 
   // Helper Widget for ExpansionTile
@@ -304,10 +318,15 @@ class CustomDrawer extends StatelessWidget {
         dividerColor: Colors.transparent,
       ), // <<< remove divider lines
       child: ExpansionTile(
-        leading: Icon(icon,color: Colors.white,),
-        title: Text(title,style: TextStyle(color: Colors.white),),
-        children:
-        submenus.map((submenu) {
+        leading: Icon(
+          icon,
+          color: Colors.white,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(color: Colors.white),
+        ),
+        children: submenus.map((submenu) {
           return Container(
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             decoration: BoxDecoration(
@@ -316,8 +335,13 @@ class CustomDrawer extends StatelessWidget {
             ),
             child: ListTile(
               dense: true,
-              leading: Icon(submenu['icon'], size: 20,color: Colors.white,),
-              title: Text(submenu['title'], style: TextStyle(fontSize: 14,color: Colors.white)),
+              leading: Icon(
+                submenu['icon'],
+                size: 20,
+                color: Colors.white,
+              ),
+              title: Text(submenu['title'],
+                  style: TextStyle(fontSize: 14, color: Colors.white)),
               onTap: submenu['onTap'],
             ),
           );

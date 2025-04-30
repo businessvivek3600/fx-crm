@@ -16,7 +16,6 @@ class ProfileController extends GetxController {
   final email = TextEditingController();
   final phone = TextEditingController();
 
-
   Future<void> fetchProfile() async {
     isLoading.value = true;
     try {
@@ -67,12 +66,14 @@ class ProfileController extends GetxController {
         "email": email.text,
         "phone": phone.text,
       };
+      print(body);
 
       final response = await dioClient.post(
         ApiConst.updateProfile, // Replace with actual update endpoint
         data: body,
         token: true,
       );
+      print(response.data);
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(

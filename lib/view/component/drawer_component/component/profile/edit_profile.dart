@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
 import 'package:get/get.dart';
+
 import '../../../../../controller/app_controller.dart';
 import '../../../../../models/customer_model.dart';
 import '../../../../../widgets/bg_container.dart';
@@ -60,6 +61,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                controller: editProfileController.lastname,
                 label: 'Last Name *',
                 hint: 'Last Name',
                 initialValue: customer?.lastName ?? '',
@@ -73,7 +75,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               CustomTextFormField(
                 label: 'Email *',
                 hint: 'Email Address',
-
                 initialValue: customer?.customerEmail ?? '',
               ),
               const SizedBox(height: 12),
@@ -147,7 +148,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     // print("object");
-                    await editProfileController.ProfileData();
+                    await editProfileController.updateProfile();
                     // TODO: Save profile changes
                   },
                   style: ElevatedButton.styleFrom(
