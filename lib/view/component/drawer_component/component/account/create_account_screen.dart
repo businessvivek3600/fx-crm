@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/utils/theme.dart';
 
 import '../../../../../controller/app_controller.dart';
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
+import 'widget/set_balance_dialog.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -27,6 +29,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     '200', '1000', '3000', '5000', '10000', '25000', '50000',
     '100000', '500000', '1000000', '5000000'
   ];
+  bool showCreateAccountForm = false;
 
   final GlobalKey _accountTypeKey = GlobalKey();
   final GlobalKey _currencyKey = GlobalKey();
@@ -71,16 +74,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     super.initState();
     accountTypeController.text = 'Raw Spread'; // Default selected
   }
-
+  bool _obscurePassword = true;
   @override
   Widget build(BuildContext context) {
-    return  BackgroundContainer(
-      child:  Scaffold(
+    return BackgroundContainer(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
-          title: const Text(
-            "Create Account",
+          title:  Text(
+            showCreateAccountForm ?   "Create Account" : "My Account",
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
           ),
           elevation: 0,
@@ -88,64 +91,197 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DropDownTextFormField(
-                key: _accountTypeKey,
-                label: 'Account Type',
-                hint: 'Select Account Type',
-                controller: accountTypeController,
-                readOnly: true,
-                onTap: _selectAccountType,
-              ),
-              const SizedBox(height: 16),
-              DropDownTextFormField(
-                key: _currencyKey,
-                label: 'Currency',
-                hint: 'Select Currency',
-                controller: currencyController,
-                readOnly: true,
-                onTap: _selectCurrency,
-              ),
-              const SizedBox(height: 16),
-              DropDownTextFormField(
-                key: _leverageKey,
-                label: 'Leverage',
-                hint: 'Select Leverage',
-                controller: leverageController,
-                readOnly: true,
-                onTap: _selectLeverage,
-              ),
-              const SizedBox(height: 16),
-              DropDownTextFormField(
-                key: _depositKey,
-                label: 'Initial Deposit',
-                hint: 'Select Deposit',
-                controller: depositController,
-                readOnly: true,
-                onTap: _selectDeposit,
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle proceed logic
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header with button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          showCreateAccountForm = !showCreateAccountForm; // Toggle
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: showCreateAccountForm ? Colors.redAccent.shade700 : ThemeUtils.primaryColor,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Text(
+                          showCreateAccountForm ? "Cancel" : "+ Open New Account", // Toggle text
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                /// Account Details Section
+                if (!showCreateAccountForm) ...[
+                  _buildAccountDetails(),
+                ],
+
+                /// Create Account Form Section
+                if (showCreateAccountForm) ...[
+                  DropDownTextFormField(
+                    key: _accountTypeKey,
+                    label: 'Account Type',
+                    hint: 'Select Account Type',
+                    controller: accountTypeController,
+                    readOnly: true,
+                    onTap: _selectAccountType,
+                  ),
+                  const SizedBox(height: 16),
+                  DropDownTextFormField(
+                    key: _currencyKey,
+                    label: 'Currency',
+                    hint: 'Select Currency',
+                    controller: currencyController,
+                    readOnly: true,
+                    onTap: _selectCurrency,
+                  ),
+                  const SizedBox(height: 16),
+                  DropDownTextFormField(
+                    key: _leverageKey,
+                    label: 'Leverage',
+                    hint: 'Select Leverage',
+                    controller: leverageController,
+                    readOnly: true,
+                    onTap: _selectLeverage,
+                  ),
+                  const SizedBox(height: 16),
+                  DropDownTextFormField(
+                    key: _depositKey,
+                    label: 'Initial Deposit',
+                    hint: 'Select Deposit',
+                    controller: depositController,
+                    readOnly: true,
+                    onTap: _selectDeposit,
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle proceed logic
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text('PROCEED', style: TextStyle(color: Colors.white)),
                     ),
                   ),
-                  child: const Text('PROCEED', style: TextStyle(color: Colors.white)),
-                ),
-              ),
-            ],
+                ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  Widget _buildAccountDetails() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('My Demo Accounts', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text('Raw Spread', style: TextStyle(fontSize: 14, color: Colors.black54)),
+              const SizedBox(width: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text('Demo', style: TextStyle(color: Colors.green.shade800, fontSize: 12)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text('MT5 Demo 52297992', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  obscureText: _obscurePassword,
+                  initialValue: '1234567',
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Chip(
+                  label: Text('SERVER  ICMarketsSC-Demo', style: TextStyle(fontSize: 12)),
+                  backgroundColor: Colors.grey.shade200,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Chip(
+                  label: Text('Currency  USD', style: TextStyle(fontSize: 12)),
+                  backgroundColor: Colors.grey.shade200,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              OutlinedButton.icon(
+                onPressed: () => showSetBalanceDialog(context),
+                icon: Icon(Icons.account_balance_wallet_outlined),
+                label: Text('Set Balance'),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () {
+                  // Show options
+                },
+                icon: Icon(Icons.more_vert),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
 }
