@@ -70,7 +70,7 @@ print(response.data);
         final List repliesJson = response.data['data']['ticket_replies'] ?? [];
 
         print("----------------------MEssage REplay");
-       print(response.data['data']['ticket_replies']..);
+       print(response.data['data']['ticket_replies']);
         ticketReplies.assignAll(repliesJson.map((e) => TicketReply.fromJson(e)).toList());
       } else {
         Get.snackbar(
