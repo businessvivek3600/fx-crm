@@ -5,6 +5,7 @@ import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_le
 import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/change_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/transaction_history.dart';
+import 'package:fx_crm/view/component/drawer_component/component/support/support_screen.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import '../../../controller/session_controller.dart';
@@ -238,7 +239,14 @@ class CustomDrawer extends StatelessWidget {
             _buildListTile(
               icon: Icons.support_agent_outlined,
               title: 'Support',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SupportPage(),
+                  ),
+                );
+              },
             ),
 
             // Economic Calendar

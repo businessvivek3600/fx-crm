@@ -26,9 +26,19 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
     ); // Provide dioClient
     kycController.getKycDetails();
   }
+  @override
+  void dispose() {
+    // Clear selected files
+    kycController.idImageFile = null;
+    kycController.selfieImageFile = null;
+    kycController.update();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    final String kycStatus = kycController.kycData.value?.status?.toLowerCase() ?? '';
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -84,92 +94,155 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
                           key: kycController.documentKey,
                           colors: Colors.white,
                           label: 'Document Type',
+                           style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                        ),
                           hint: 'Select Document',
                           controller: kycController.documentController,
-                          readOnly: true,
-                          onTap: kycController.selectDocument,
+                          readOnly: kycStatus == 1 || kycStatus == 3,
+                          onTap: kycStatus == 1 || kycStatus == 3 ? null : kycController.selectDocument,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
                         Text(
                           "Upload ID",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
                         ),
-                        const SizedBox(height: 8),
-                        kycController
-                                    .kycData
-                                    .value
-                                    ?.uploadFirstProof
-                                    ?.isNotEmpty ==
-                                true
-                            ? Center(
-                              child: Image.network(
-                                kycController.kycData.value!.uploadFirstProof!,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                            : Row(
-                              children: [
-                                ElevatedButton(
-                                  onPressed:
-                                      () => kycController.pickFile(false),
-                                  child: const Text("Choose file"),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    kycController.idFileName ??
-                                        "No file chosen",
-                                    style: const TextStyle(color: Colors.grey),
-                                    overflow: TextOverflow.ellipsis,
+
+
+                        const SizedBox(height: 20),
+                        GetBuilder<KycController>(
+                          builder: (_) {
+                            if (kycController.idImageFile != null) {
+                              return Stack(
+                                children: [
+                                  Image.file(
+                                    kycController.idImageFile!,
+                                    height: 120,
+                                    width: 120,
+                                    fit: BoxFit.contain,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  Positioned(
+                                    right: 0,
+                                    top: -10,
+                                    child: IconButton(
+                                      icon: Icon(Icons.cancel, color: Colors.white70,size: 25,),
+                                      onPressed: () {
+                                        kycController.idImageFile = null;
+                                        kycController.update();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else if (kycController.kycData.value?.uploadFirstProof?.isNotEmpty == true) {
+                              return Image.network(
+                                kycController.kycData.value!.uploadFirstProof!,
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.contain,
+                              );
+                            } else {
+                              return Row(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => kycController.pickFile(false),
+                                    child: const Text("Choose file"),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  const Expanded(
+                                    child: Text(
+                                      "No file chosen",
+                                      style: TextStyle(color: Colors.grey),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                          },
+                        ),
+
 
                         const SizedBox(height: 24),
                         Text(
-                          "Upload Selfie With ID",
-                          style: TextStyle(color: Colors.white),
+                          "Upload Selfie",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
                         ),
-                        const SizedBox(height: 8),
-                        kycController
-                                    .kycData
-                                    .value
-                                    ?.uploadSecondProof
-                                    ?.isNotEmpty ==
-                                true
-                            ? Center(
-                              child: Image.network(
-                                kycController.kycData.value!.uploadSecondProof!,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                            : Row(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () => kycController.pickFile(true),
-                                  child: const Text("Choose file"),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    kycController.selfieFileName ??
-                                        "No file chosen",
-                                    style: const TextStyle(color: Colors.grey),
-                                    overflow: TextOverflow.ellipsis,
+
+                        const SizedBox(height: 20),
+                        GetBuilder<KycController>(
+                          builder: (_) {
+                            if (kycController.selfieImageFile != null) {
+                              return Stack(
+                                children: [
+                                  Image.file(
+                                    kycController.selfieImageFile!,
+                                    height: 120,
+                                    width: 120,
+                                    fit: BoxFit.contain,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  Positioned(
+                                    right: 0,
+                                    top: -10,
+                                    child: IconButton(
+                                      icon: Icon(Icons.cancel, color: Colors.white70,size: 25,),
+                                      onPressed: () {
+                                        kycController.selfieImageFile = null;
+                                        kycController.update();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else if (kycController.kycData.value?.uploadSecondProof?.isNotEmpty == true) {
+                              return Image.network(
+                                kycController.kycData.value!.uploadSecondProof!,
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.contain,
+                              );
+                            } else {
+                              return Row(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () => kycController.pickFile(true),
+                                    child: const Text("Choose file"),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  const Expanded(
+                                    child: Text(
+                                      "No file chosen",
+                                      style: TextStyle(color: Colors.grey),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                          },
+                        ),
 
                         const SizedBox(height: 24),
                         Align(
                           alignment: Alignment.centerRight,
-                          child: ElevatedButton(
+                          child: (kycStatus == "1" || kycStatus == "3")
+                              ? const SizedBox()  // Empty container to hide the button
+                              : ElevatedButton(
                             onPressed: () {
-                              // Submit logic
+                              kycController.uploadKyc();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey.shade800,
@@ -177,6 +250,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
                             child: const Text("Submit"),
                           ),
                         ),
+
                       ],
                     ),
                   ),
