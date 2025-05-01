@@ -9,6 +9,7 @@ class CustomTextFormField extends StatelessWidget {
   final String? initialValue;
   final VoidCallback? onTap;
   final TextStyle? textStyle;
+  final Color? labelColor;
   final Icon? icon;
   final String? Function(String?)? validator;       // 🛑 validator callback
   final void Function(String)? onChanged;
@@ -25,7 +26,8 @@ class CustomTextFormField extends StatelessWidget {
     this.validator,    // 🛑 initialize
     this.onChanged,
     this.textStyle,
-    this.icon
+    this.icon,
+    this.labelColor
   });
 
   @override
@@ -33,7 +35,7 @@ class CustomTextFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+        Text(label, style: TextStyle(color: labelColor ?? Colors.white70, fontSize: 14)),
         const SizedBox(height: 6),
         TextFormField(
           controller: controller,
