@@ -13,6 +13,7 @@ class ProfileController extends GetxController {
   // Profile text controllers
   final firstname = TextEditingController();
   final lastname = TextEditingController();
+  final nextofKin = TextEditingController();
   final email = TextEditingController();
   final country = TextEditingController();
   final customerMobile = TextEditingController();
@@ -85,6 +86,8 @@ class ProfileController extends GetxController {
       final body = {
         "first_name": firstname.text,
         "last_name": lastname.text,
+        "next_of_kin": nextofKin.text,
+
         "country": country.text,
         "email": email.text,
         "phone": customerMobile.text,

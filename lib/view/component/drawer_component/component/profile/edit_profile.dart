@@ -68,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                //  controller: editProfileController.kin,
+                 controller: editProfileController.nextofKin,
                 label: 'Next of Kin (Optional)',
                 hint: 'Next of Kin',
               ),
