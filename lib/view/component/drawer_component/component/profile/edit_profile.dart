@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
 import 'package:get/get.dart';
+
 import '../../../../../controller/app_controller.dart';
 import '../../../../../models/customer_model.dart';
 import '../../../../../widgets/bg_container.dart';
@@ -60,79 +61,92 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                controller: editProfileController.lastname,
                 label: 'Last Name *',
                 hint: 'Last Name',
                 initialValue: customer?.lastName ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                //  controller: editProfileController.kin,
                 label: 'Next of Kin (Optional)',
                 hint: 'Next of Kin',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.email,
                 label: 'Email *',
                 hint: 'Email Address',
-
                 initialValue: customer?.customerEmail ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                  controller: editProfileController.dateOfBirth,
                 label: 'Date Of Birth *',
                 hint: 'dd/mm/yyyy',
-                isDate: true,
+                // isDate: true,
                 initialValue: customer?.dateOfBirth ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.company,
                 label: 'Company (Optional)',
                 hint: 'Company',
                 initialValue: customer?.company ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.country,
                 label: 'Country *',
                 hint: 'Country',
                 initialValue: customer?.countryText ?? '',
+                
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.state,
                 label: 'State',
                 hint: 'State',
                 initialValue: customer?.state ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.city,
                 label: 'City',
                 hint: 'City',
                 initialValue: customer?.city ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.shortAddress,
                 label: 'House/Flat No. *',
                 hint: 'House/Flat No.',
                 initialValue: customer?.customerShortAddress ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.address1,
                 label: 'Address 1 *',
                 hint: 'Address 1',
                 initialValue: customer?.customerAddress1 ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.address2,
                 label: 'Address 2 (Optional)',
                 hint: 'Address 2',
                 initialValue: customer?.customerAddress2 ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 controller: editProfileController.zip,
                 label: 'Zip',
                 hint: 'Zip',
                 initialValue: customer?.zip ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
+                 
                 label: 'Google Authentication *',
                 hint: 'Disabled',
                 readOnly: true,
@@ -147,7 +161,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     // print("object");
-                    await editProfileController.ProfileData();
+                    await editProfileController.updateProfile();
                     // TODO: Save profile changes
                   },
                   style: ElevatedButton.styleFrom(
