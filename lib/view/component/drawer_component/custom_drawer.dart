@@ -13,6 +13,7 @@ import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
 import 'component/account/create_account_screen.dart';
 import 'component/account/wallet_account.dart';
+import 'component/economic/economic_calander.dart';
 import 'component/profile/bank_wallet_screen.dart';
 import 'component/profile/edit_profile.dart';
 import 'component/profile/kyc_verification.dart';
@@ -253,7 +254,15 @@ class CustomDrawer extends StatelessWidget {
             _buildListTile(
               icon: Icons.calendar_month_outlined,
               title: 'Economic Calendar',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EconomicCalendarScreen(),
+                  ),
+                );
+
+              },
             ),
 
             // Downloads
