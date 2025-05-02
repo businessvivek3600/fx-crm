@@ -25,7 +25,7 @@ void main() async{
       loggingInterceptor: LoggingInterceptor());
   Get.put<DioClient>(dioClient);
   Get.put(AppController());
-
+  AppController.to.syncWithSession();
   runApp(const MyApp());
 }
 

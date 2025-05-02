@@ -22,7 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   AuthController authController = Get.put(AuthController(dioClient: dioClient));
   @override
   Widget build(BuildContext context) {
-    final customer = AppController.to.customer;
+    final customer = AppController.to.customer.value;
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
