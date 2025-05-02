@@ -34,4 +34,7 @@ class ApiConst {
   static const String createTicket = 'open_ticket';
   static const String ticketDetails = 'ticket_detail';
   static const String ticketReplay = 'ticket_reply';
+  //Password
+   static const String updatepassword = 'update_password';
+
 }
