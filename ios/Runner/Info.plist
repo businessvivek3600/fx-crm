@@ -28,10 +28,10 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-    <string>We need access to your photo library to select files.</string>
-    <key>NSDocumentsFolderUsageDescription</key>
-    <string>We need access to your documents to upload files.</string>
+	<key>NSCameraUsageDescription</key>
+    <string>We need camera access to take photos for KYC verification.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need photo library access to select documents or selfies.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constant/api_constants.dart';
+import '../database/dio/dio/dio_client.dart';
 import '../models/customer_model.dart';
 
 class AppController extends GetxController {
   static AppController get to => Get.find();
-
   RxString token = ''.obs;
   RxBool isLoggedIn = false.obs;
   Customer? customer;
@@ -19,4 +21,5 @@ class AppController extends GetxController {
   void saveCustomerData(Customer newCustomer) {
     customer = newCustomer;
   }
+
 }
