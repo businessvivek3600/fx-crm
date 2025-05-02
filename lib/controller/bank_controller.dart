@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
@@ -7,7 +5,7 @@ import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
 import '../models/bank_model.dart';
 
-class BankController extends GetxController{
+class BankController extends GetxController {
   final DioClient dioClient;
 
   BankController({required this.dioClient});
@@ -27,7 +25,6 @@ class BankController extends GetxController{
   final usdtAddressController = TextEditingController();
   final otpController = TextEditingController();
 
-
   /// Get Bank Data
   Future<void> getBankDetails() async {
     isLoading.value = true;
@@ -37,7 +34,8 @@ class BankController extends GetxController{
         ApiConst.getBankDetails,
         token: true,
       );
-
+      print('bank data');
+      print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = response.data['data'];
         final bank = Bank.fromJson(data);
@@ -72,6 +70,7 @@ class BankController extends GetxController{
       isLoading.value = false;
     }
   }
+
   /// Update Bank Data
   Future<void> updateBankDetails() async {
     isLoading.value = true;
@@ -90,7 +89,7 @@ class BankController extends GetxController{
       });
       final response = await dioClient.post(
         ApiConst.updateBankDetails,
-        data:  formData,
+        data: formData,
       );
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(
@@ -125,14 +124,13 @@ class BankController extends GetxController{
       isLoading.value = false;
     }
   }
-///Verify Email
+
+  ///Verify Email
   Future<void> verifyEmail() async {
     otpLoading.value = true;
     try {
-      final response = await dioClient.post(
-        ApiConst.bankEmail,
-      );
-print(response.data);
+      final response = await dioClient.post(ApiConst.bankEmail);
+      print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(
           'Success',
@@ -162,16 +160,19 @@ print(response.data);
       otpLoading.value = false;
     }
   }
-///Bank/Wallet Filed Validation
+
+  ///Bank/Wallet Filed Validation
   /// Bank/Wallet Field Validation with OTP Check
   bool validateBankOrWalletFields() {
-    final isBankDetailsEntered = bankNameController.text.isNotEmpty ||
+    final isBankDetailsEntered =
+        bankNameController.text.isNotEmpty ||
         bankAddressController.text.isNotEmpty ||
         accountHolderNameController.text.isNotEmpty ||
         accountNumberController.text.isNotEmpty ||
         ifscCodeController.text.isNotEmpty;
 
-    final isWalletEntered = btcAddressController.text.isNotEmpty ||
+    final isWalletEntered =
+        btcAddressController.text.isNotEmpty ||
         bizzcoinAddressController.text.isNotEmpty ||
         usdtAddressController.text.isNotEmpty;
 
@@ -218,6 +219,4 @@ print(response.data);
 
     return true;
   }
-
-
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/password_controller.dart';
+
+import 'package:fx_crm/controller/profile_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../../../widgets/custom_text_form.dart';
