@@ -10,7 +10,7 @@ import 'support_chat.dart';
 class SupportPage extends StatefulWidget {
 
 
-  SupportPage({super.key});
+  const SupportPage({super.key});
 
   @override
   State<SupportPage> createState() => _SupportPageState();
@@ -41,6 +41,7 @@ class _SupportPageState extends State<SupportPage> {
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Colors.lightBlue,
           onPressed: () {
             showModalBottomSheet(
               context: context,
@@ -50,8 +51,8 @@ class _SupportPageState extends State<SupportPage> {
               builder: (context) => CreateSupportTicket(),
             );
           },
-          label: Text('Open Ticket'),
-          icon: Icon(Icons.add),
+          label: Text('Open Ticket',style: TextStyle(color: Colors.white),),
+          icon: Icon(Icons.add,color:Colors.white),
 
         ),
         body: Obx(() {
@@ -79,7 +80,6 @@ class _SupportPageState extends State<SupportPage> {
                     itemCount: supportController.tickets.length,
                     itemBuilder: (context, index) {
                       final ticket = supportController.tickets[index];
-                      print(ticket.lastReply);
                       return GestureDetector(
                         onTap: () {
                           // Navigate to chat page
@@ -106,7 +106,7 @@ class _SupportPageState extends State<SupportPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${ticket.subject}',
+                                    ticket.subject,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,

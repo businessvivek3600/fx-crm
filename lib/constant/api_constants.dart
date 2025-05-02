@@ -1,4 +1,8 @@
 class ApiConst {
+
+///APP INFO
+  static const String appInfo = "app_info";
+
   ///  Auth APIs
   static const String login = "login";
   static const String register = "signup";

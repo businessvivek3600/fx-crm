@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../../../controller/support_controller.dart';
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/custom_text_form.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
@@ -126,9 +128,47 @@ class _CreateSupportTicketState extends State<CreateSupportTicket> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Save profile changes
+                    onPressed: () async {
+                      final subject = subjectController.text.trim();
+                      final departmentName = departmentController.text.trim();
+                      final priorityName = priorityController.text.trim();
+                      final body = bodyController.text.trim();
+
+                      if (subject.isEmpty || departmentName.isEmpty || priorityName.isEmpty || body.isEmpty) {
+                        Get.snackbar('Error', 'Please fill all fields',
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: Colors.redAccent,
+                            colorText: Colors.white);
+                        return;
+                      }
+
+                      final SupportController controller = Get.find<SupportController>();
+
+                      // Get department ID and priority ID from names
+                      final departmentId = controller.ticketDepartments
+                          .firstWhereOrNull((e) => e.name == departmentName)?.departmentId;
+                      final priorityId = {
+                        'Low': '1',
+                        'Medium': '2',
+                        'High': '3',
+                      }[priorityName];
+
+                      if (departmentId == null || priorityId == null) {
+                        Get.snackbar('Error', 'Invalid department or priority selected',
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: Colors.redAccent,
+                            colorText: Colors.white);
+                        return;
+                      }
+
+                      await controller.createTicket(
+                        subject: subject,
+                        departmentId: departmentId,
+                        priorityId: priorityId,
+                        message: body,
+                      );
                     },
+
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
