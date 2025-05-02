@@ -80,7 +80,7 @@ class AuthController extends GetxController {
       );
 
       /// 🛑 DEBUG: Print API Response
-
+      print("------------------------------------------");
       print(response.data);
       if (response.statusCode == 200) {
         int isSuccess = response.data['status'] ?? 0;
