@@ -1,5 +1,8 @@
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
+import 'package:fx_crm/main.dart';
 import 'package:get/get.dart';
 
 import '../../../../../controller/app_controller.dart';
@@ -16,6 +19,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   ProfileController editProfileController = Get.put(ProfileController());
+  AuthController authController = Get.put(AuthController(dioClient: dioClient));
   @override
   Widget build(BuildContext context) {
     final customer = AppController.to.customer;
@@ -68,85 +72,126 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.nextofKin,
+                controller: editProfileController.nextofKin,
                 label: 'Next of Kin (Optional)',
                 hint: 'Next of Kin',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.email,
+                controller: editProfileController.email,
                 label: 'Email *',
                 hint: 'Email Address',
                 initialValue: customer?.customerEmail ?? '',
               ),
               const SizedBox(height: 12),
+
+              // Container(
+              //   padding: const EdgeInsets.symmetric(horizontal: 12),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(8),
+              //     border: Border.all(color: Colors.grey.shade300),
+              //   ),
+              //   child: Icon(Icons.calendar_month, color: Colors.grey.shade400),
+              // ),
               CustomTextFormField(
-                  controller: editProfileController.dateOfBirth,
+                onTap: () {
+                  editProfileController.pickDate(context);
+                },
+                controller: editProfileController.dateOfBirth,
                 label: 'Date Of Birth *',
                 hint: 'dd/mm/yyyy',
-                // isDate: true,
+                isDate: true,
                 initialValue: customer?.dateOfBirth ?? '',
               ),
+
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.company,
+                controller: editProfileController.company,
                 label: 'Company (Optional)',
                 hint: 'Company',
                 initialValue: customer?.company ?? '',
               ),
               const SizedBox(height: 12),
-              CustomTextFormField(
-                 controller: editProfileController.country,
-                label: 'Country *',
-                hint: 'Country',
-                initialValue: customer?.countryText ?? '',
-                
+              Obx(
+                () => CustomTextFormField(
+                  label: 'Country',
+                  readOnly: true,
+                  textStyle: TextStyle(color: Colors.black),
+                  hint:
+                      authController.selectedCountryName.value.isEmpty
+                          ? 'Please select a country'
+                          : authController.selectedCountryName.value,
+                  onTap: () {
+                    showCountryPicker(
+                      context: context,
+                      showPhoneCode: true,
+                      onSelect: (Country country) {
+                        authController.setSelectedCountry(
+                          country.name,
+                          country.phoneCode,
+                        );
+                      },
+                    );
+                  },
+                  validator:
+                      (_) =>
+                          authController.selectedCountryId.value.isEmpty
+                              ? 'Please select a country'
+                              : null,
+                ),
               ),
+
+              // CustomTextFormField(
+              //   controller: editProfileController.country,
+              //   label: 'Country *',
+              //   hint: 'Country',
+              //   initialValue: customer?.countryText ?? '',
+              // ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.state,
+                controller: editProfileController.state,
                 label: 'State',
                 hint: 'State',
                 initialValue: customer?.state ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.city,
+                controller: editProfileController.city,
                 label: 'City',
                 hint: 'City',
                 initialValue: customer?.city ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.shortAddress,
+                controller: editProfileController.shortAddress,
                 label: 'House/Flat No. *',
                 hint: 'House/Flat No.',
                 initialValue: customer?.customerShortAddress ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.address1,
+                controller: editProfileController.address1,
                 label: 'Address 1 *',
                 hint: 'Address 1',
                 initialValue: customer?.customerAddress1 ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.address2,
+                controller: editProfileController.address2,
                 label: 'Address 2 (Optional)',
                 hint: 'Address 2',
                 initialValue: customer?.customerAddress2 ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 controller: editProfileController.zip,
+                controller: editProfileController.zip,
                 label: 'Zip',
                 hint: 'Zip',
                 initialValue: customer?.zip ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                 
                 label: 'Google Authentication *',
                 hint: 'Disabled',
                 readOnly: true,

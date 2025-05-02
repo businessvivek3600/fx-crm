@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:fx_crm/main.dart';
-import 'package:fx_crm/models/customer_model.dart';
-import 'package:get/get.dart';
 import 'package:fx_crm/constant/api_constants.dart';
-import 'package:fx_crm/controller/app_controller.dart';
-import 'package:fx_crm/database/dio/dio/dio_client.dart';
+import 'package:fx_crm/controller/auth_controller.dart';
+import 'package:fx_crm/main.dart';
+import 'package:get/get.dart';
 
 class ProfileController extends GetxController {
+  AuthController authController = Get.put(AuthController(dioClient: dioClient));
   var isLoading = false.obs;
   var ProfileData = {}.obs;
 
@@ -26,6 +25,20 @@ class ProfileController extends GetxController {
   final address1 = TextEditingController();
   final address2 = TextEditingController();
   final zip = TextEditingController();
+  var selectedDate = Rxn<DateTime>();
+
+  void pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000, 1, 1),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      selectedDate.value = picked;
+      dateOfBirth.text = selectedDate.value.toString().split(' ')[0];
+    }
+  }
 
   // Future<void> fetchProfile() async {
   //   isLoading.value = true;
@@ -88,7 +101,7 @@ class ProfileController extends GetxController {
         "last_name": lastname.text,
         "next_of_kin": nextofKin.text,
 
-        "country": country.text,
+        "country": authController.selectedCountryName.value,
         "email": email.text,
         "phone": customerMobile.text,
         "customer_mobile": customerMobile.text,
@@ -117,6 +130,8 @@ class ProfileController extends GetxController {
       print(body);
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
+        // Customer customerData = Customer.fromJson(response.data['customer']);
+        // AppController.to.saveCustomerData(customerData);
         Get.snackbar(
           'Success',
           'Profile updated successfully!',
@@ -147,3 +162,5 @@ class ProfileController extends GetxController {
     }
   }
 }
+
+reset() {}
