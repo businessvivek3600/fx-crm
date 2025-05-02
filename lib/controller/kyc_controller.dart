@@ -29,6 +29,8 @@ class KycController extends GetxController {
     isLoading.value = true;
     try {
       final response = await dioClient.post(ApiConst.getKyc);
+      print("ApiConst.getKyc response data---------");
+      print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = response.data['data'];
 

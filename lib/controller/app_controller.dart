@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/controller/session_controller.dart';
 import 'package:get/get.dart';
 
 import '../constant/api_constants.dart';
@@ -11,7 +12,7 @@ class AppController extends GetxController {
   static AppController get to => Get.find();
   RxString token = ''.obs;
   RxBool isLoggedIn = false.obs;
-  Customer? customer;
+  final Rxn<Customer> customer = Rxn<Customer>();
   AppInfoModel? appInfoModel;
   final Rxn<Company> company = Rxn<Company>();
   final RxList<Setting> settings = <Setting>[].obs;
@@ -22,6 +23,17 @@ class AppController extends GetxController {
     super.onInit();
     getAppInfo(); // Safe to call here
   }
+  void syncWithSession() {
+    final sessionCustomer = SessionController.to.customer.value;
+    if (sessionCustomer != null) {
+      customer.value = sessionCustomer;
+      token.value = SessionController.to.token.value;
+      isLoggedIn.value = SessionController.to.isLoggedIn.value;
+    }
+  }
+
+
+
   void saveToken(String newToken) {
     token.value = newToken;
   }
@@ -31,7 +43,7 @@ class AppController extends GetxController {
   }
 
   void saveCustomerData(Customer newCustomer) {
-    customer = newCustomer;
+    customer.value = newCustomer;
   }
   final isLoading = false.obs;
   Future<void> getAppInfo() async {

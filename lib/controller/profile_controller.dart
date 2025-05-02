@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
 import 'package:fx_crm/controller/app_controller.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
+import 'package:fx_crm/controller/session_controller.dart';
 import 'package:fx_crm/main.dart';
 import 'package:fx_crm/models/customer_model.dart';
 import 'package:get/get.dart';
@@ -78,13 +79,11 @@ class ProfileController extends GetxController {
         token: true,
         // options: Options(contentType: 'multipart/form-data'),
       );
-
-      print("-------------------------------------------------------");
-      print(response.data);
-
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Customer customerData = Customer.fromJson(response.data['data']);
         AppController.to.saveCustomerData(customerData);
+        SessionController.to.saveSession(SessionController.to.token.value, customerData);
+
         Get.snackbar(
           'Success',
           'Profile updated successfully!',
