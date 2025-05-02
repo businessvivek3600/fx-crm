@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
+import 'package:dio/dio.dart' as dio;
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
 import '../models/support_Model.dart';
@@ -65,17 +65,101 @@ class SupportController extends GetxController{
         ApiConst.ticketDetails,
         data: {"ticket_id": ticketId},
       );
-print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final List repliesJson = response.data['data']['ticket_replies'] ?? [];
-
-        print("----------------------MEssage REplay");
-       print(response.data['data']['ticket_replies']);
         ticketReplies.assignAll(repliesJson.map((e) => TicketReply.fromJson(e)).toList());
       } else {
         Get.snackbar(
           'Error',
           response.data['message'] ?? 'Failed to fetch ticket details',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  ///SENT MESSAGE-------------
+
+  Future<void> sentMessage({required String ticketId, required String message}) async {
+    isLoading.value = true;
+    try {
+      dio.FormData formData = dio.FormData.fromMap({
+        'ticket_id': ticketId,
+        'message': message,
+      });
+      final response = await dioClient.post(
+        ApiConst.ticketReplay,
+        data: formData,
+      );
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        await getTicketDetails(ticketId);
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch ticket details',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  ///CREATE TICKET
+  Future<void> createTicket({
+    required String subject,
+    required String departmentId,
+    required String priorityId,
+    required String message,
+  }) async {
+    isLoading.value = true;
+    try {
+      final formData = dio.FormData.fromMap({
+        'subject': subject,
+        'department': departmentId,
+        'priority': priorityId,
+        'message': message,
+      });
+
+      print(formData.fields);
+      final response = await dioClient.post(ApiConst.createTicket, data: formData);
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        Get.back();
+        await getTicketsList();
+        Get.snackbar(
+          'Success',
+          'Ticket created successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to create ticket',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
@@ -107,11 +191,21 @@ print(response.data);
   }
 
   ///FORMAT TIME
-  String? formatDateTime(String input) {
-    DateTime parsedDate = DateTime.parse(input);
-    String formatted = DateFormat('hh:mma d MMM y').format(parsedDate);
-    return formatted.toLowerCase(); // for 'pm' instead of 'PM'
+  String formatDateTime(String? input) {
+    if (input == null || input.isEmpty || input == '-') {
+      return '-';
+    }
+
+    try {
+      final dateTime = DateTime.parse(input);
+      return DateFormat.yMMMd().add_jm().format(dateTime);
+    } catch (e) {
+      // Log error and return fallback
+      print("Error parsing date: $e");
+      return '-';
+    }
   }
+
 
   String getPriorityName(String? priorityId) {
     switch (priorityId) {

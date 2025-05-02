@@ -19,12 +19,13 @@ void main() async{
   if (!kIsWeb) {
     await GetStorage.init(); // Only for Android/iOS/desktop
   }
+  Get.put(SessionController());
+  SessionController.to.loadSession();
   dioClient = DioClient(AppConst.baseUrl, null,
       loggingInterceptor: LoggingInterceptor());
   Get.put<DioClient>(dioClient);
   Get.put(AppController());
-  Get.put(SessionController());
-  SessionController.to.loadSession();
+
   runApp(const MyApp());
 }
 
