@@ -20,42 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthController authController = Get.put(
     AuthController(dioClient: dioClient),
   );
-  @override
-  void initState() {
-    super.initState();
-    getCountryList();
-  }
-  Future<void> getCountryList() async {
-    try {
 
-      final response = await dioClient.get(ApiConst.country); // Replace with actual endpoint
-
-      print("response Country ----${response.data}");
-      if (response.statusCode == 200 && response.data['status'] == 1) {
-        final List countriesData = response.data['countries'] ?? [];
-
-        authController.countryList.value = countriesData
-            .map((countryJson) => Country.fromJson(countryJson))
-            .toList();
-      } else {
-        Get.snackbar(
-          'Failed to Fetch Countries',
-          response.data['message'] ?? 'Something went wrong',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.redAccent,
-        colorText: Colors.white,
-      );
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(

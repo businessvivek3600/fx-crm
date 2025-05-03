@@ -23,6 +23,7 @@ class AppController extends GetxController {
     super.onInit();
     getAppInfo(); // Safe to call here
   }
+  /// ON UPDATE IT RESAVE THE CUSTOMER DATA ----------
   void syncWithSession() {
     final sessionCustomer = SessionController.to.customer.value;
     if (sessionCustomer != null) {
@@ -33,7 +34,7 @@ class AppController extends GetxController {
   }
 
 
-
+///
   void saveToken(String newToken) {
     token.value = newToken;
   }

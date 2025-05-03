@@ -245,6 +245,8 @@ class AuthController extends GetxController {
   }
 
   ///Get CountryList
+  /// @override
+
   Future<void> getCountryList() async {
     try {
       isLoading.value = true;
