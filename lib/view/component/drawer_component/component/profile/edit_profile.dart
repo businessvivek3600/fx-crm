@@ -62,7 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             'Edit Profile',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
           ),
-        ),
+        ), 
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
