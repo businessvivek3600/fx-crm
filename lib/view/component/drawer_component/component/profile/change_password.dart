@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
 import 'package:get/get.dart';
 
+import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/custom_text_form.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -17,26 +18,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          "Change Password",
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+    return BackgroundContainer(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            'Change Password',
+            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+          ),
         ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+             Text(
                 "Old Information",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.blueGrey.shade300,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),

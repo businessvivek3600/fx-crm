@@ -20,6 +20,34 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   ProfileController editProfileController = Get.put(ProfileController());
   AuthController authController = Get.put(AuthController(dioClient: dioClient));
+
+  @override
+  void initState() {
+    super.initState();
+
+    final customer = AppController.to.customer.value;
+
+    editProfileController.firstname.text = customer?.firstName ?? '';
+    editProfileController.lastname.text = customer?.lastName ?? '';
+    // editProfileController.nextofKin.text = customer?.nextofKin ?? '';
+    // editProfileController.email.text = customer?.customerEmail ?? '';
+    editProfileController.dateOfBirth.text = customer?.dateOfBirth ?? '';
+    editProfileController.company.text = customer?.company ?? '';
+    editProfileController.state.text = customer?.state ?? '';
+    editProfileController.city.text = customer?.city ?? '';
+    editProfileController.shortAddress.text =
+        customer?.customerShortAddress ?? '';
+    editProfileController.address1.text = customer?.customerAddress1 ?? '';
+    editProfileController.address2.text = customer?.customerAddress2 ?? '';
+    editProfileController.zip.text = customer?.zip ?? '';
+    if (customer?.countryText != null && customer?.countryCode != null) {
+      authController.setSelectedCountry(
+        customer!.countryText!,
+        customer.countryCode!.toString(),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final customer = AppController.to.customer.value;
@@ -77,13 +105,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hint: 'Next of Kin',
               ),
               const SizedBox(height: 12),
-              CustomTextFormField(
-                controller: editProfileController.email,
-                label: 'Email *',
-                hint: 'Email Address',
-                initialValue: customer?.customerEmail ?? '',
-              ),
-              const SizedBox(height: 12),
+              // CustomTextFormField(
+              //   controller: editProfileController.email,
+              //   label: 'Email *',
+              //   hint: 'Email Address',
+              //   initialValue: customer?.customerEmail ?? '',
+              // ),
+              // const SizedBox(height: 12),
 
               // Container(
               //   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -103,6 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hint: 'dd/mm/yyyy',
                 isDate: true,
                 initialValue: customer?.dateOfBirth ?? '',
+
               ),
 
               const SizedBox(height: 12),
@@ -113,11 +142,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 initialValue: customer?.company ?? '',
               ),
               const SizedBox(height: 12),
-              Obx(
-                () => CustomTextFormField(
+              Obx(() {
+                if (authController.countryList.isEmpty) {
+                  return const CircularProgressIndicator();
+                }
+
+                final customerCountryId = customer?.country;
+                final initialCountry = authController.countryList
+                    .firstWhereOrNull(
+                      (e) => e.id.toString() == customerCountryId,
+                    );
+
+                if (authController.selectedCountryName.value.isEmpty &&
+                    initialCountry != null) {
+                  authController.setSelectedCountry(
+                    initialCountry.name,
+                    initialCountry.phonecode,
+                    initialCountry.id.toString(),
+                  );
+                }
+
+                return CustomTextFormField(
                   label: 'Country',
                   readOnly: true,
-                  textStyle: TextStyle(color: Colors.black),
+                  textStyle: const TextStyle(color: Colors.black),
                   hint:
                       authController.selectedCountryName.value.isEmpty
                           ? 'Please select a country'
@@ -127,10 +175,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       context: context,
                       showPhoneCode: true,
                       onSelect: (Country country) {
-                        authController.setSelectedCountry(
-                          country.name,
-                          country.phoneCode,
-                        );
+                        // Match selected country with your internal list to get ID
+                        final matchedCountry = authController.countryList
+                            .firstWhereOrNull(
+                              (e) =>
+                                  e.name.toLowerCase() ==
+                                  country.name.toLowerCase(),
+                            );
+
+                        if (matchedCountry != null) {
+                          authController.setSelectedCountry(
+                            matchedCountry.name,
+                            matchedCountry.phonecode,
+                            matchedCountry.id.toString(),
+                          );
+                        } else {
+                          // fallback if not found
+                          authController.setSelectedCountry(
+                            country.name,
+                            country.phoneCode,
+                            '',
+                          );
+                        }
                       },
                     );
                   },
@@ -139,8 +205,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           authController.selectedCountryId.value.isEmpty
                               ? 'Please select a country'
                               : null,
-                ),
-              ),
+                );
+              }),
 
               // CustomTextFormField(
               //   controller: editProfileController.country,
