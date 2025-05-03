@@ -2,34 +2,38 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:fx_crm/view/component/auth/login_screen.dart';
-import 'package:fx_crm/view/component/auth/signup_screen.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'constant/app_constant.dart';
 import 'controller/app_controller.dart';
+import 'controller/auth_controller.dart';
 import 'controller/session_controller.dart';
 import 'database/dio/dio/dio_client.dart';
 import 'database/dio/dio/logging_interceptor.dart';
 import 'view/dashboard_screen.dart';
+
 late DioClient dioClient;
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
-    await GetStorage.init(); // Only for Android/iOS/desktop
+    await GetStorage.init();
   }
   Get.put(SessionController());
   SessionController.to.loadSession();
-  dioClient = DioClient(AppConst.baseUrl, null,
-      loggingInterceptor: LoggingInterceptor());
+  dioClient = DioClient(
+    AppConst.baseUrl,
+    null,
+    loggingInterceptor: LoggingInterceptor(),
+  );
   Get.put<DioClient>(dioClient);
   Get.put(AppController());
   AppController.to.syncWithSession();
+  final AuthController authController = Get.put(AuthController(dioClient: dioClient));
+  await authController.getCountryList();
   runApp(const MyApp());
 }
-
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -39,14 +43,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
-    return  GetMaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeUtils.lightTheme,
       title: 'FXCRM',
-      home:  Obx(() {
+      home: Obx(() {
         return SessionController.to.isLoggedIn.value
             ? DashboardScreen()
             : LoginScreen();
@@ -54,5 +57,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-

@@ -8,6 +8,7 @@ import 'package:fx_crm/view/component/drawer_component/component/account/transac
 import 'package:fx_crm/view/component/drawer_component/component/support/support_screen.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import '../../../controller/app_controller.dart';
 import '../../../controller/session_controller.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
@@ -25,10 +26,12 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final logo = AppController.to.settings;
     return  BackgroundContainer(
       useAlternateBackground: true,
       child:   Drawer(
         elevation: 5,
+
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -39,14 +42,25 @@ class CustomDrawer extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color:Colors.transparent),
-              child: CircleAvatar(
-                radius: 40,
-                child: Text("V", style: TextStyle(fontSize: 24)),
+            SizedBox(
+              height: 130,
+              child: DrawerHeader(
+                decoration: const BoxDecoration(color: Colors.transparent),
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                child: Align(
+                  alignment: Alignment.centerLeft, // Start from left
+                  child: Image.network(
+                    logo.first.logo ?? 'https://png.pngtree.com/png-vector/20220423/ourmid/pngtree-trade-market-candle-line-png-png-image_4553954.png',
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.error, color: Colors.white),
+                  ),
+                ),
               ),
             ),
-
             // Profile with submenus
             _buildExpansionTile(
               title: 'My Account',
