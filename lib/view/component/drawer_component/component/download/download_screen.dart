@@ -1,12 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/app_controller.dart';
+import 'package:fx_crm/database/database_index.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
 
 class DownloadScreen extends StatefulWidget {
   const DownloadScreen({super.key});
@@ -222,19 +221,31 @@ class DownloadCard extends StatelessWidget {
   }
 
   Future<void> downloadFile(String url) async {
+    var uri = Uri.tryParse(url);
+    if (uri == null) {
+      Get.snackbar("Error", "Invalid URL");
+      return;
+    }
+    url = uri.origin + uri.path; // Ensure URL is valid
+    print("Downloading URL: $url");
     // Request storage permission (Android)
     if (await Permission.storage.request().isGranted) {
       try {
         // Get the directory to save file
-        final dir = await getExternalStorageDirectory();
+        // FileStorage.saveFile(File(savePath), savePath);
+        final dir = await FileStorage.getExternalDocumentPath();
+        if (dir == null) {
+          Get.snackbar("Error", "Failed to get download directory");
+          return;
+        }
         final fileName = url.split('/').last;
-        final savePath = "${dir!.path}/$fileName";
+        final savePath = "$dir/$fileName";
 
         // Create Dio instance
         Dio dio = Dio();
 
         // Start download
-        await dio.download(
+        var res = await dio.download(
           url,
           savePath,
           onReceiveProgress: (received, total) {
@@ -245,6 +256,12 @@ class DownloadCard extends StatelessWidget {
             }
           },
         );
+        if (res.statusCode == 200) {
+          print("Download completed: $savePath (${res.data.runtimeType})");
+          // FileStorage.saveFile(File(savePath), savePath);
+        } else {
+          print("Download failed: ${res.statusCode}");
+        }
 
         // Notify user of successful download
         Get.snackbar("Download Completed", "File saved to $savePath");
