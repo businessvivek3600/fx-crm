@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+
+import 'notification_db.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -53,12 +53,15 @@ class NotificationService {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _showNotification(message);
     });
-    await subscribeToTopic('fxcrm_users');
-    // ✅ Wait for APNs token if iOS before subscribing to topic
+
+    final fcmToken = await getDeviceToken();
+    print("✅ FCM token: $fcmToken");
+
     if (Platform.isIOS) {
       String? apnsToken;
       int retry = 0;
 
+      // 🔁 Wait for APNs token up to 10 times (10 seconds)
       while (apnsToken == null && retry < 10) {
         apnsToken = await _firebaseMessaging.getAPNSToken();
         if (apnsToken == null) {
@@ -75,12 +78,6 @@ class NotificationService {
       }
     } else {
       await subscribeToTopic('fxcrm_users');
-    }
-
-    // Log the FCM token
-    final fcmToken = await getDeviceToken();
-    if (fcmToken != null) {
-      print("✅ FCM token: $fcmToken");
     }
   }
 
@@ -118,7 +115,7 @@ class NotificationService {
     final String? imageUrl = android?.imageUrl ?? data['image'];
     BigPictureStyleInformation? bigPictureStyleInformation;
 
-    if (imageUrl != null) {
+    if (Platform.isAndroid && imageUrl != null) {
       final bigImagePath = await _downloadImage(imageUrl, 'bigImage');
       bigPictureStyleInformation = BigPictureStyleInformation(
         FilePathAndroidBitmap(bigImagePath),
@@ -138,7 +135,7 @@ class NotificationService {
 
     final notificationDetails = NotificationDetails(
       android: androidDetails,
-      iOS: const DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(), // iOS fallback: title & body only
     );
 
     await flutterLocalNotificationsPlugin.show(
@@ -148,7 +145,16 @@ class NotificationService {
       notificationDetails,
       payload: data.toString(),
     );
+
+    // Save notification to SQLite
+    await NotificationDatabase().insertNotification({
+      'title': notification?.title ?? '',
+      'body': notification?.body ?? '',
+      'image': imageUrl ?? '',
+      'timestamp': DateTime.now().toIso8601String(),
+    });
   }
+
 
   Future<String> _downloadImage(String url, String fileName) async {
     final response = await http.get(Uri.parse(url));

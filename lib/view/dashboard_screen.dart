@@ -6,6 +6,7 @@ import '../main.dart';
 import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
+import 'component/notification/notification_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -42,6 +43,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               letterSpacing: 1.2,
             ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen(),));
+              },
+              icon: Icon(Icons.notifications_outlined),
+            ),
+          ],
         ),
         // backgroundColor: const Color(0xFF1A1A1A),
         body: SingleChildScrollView(
@@ -102,12 +111,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 20),
               _buildDailyReturnCard(),
               const SizedBox(height: 20),
-              _buildBounceRateCard(title: "Bounce Rate", value: "48.32%", percentage: "+12.34", isIncrease: true),
+              _buildBounceRateCard(
+                title: "Bounce Rate",
+                value: "48.32%",
+                percentage: "+12.34",
+                isIncrease: true,
+              ),
               const SizedBox(height: 12),
-              _buildBounceRateCard(title: "Pageviews", value: "52.64%", percentage: "+21.34", isIncrease: true),
+              _buildBounceRateCard(
+                title: "Pageviews",
+                value: "52.64%",
+                percentage: "+21.34",
+                isIncrease: true,
+              ),
               const SizedBox(height: 12),
-              _buildBounceRateCard(title: "New Sessions", value: "68.23%", percentage: "+18.42", isIncrease: true),
-
+              _buildBounceRateCard(
+                title: "New Sessions",
+                value: "68.23%",
+                percentage: "+18.42",
+                isIncrease: true,
+              ),
             ],
           ),
         ),
@@ -158,34 +181,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
 
             const SizedBox(height: 12),
+
             /// Value
             Text(
               value,
-              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
+
             /// Sub Title or Progress Bar
             subTitle != null
                 ? Text(
-              subTitle,
-              style: const TextStyle(color: Colors.white54, fontSize: 12),
-            )
+                  subTitle,
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
+                )
                 : progress != null
                 ? LinearProgressIndicator(
-              value: progress,
-              backgroundColor: Colors.grey.shade700,
-              color: Colors.greenAccent,
-            )
+                  value: progress,
+                  backgroundColor: Colors.grey.shade700,
+                  color: Colors.greenAccent,
+                )
                 : const SizedBox.shrink(),
             const SizedBox(height: 10),
+
             /// Mini line (fake small graph line)
             Container(
               height: 30,
               width: double.infinity,
               color: Colors.transparent,
-              child: CustomPaint(
-                painter: _FakeGraphPainter(),
-              ),
+              child: CustomPaint(painter: _FakeGraphPainter()),
             ),
           ],
         ),
@@ -206,21 +234,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                Text('Daily Return Chart',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(
+                  'Daily Return Chart',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Icon(Icons.more_vert, color: Colors.white70),
               ],
             ),
             const SizedBox(height: 4),
-            const Text('in last 30 days revenue', style: TextStyle(color: Colors.white54, fontSize: 12)),
+            const Text(
+              'in last 30 days revenue',
+              style: TextStyle(color: Colors.white54, fontSize: 12),
+            ),
             const SizedBox(height: 16),
 
             /// Revenue Section
-            _buildReturnItem('Revenue', '\$4805', '\$1458 Since last month', isUp: true),
+            _buildReturnItem(
+              'Revenue',
+              '\$4805',
+              '\$1458 Since last month',
+              isUp: true,
+            ),
             const SizedBox(height: 8),
-            _buildReturnItem('Total Customers', '8.4K', '12.3% Since last month', isUp: true),
+            _buildReturnItem(
+              'Total Customers',
+              '8.4K',
+              '12.3% Since last month',
+              isUp: true,
+            ),
             const SizedBox(height: 8),
-            _buildReturnItem('Store Visitors', '59K', '2.4% Since last month', isUp: false),
+            _buildReturnItem(
+              'Store Visitors',
+              '59K',
+              '2.4% Since last month',
+              isUp: false,
+            ),
 
             const SizedBox(height: 16),
 
@@ -233,15 +285,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   maxY: 120,
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 30),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                      ),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (double value, TitleMeta meta) {
-                          final titles = ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+                          final titles = [
+                            'Feb',
+                            'Mar',
+                            'Apr',
+                            'May',
+                            'Jun',
+                            'Jul',
+                            'Aug',
+                            'Sep',
+                            'Oct',
+                          ];
                           if (value.toInt() < titles.length) {
-                            return Text(titles[value.toInt()], style: TextStyle(color: Colors.white54, fontSize: 10));
+                            return Text(
+                              titles[value.toInt()],
+                              style: TextStyle(
+                                color: Colors.white54,
+                                fontSize: 10,
+                              ),
+                            );
                           }
                           return const Text('');
                         },
@@ -251,14 +322,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   borderData: FlBorderData(show: false),
                   barGroups: List.generate(9, (index) {
-                    return BarChartGroupData(x: index, barRods: [
-                      BarChartRodData(
-                        toY: (index + 5) * 10.0,
-                        width: 8,
-                        color: Colors.blueAccent,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ]);
+                    return BarChartGroupData(
+                      x: index,
+                      barRods: [
+                        BarChartRodData(
+                          toY: (index + 5) * 10.0,
+                          width: 8,
+                          color: Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ],
+                    );
                   }),
                   gridData: FlGridData(show: false),
                 ),
@@ -273,7 +347,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 _buildLegendDot(color: Colors.blueAccent, title: 'Total Sales'),
                 _buildLegendDot(color: Colors.greenAccent, title: 'Customers'),
-                _buildLegendDot(color: Colors.purpleAccent, title: 'Store Visitors'),
+                _buildLegendDot(
+                  color: Colors.purpleAccent,
+                  title: 'Store Visitors',
+                ),
               ],
             ),
           ],
@@ -281,6 +358,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+
   Widget _buildBounceRateCard({
     required String title,
     required String value,
@@ -299,14 +377,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: TextStyle(color: Colors.white70, fontSize: 14)),
+                Text(
+                  title,
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       "$percentage Increase",
                       style: TextStyle(
-                        color: isIncrease ? Colors.greenAccent : Colors.redAccent,
+                        color:
+                            isIncrease ? Colors.greenAccent : Colors.redAccent,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -325,7 +407,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             /// Value (e.g. 48.32%)
             Text(
               value,
-              style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             const SizedBox(height: 8),
@@ -368,7 +454,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildReturnItem(String title, String value, String subText, {bool isUp = true}) {
+  Widget _buildReturnItem(
+    String title,
+    String value,
+    String subText, {
+    bool isUp = true,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -376,8 +467,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 2),
         Row(
           children: [
-            Text(value,
-                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(width: 8),
             Row(
               children: [
@@ -441,15 +538,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
 class _FakeGraphPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white30
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+    final paint =
+        Paint()
+          ..color = Colors.white30
+          ..strokeWidth = 2
+          ..style = PaintingStyle.stroke;
 
     final path = Path();
     path.moveTo(0, size.height / 2);
-    path.quadraticBezierTo(size.width * 0.25, 0, size.width * 0.5, size.height / 2);
-    path.quadraticBezierTo(size.width * 0.75, size.height, size.width, size.height / 2);
+    path.quadraticBezierTo(
+      size.width * 0.25,
+      0,
+      size.width * 0.5,
+      size.height / 2,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.75,
+      size.height,
+      size.width,
+      size.height / 2,
+    );
 
     canvas.drawPath(path, paint);
   }
