@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/view/component/drawer_component/component/download/download_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposit_fund.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposite_withdraw_history.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
@@ -8,7 +9,6 @@ import 'package:fx_crm/view/component/drawer_component/component/account/transac
 import 'package:fx_crm/view/component/drawer_component/component/support/support_screen.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import '../../../controller/app_controller.dart';
 import '../../../controller/session_controller.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
@@ -26,12 +26,10 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = AppController.to.settings;
-    return  BackgroundContainer(
+    return BackgroundContainer(
       useAlternateBackground: true,
-      child:   Drawer(
+      child: Drawer(
         elevation: 5,
-
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -42,25 +40,14 @@ class CustomDrawer extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            SizedBox(
-              height: 130,
-              child: DrawerHeader(
-                decoration: const BoxDecoration(color: Colors.transparent),
-                margin: EdgeInsets.zero,
-                padding: EdgeInsets.zero,
-                child: Align(
-                  alignment: Alignment.centerLeft, // Start from left
-                  child: Image.network(
-                    logo.first.logo ?? 'https://png.pngtree.com/png-vector/20220423/ourmid/pngtree-trade-market-candle-line-png-png-image_4553954.png',
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.error, color: Colors.white),
-                  ),
-                ),
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.transparent),
+              child: CircleAvatar(
+                radius: 40,
+                child: Text("V", style: TextStyle(fontSize: 24)),
               ),
             ),
+
             // Profile with submenus
             _buildExpansionTile(
               title: 'My Account',
@@ -73,7 +60,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>CreateAccountScreen(),
+                        builder: (context) => CreateAccountScreen(),
                       ),
                     );
                   },
@@ -136,7 +123,9 @@ class CustomDrawer extends StatelessWidget {
                   'onTap': () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => KycUploadScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => KycUploadScreen(),
+                      ),
                     );
                   },
                 },
@@ -257,9 +246,7 @@ class CustomDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => SupportPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => SupportPage()),
                 );
               },
             ),
@@ -275,15 +262,18 @@ class CustomDrawer extends StatelessWidget {
                     builder: (context) => EconomicCalendarScreen(),
                   ),
                 );
-
               },
             ),
-
-            // Downloads
+            // download
             _buildListTile(
               icon: Icons.download_outlined,
               title: 'Downloads',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DownloadScreen()),
+                );
+              },
             ),
 
             // Logout
@@ -296,19 +286,24 @@ class CustomDrawer extends StatelessWidget {
                   dialogType: DialogType.warning,
                   animType: AnimType.rightSlide,
                   title: 'Logout',
-                  customHeader: Icon(Icons.question_mark_outlined, size: 50, color: Colors.orange),
+                  customHeader: Icon(
+                    Icons.question_mark_outlined,
+                    size: 50,
+                    color: Colors.orange,
+                  ),
                   headerAnimationLoop: true,
-                  titleTextStyle: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
+                  titleTextStyle: Theme.of(context).textTheme.headlineLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
                   desc: 'Are you sure you want to logout?',
                   btnCancelOnPress: () {},
                   btnOkText: 'Logout',
                   btnOkOnPress: () {
-                    SessionController.to.clearSession(); // Clears session and navigates to login
+                    SessionController.to
+                        .clearSession(); // Clears session and navigates to login
                   },
                 ).show();
               },
             ),
-
           ],
         ),
       ),
@@ -321,7 +316,11 @@ class CustomDrawer extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
   }) {
-    return ListTile(leading: Icon(icon,color: Colors.white,), title: Text(title,style: TextStyle(color: Colors.white),), onTap: onTap);
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(title, style: TextStyle(color: Colors.white)),
+      onTap: onTap,
+    );
   }
 
   // Helper Widget for ExpansionTile
@@ -335,24 +334,27 @@ class CustomDrawer extends StatelessWidget {
         dividerColor: Colors.transparent,
       ), // <<< remove divider lines
       child: ExpansionTile(
-        leading: Icon(icon,color: Colors.white,),
-        title: Text(title,style: TextStyle(color: Colors.white),),
+        leading: Icon(icon, color: Colors.white),
+        title: Text(title, style: TextStyle(color: Colors.white)),
         children:
-        submenus.map((submenu) {
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListTile(
-              dense: true,
-              leading: Icon(submenu['icon'], size: 20,color: Colors.white,),
-              title: Text(submenu['title'], style: TextStyle(fontSize: 14,color: Colors.white)),
-              onTap: submenu['onTap'],
-            ),
-          );
-        }).toList(),
+            submenus.map((submenu) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  dense: true,
+                  leading: Icon(submenu['icon'], size: 20, color: Colors.white),
+                  title: Text(
+                    submenu['title'],
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                  onTap: submenu['onTap'],
+                ),
+              );
+            }).toList(),
       ),
     );
   }
