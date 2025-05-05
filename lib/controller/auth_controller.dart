@@ -37,17 +37,24 @@ class AuthController extends GetxController {
   final RxString selectedCountryId = ''.obs;
 
   ///Select Country
-  void setSelectedCountry(String name, String phoneCode) {
+  void setSelectedCountry(String name, String phoneCode, [String? id]) {
     selectedCountryName.value = name;
     selectedCountryCode.value = phoneCode;
 
-    final matchedCountry = countryList.firstWhereOrNull(
-      (c) => c.name.toLowerCase() == name.toLowerCase(),
-    );
+    if (id != null && id.isNotEmpty) {
+      // If ID is provided directly, use it
+      selectedCountryId.value = id;
+    } else {
+      // Otherwise, try to match based on name
+      final matchedCountry = countryList.firstWhereOrNull(
+            (c) => c.name.toLowerCase() == name.toLowerCase(),
+      );
+      selectedCountryId.value = matchedCountry?.id.toString() ?? '';
+    }
 
-    selectedCountryId.value = matchedCountry?.id.toString() ?? '';
-    log("Selected Country ID: ${selectedCountryName.value}");
+    log("Selected Country ID: ${selectedCountryId.value}");
   }
+
 
   /// ------ Login APIs Functions
   Future<void> login() async {
@@ -245,6 +252,8 @@ class AuthController extends GetxController {
   }
 
   ///Get CountryList
+  /// @override
+
   Future<void> getCountryList() async {
     try {
       isLoading.value = true;

@@ -33,8 +33,6 @@ class AppController extends GetxController {
     getAppInfo();
     // fetchDownloadData();
   }
-
-  // Session Sync
   void syncWithSession() {
     final sessionCustomer = SessionController.to.customer.value;
     if (sessionCustomer != null) {
@@ -49,7 +47,7 @@ class AppController extends GetxController {
   void setLoginStatus(bool status) => isLoggedIn.value = status;
   void saveCustomerData(Customer newCustomer) => customer.value = newCustomer;
 
-  // Fetch App Info
+
   Future<void> getAppInfo() async {
     isLoading.value = true;
     try {

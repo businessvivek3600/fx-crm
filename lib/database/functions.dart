@@ -27,16 +27,16 @@ class FileStorage {
       await Directory(exPath).create(recursive: true);
       return exPath;
     } catch (e) {
-      print("Error getting external document path: $e");
+      // print("Error getting external document path: $e");
       return null;
     }
   }
 
   static Future<void> saveFile(File file, String path) async {
     File newFile = await file.copy(path);
-    print("File saved to: ${newFile.path}");
+    // print("File saved to: ${newFile.path}");
     await newFile.create(recursive: true);
-    print("File created: ${newFile.path}");
+    // print("File created: ${newFile.path}");
     newFile.writeAsStringSync(file.readAsStringSync());
   }
 
@@ -54,7 +54,7 @@ class FileStorage {
     // device and file name with extension
     File file = File('$path/$name');
     ;
-    print("Save file");
+    // print("Save file");
 
     // Write the data in the file you have created
     return file.writeAsString(bytes);
