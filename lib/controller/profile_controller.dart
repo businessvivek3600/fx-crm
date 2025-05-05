@@ -64,7 +64,8 @@ class ProfileController extends GetxController {
         "first_name": firstname.text,
         "last_name": lastname.text,
         "next_of_kin": nextofKin.text,
-
+        "country": country,
+        "email": email.text,
         "phone": customerMobile.text,
         "customer_mobile": customerMobile.text,
         "date_of_birth": dateOfBirth.text,
@@ -77,6 +78,11 @@ class ProfileController extends GetxController {
         "customer_address_2": address2.text,
         "zip": zip.text,
 
+        // Uncomment this part if you're uploading a file
+        // "profile_image": await MultipartFile.fromFile(
+        //   imageFile.path,
+        //   filename: "profile.jpg",
+        // ),
       });
       print("---------------------");
       print(country);
@@ -86,7 +92,6 @@ class ProfileController extends GetxController {
         token: true,
         // options: Options(contentType: 'multipart/form-data'),
       );
-      print(formData.fields);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Customer customerData = Customer.fromJson(response.data['data']);
         AppController.to.saveCustomerData(customerData);
@@ -142,6 +147,27 @@ class ProfileController extends GetxController {
     zip.clear();
     selectedDate.value = null;
   }
+
+  // /// Dispose controllers to avoid memory leaks
+  // @override
+  // void onClose() {
+  //   firstname.dispose();
+  //   lastname.dispose();
+  //   nextofKin.dispose();
+  //   email.dispose();
+  //   country.dispose();
+  //   customerMobile.dispose();
+  //   dateOfBirth.dispose();
+  //   fatherName.dispose();
+  //   company.dispose();
+  //   state.dispose();
+  //   city.dispose();
+  //   shortAddress.dispose();
+  //   address1.dispose();
+  //   address2.dispose();
+  //   zip.dispose();
+  //   super.onClose();
+  // }
 }
 
 class ChangePasswordController extends GetxController {
