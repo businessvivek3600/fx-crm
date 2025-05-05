@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:fx_crm/view/component/auth/forgot_password/new_password.dart';
 import 'package:pinput/pinput.dart';
 import '../../../../widgets/bg_container.dart';
 import '../../drawer_component/component/profile/change_password.dart';
@@ -41,7 +42,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => ChangePasswordScreen()),
+        MaterialPageRoute(builder: (_) => NewPasswordScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
