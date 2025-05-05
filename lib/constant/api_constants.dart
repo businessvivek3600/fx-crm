@@ -39,5 +39,7 @@ class ApiConst {
 
    //Downloads
    static const String downloads = 'downloads';
+   //get otp
+    static const String send_code = 'send-code';
 
 }

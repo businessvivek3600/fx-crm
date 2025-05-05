@@ -47,14 +47,13 @@ class AuthController extends GetxController {
     } else {
       // Otherwise, try to match based on name
       final matchedCountry = countryList.firstWhereOrNull(
-            (c) => c.name.toLowerCase() == name.toLowerCase(),
+        (c) => c.name.toLowerCase() == name.toLowerCase(),
       );
       selectedCountryId.value = matchedCountry?.id.toString() ?? '';
     }
 
     log("Selected Country ID: ${selectedCountryId.value}");
   }
-
 
   /// ------ Login APIs Functions
   Future<void> login() async {
@@ -341,15 +340,73 @@ class AuthController extends GetxController {
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
-  }
 
-  @override
-  void onClose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    super.onClose();
+    //Forget password
+    Future<void> getOtp() async {
+      if (usernameController.text.isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Please enter your username or email',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      isLoading.value = true;
+
+      try {
+        dio.FormData formData = dio.FormData.fromMap({
+          'username': usernameController.text,
+        });
+
+        final response = await dioClient.post(
+          ApiConst
+              .send_code, // Replace with your actual endpoint, e.g. '/send-code'
+          data: formData,
+          token: false,
+        );
+
+        if (response.statusCode == 200 && response.data['status'] == 1) {
+          Get.snackbar(
+            'Success',
+            response.data['message'] ?? 'OTP sent successfully',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+
+          // Optionally: Store the username or navigate to OTP page
+          // String username = response.data['username'];
+        } else {
+          Get.snackbar(
+            'Failed',
+            response.data['message'] ?? 'Unable to send OTP',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.redAccent,
+            colorText: Colors.white,
+          );
+        }
+      } catch (e) {
+        Get.snackbar(
+          'Error',
+          e.toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      } finally {
+        isLoading.value = false;
+      }
+
+      @override
+      void onClose() {
+        usernameController.dispose();
+        passwordController.dispose();
+        super.onClose();
+      }
+    }
   }
 }

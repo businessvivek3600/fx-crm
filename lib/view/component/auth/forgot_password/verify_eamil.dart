@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/controller/auth_controller.dart';
+import 'package:fx_crm/database/dio/dio/dio_client.dart';
+import 'package:get/get.dart';
 
 import '../../../../widgets/bg_container.dart';
 import 'otp_verification.dart';
-
 
 class EmailInputScreen extends StatefulWidget {
   const EmailInputScreen({super.key});
@@ -13,6 +15,7 @@ class EmailInputScreen extends StatefulWidget {
 
 class _EmailInputScreenState extends State<EmailInputScreen> {
   final TextEditingController _emailController = TextEditingController();
+  late final AuthController authController;
 
   void _sendOtp() {
     String email = _emailController.text.trim();
@@ -26,9 +29,7 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
     // Navigate to OTP screen
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => OtpVerificationScreen(email: email,),
-      ),
+      MaterialPageRoute(builder: (_) => OtpVerificationScreen(email: email)),
     );
   }
 
@@ -63,14 +64,11 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
               const SizedBox(height: 10),
               Text(
                 'Enter your registered email address below and we’ll send you a 6-digit OTP code to reset your password.',
-                style: TextStyle(
-                  color: Colors.grey.shade300,
-                  fontSize: 15,
-                ),
+                style: TextStyle(color: Colors.grey.shade300, fontSize: 15),
               ),
               const SizedBox(height: 40),
               TextField(
-                controller: _emailController,
+                controller: TextEditingController(),
                 keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
@@ -83,28 +81,31 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                    ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
-              SizedBox(
-                height: 48,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _sendOtp,
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text('Send OTP'),
-                ),
-              ),
+
+              //               const SizedBox(height: 32),
+              //                 Obx(() => SizedBox(
+              //   height: 48,
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     onPressed: authController.isLoading.value
+              //         ? null
+              //         // : () => authController.getOtp(_emailController.text.trim()),
+              //     // child: authController.isLoading.value
+              //     //     ? const CircularProgressIndicator(color: Colors.white)
+              //     //     : const Text('Send OTP'),
+              //   ),
+              // )),
             ],
           ),
         ),
       ),
     );
-  }}
+  }
+}

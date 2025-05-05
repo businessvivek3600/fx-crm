@@ -16,6 +16,7 @@ class OtpVerificationScreen extends StatefulWidget {
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpController = TextEditingController();
+
   Timer? _timer;
   int _remainingTime = 60;
 
@@ -23,6 +24,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     super.initState();
     _startCountdown();
+    //  otpController.sendOtp(widget.email); 
   }
 
   void _startCountdown() {
