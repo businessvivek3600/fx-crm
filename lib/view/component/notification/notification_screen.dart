@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../database/notification_db.dart';
+import '../../../widgets/bg_container.dart';
 
 
 class NotificationScreen extends StatefulWidget {
@@ -35,46 +36,64 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () async {
-              await NotificationDatabase().clearNotifications();
-              _loadNotifications();
-            },
-          ),
-        ],
-      ),
-      body: notifications.isEmpty
-          ? const Center(child: Text("No notifications found"))
-          : ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final item = notifications[index];
-          return ListTile(
-            leading: item['image'] != null && item['image'] != ''
-                ? CircleAvatar(
-              backgroundImage: NetworkImage(item['image']),
-            )
-                : const CircleAvatar(child: Icon(Icons.notifications)),
-            title: Text(item['title'] ?? 'No Title'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item['body'] ?? 'No message'),
-                const SizedBox(height: 4),
-                Text(
-                  formatTimestamp(item['timestamp']),
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
+  return  BackgroundContainer(
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text(
+              'Notifications',
+              style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
             ),
-            isThreeLine: true,
-          );
-        },
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  await NotificationDatabase().clearNotifications();
+                  _loadNotifications();
+                },
+              ),
+            ],
+            elevation: 0,
+            centerTitle: true,
+          ),
+          body:
+          notifications.isEmpty
+          ? const Center(child: Text("No notifications found"))
+          : Padding(
+            padding: const EdgeInsets.all(12),
+            child: ListView.builder(
+                    itemCount: notifications.length,
+                    itemBuilder: (context, index) {
+            final item = notifications[index];
+            return Card(
+              color: Colors.grey.shade700.withOpacity(0.8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: ListTile(
+                leading: item['image'] != null && item['image'] != ''
+                    ? CircleAvatar(
+                  backgroundImage: NetworkImage(item['image']),
+                )
+                    : const CircleAvatar(child: Icon(Icons.notifications)),
+                title: Text(item['title'] ?? 'No Title',style: TextStyle(color: Colors.white),),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item['body'] ?? 'No message',style: TextStyle(color: Colors.white70),),
+                    const SizedBox(height: 4),
+                    Text(
+                      formatTimestamp(item['timestamp']),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+                isThreeLine: true,
+              ),
+            );
+                    },
+                  ),
+          ),
       ),
     );
   }

@@ -51,6 +51,7 @@ class NotificationService {
     _setupInteractedMessage();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("📩 Foreground message received ${message.data}");
       _showNotification(message);
     });
 
@@ -99,10 +100,12 @@ class NotificationService {
     await _firebaseMessaging.getInitialMessage();
 
     if (initialMessage != null) {
+      print("📤 getInitialMessage triggered ${initialMessage.data}");
       _handleNotificationClick(initialMessage.data.toString());
     }
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("📬 onMessageOpenedApp triggered${message.data.toString()}");
       _handleNotificationClick(message.data.toString());
     });
   }
@@ -153,6 +156,8 @@ class NotificationService {
       'image': imageUrl ?? '',
       'timestamp': DateTime.now().toIso8601String(),
     });
+    print("✅ Notification saved: ${notification?.title}");
+
   }
 
 
@@ -165,10 +170,37 @@ class NotificationService {
     return file.path;
   }
 
-  void _handleNotificationClick(String payload) {
+  void _handleNotificationClick(String payload) async {
     print('Notification clicked with payload: $payload');
-    // Navigate to a screen or perform an action
+
+    final data = _parsePayloadToMap(payload);
+
+    if (data != null) {
+      await NotificationDatabase().insertNotification({
+        'title': data['title'] ?? '',
+        'body': data['body'] ?? '',
+        'image': data['image'] ?? '',
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+    }
+
+    // Navigate to desired screen if needed
   }
+
+  Map<String, dynamic>? _parsePayloadToMap(String payload) {
+    try {
+      final cleaned = payload.replaceAll(RegExp(r'[{}]'), '');
+      final entries = cleaned.split(', ').map((pair) {
+        final split = pair.split(':');
+        return MapEntry(split[0], split.length > 1 ? split.sublist(1).join(':') : '');
+      });
+      return Map.fromEntries(entries);
+    } catch (e) {
+      print("Failed to parse payload: $e");
+      return null;
+    }
+  }
+
 
   Future<String?> getDeviceToken() async {
     final fcmToken = await _firebaseMessaging.getToken();
