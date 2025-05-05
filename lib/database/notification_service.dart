@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
@@ -15,39 +16,26 @@ class NotificationService {
   FlutterLocalNotificationsPlugin();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final GetStorage storage = GetStorage();
+  // Add this for Platform check
 
   Future<void> init() async {
-    await _firebaseMessaging.requestPermission();
+    await _requestNotificationPermissionIfNeeded();
 
     const AndroidInitializationSettings androidSettings =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final DarwinInitializationSettings iosSettings =
+    const DarwinInitializationSettings initializationSettingsDarwin =
     DarwinInitializationSettings(
-      defaultPresentAlert: true,
-      defaultPresentBadge: true,
-      defaultPresentBanner: true,
-      defaultPresentList: true,
+      requestAlertPermission: true,
       requestSoundPermission: true,
       requestBadgePermission: true,
-      notificationCategories:<DarwinNotificationCategory>[
-        DarwinNotificationCategory(
-          'call_actions', // a unique identifier
-          actions: <DarwinNotificationAction>[
-            DarwinNotificationAction.plain('ACCEPT', 'Accept'),
-            DarwinNotificationAction.plain('DECLINE', 'Decline'),
-          ],
-          options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.customDismissAction,
-            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-          },
-        ),
-      ],
     );
 
     final InitializationSettings settings = InitializationSettings(
       android: androidSettings,
-      iOS: iosSettings,
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin,
     );
 
     await flutterLocalNotificationsPlugin.initialize(
@@ -61,10 +49,53 @@ class NotificationService {
     );
 
     _setupInteractedMessage();
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _showNotification(message);
     });
+    await subscribeToTopic('fxcrm_users');
+    // ✅ Wait for APNs token if iOS before subscribing to topic
+    if (Platform.isIOS) {
+      String? apnsToken;
+      int retry = 0;
+
+      while (apnsToken == null && retry < 10) {
+        apnsToken = await _firebaseMessaging.getAPNSToken();
+        if (apnsToken == null) {
+          await Future.delayed(Duration(seconds: 1));
+          retry++;
+        }
+      }
+
+      if (apnsToken != null) {
+        print("✅ APNs token: $apnsToken");
+        await subscribeToTopic('fxcrm_users');
+      } else {
+        print("❌ Failed to get APNs token");
+      }
+    } else {
+      await subscribeToTopic('fxcrm_users');
+    }
+
+    // Log the FCM token
+    final fcmToken = await getDeviceToken();
+    if (fcmToken != null) {
+      print("✅ FCM token: $fcmToken");
+    }
   }
+
+
+  ///user Permission
+  Future<void> _requestNotificationPermissionIfNeeded() async {
+    final alreadyRequested = storage.read('notification_permission_requested') ?? false;
+    if (!alreadyRequested) {
+      final settings = await _firebaseMessaging.requestPermission();
+      final granted = settings.authorizationStatus == AuthorizationStatus.authorized;
+
+      storage.write('notification_permission_requested', granted);
+    }
+  }
+
 
   void _setupInteractedMessage() async {
     final RemoteMessage? initialMessage =
@@ -97,9 +128,9 @@ class NotificationService {
     }
 
     final androidDetails = AndroidNotificationDetails(
-      'default_channel',
-      'Default Notifications',
-      channelDescription: 'For general notifications',
+      'fxcrm_channel',
+      'FXCRM Notifications',
+      channelDescription: 'Notifications from FXCRM app',
       importance: Importance.max,
       priority: Priority.high,
       styleInformation: bigPictureStyleInformation,
@@ -134,8 +165,17 @@ class NotificationService {
   }
 
   Future<String?> getDeviceToken() async {
-    return await _firebaseMessaging.getToken();
+    final fcmToken = await _firebaseMessaging.getToken();
+    final apnsToken = Platform.isIOS ? await _firebaseMessaging.getAPNSToken() : null;
+
+    print("📱 FCM Token: $fcmToken");
+    if (apnsToken != null) {
+      print("🍏 APNs Token: $apnsToken");
+    }
+
+    return fcmToken;
   }
+
 
   Future<void> subscribeToTopic(String topic) async {
     await _firebaseMessaging.subscribeToTopic(topic);
