@@ -37,7 +37,7 @@ class ApiConst {
   //Password
    static const String updatepassword = 'update_password';
 
-  //Downloads
-  static const String downloads = 'downloads';
+   //Downloads
+   static const String downloads = 'downloads';
 
 }
