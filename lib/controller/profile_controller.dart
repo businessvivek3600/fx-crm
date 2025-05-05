@@ -12,10 +12,7 @@ class ProfileController extends GetxController {
   AuthController authController = Get.put(AuthController(dioClient: dioClient));
   var isLoading = false.obs;
   var ProfileData = {}.obs;
-  final RxString selectedCountryName = ''.obs;
-  final RxString countryError = ''.obs;
-  final RxString selectedCountryCode = ''.obs;
-  final RxString selectedCountryId = ''.obs;
+
   // Profile text controllers
   final firstname = TextEditingController();
   final lastname = TextEditingController();
@@ -47,24 +44,16 @@ class ProfileController extends GetxController {
     }
   }
 
-  void setSelectedCountry(String name, String phoneCode) {
-    selectedCountryName.value = name;
-    selectedCountryCode.value = phoneCode;
-
-    final matchedCountry = authController.countryList.firstWhereOrNull(
-      (c) => c.name.toLowerCase() == name.toLowerCase(),
-    );
-  }
-
   /// Update user profile via API using FormData
-  Future<void> updateProfile(String? country) async {
+  Future<void> updateProfile() async {
     isLoading.value = true;
     try {
       final formData = dio.FormData.fromMap({
         "first_name": firstname.text,
         "last_name": lastname.text,
         "next_of_kin": nextofKin.text,
-
+        "country": authController.selectedCountryId.value,
+        "email": email.text,
         "phone": customerMobile.text,
         "customer_mobile": customerMobile.text,
         "date_of_birth": dateOfBirth.text,
@@ -78,8 +67,7 @@ class ProfileController extends GetxController {
         "zip": zip.text,
 
       });
-      print("---------------------");
-      print(country);
+
       final response = await dioClient.post(
         ApiConst.updateProfile,
         data: formData,
@@ -90,10 +78,7 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Customer customerData = Customer.fromJson(response.data['data']);
         AppController.to.saveCustomerData(customerData);
-        SessionController.to.saveSession(
-          SessionController.to.token.value,
-          customerData,
-        );
+        SessionController.to.saveSession(SessionController.to.token.value, customerData);
 
         Get.snackbar(
           'Success',

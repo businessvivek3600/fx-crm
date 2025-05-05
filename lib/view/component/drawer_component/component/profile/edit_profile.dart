@@ -4,7 +4,6 @@ import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
 import 'package:fx_crm/main.dart';
 import 'package:get/get.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 import '../../../../../controller/app_controller.dart';
 import '../../../../../models/customer_model.dart';
@@ -21,6 +20,7 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   ProfileController editProfileController = Get.put(ProfileController());
   AuthController authController = Get.put(AuthController(dioClient: dioClient));
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +30,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     editProfileController.firstname.text = customer?.firstName ?? '';
     editProfileController.lastname.text = customer?.lastName ?? '';
     // editProfileController.nextofKin.text = customer?.nextofKin ?? '';
-    editProfileController.email.text = customer?.customerEmail ?? '';
+    // editProfileController.email.text = customer?.customerEmail ?? '';
     editProfileController.dateOfBirth.text = customer?.dateOfBirth ?? '';
     editProfileController.company.text = customer?.company ?? '';
     editProfileController.state.text = customer?.state ?? '';
@@ -40,17 +40,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     editProfileController.address1.text = customer?.customerAddress1 ?? '';
     editProfileController.address2.text = customer?.customerAddress2 ?? '';
     editProfileController.zip.text = customer?.zip ?? '';
+    if (customer?.countryText != null && customer?.countryCode != null) {
+      authController.setSelectedCountry(
+        customer!.countryText!,
+        customer.countryCode!.toString(),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final customer = AppController.to.customer.value;
-    log(customer?.countryCode);
-    log(customer?.country);
-    log(customer?.lastName);
-    print(customer?.countryCode);
-    print(customer?.country);
-    print(customer?.lastName);
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -62,7 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             'Edit Profile',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
           ),
-        ), 
+        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -98,22 +98,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hint: 'Last Name',
                 initialValue: customer?.lastName ?? '',
               ),
-              // const SizedBox(height: 12),
-              // CustomTextFormField(
-              //   controller: editProfileController.nextofKin,
-              //   label: 'Next of Kin (Optional)',
-              //   hint: 'Next of Kin',
-              //   initialValue: customer?. ?? '',
-              // ),
               const SizedBox(height: 12),
               CustomTextFormField(
-                controller: editProfileController.email,
-                label: 'Email *',
-                hint: 'Email Address',
-                initialValue: customer?.customerEmail ?? '',
-                readOnly: true,
+                controller: editProfileController.nextofKin,
+                label: 'Next of Kin (Optional)',
+                hint: 'Next of Kin',
               ),
               const SizedBox(height: 12),
+              // CustomTextFormField(
+              //   controller: editProfileController.email,
+              //   label: 'Email *',
+              //   hint: 'Email Address',
+              //   initialValue: customer?.customerEmail ?? '',
+              // ),
+              // const SizedBox(height: 12),
 
               // Container(
               //   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -143,40 +141,71 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 initialValue: customer?.company ?? '',
               ),
               const SizedBox(height: 12),
-              Obx(
-                () => CustomTextFormField(
+              Obx(() {
+                if (authController.countryList.isEmpty) {
+                  return const CircularProgressIndicator();
+                }
+
+                final customerCountryId = customer?.country;
+                final initialCountry = authController.countryList
+                    .firstWhereOrNull(
+                      (e) => e.id.toString() == customerCountryId,
+                );
+
+                if (authController.selectedCountryName.value.isEmpty &&
+                    initialCountry != null) {
+                  authController.setSelectedCountry(
+                    initialCountry.name,
+                    initialCountry.phonecode,
+                    initialCountry.id.toString(),
+                  );
+                }
+
+                return CustomTextFormField(
                   label: 'Country',
                   readOnly: true,
-                  textStyle: TextStyle(color: Colors.black),
-                  initialValue: customer?.countryText ?? '',
+                  textStyle: const TextStyle(color: Colors.black),
                   hint:
-                      editProfileController.selectedCountryName.value.isEmpty
-                          ? 'Please select a country'
-                          : editProfileController.selectedCountryName.value,
+                  authController.selectedCountryName.value.isEmpty
+                      ? 'Please select a country'
+                      : authController.selectedCountryName.value,
                   onTap: () {
                     showCountryPicker(
                       context: context,
                       showPhoneCode: true,
                       onSelect: (Country country) {
-                        editProfileController.setSelectedCountry(
-                          country.name,
-                          country.phoneCode,
+                        // Match selected country with your internal list to get ID
+                        final matchedCountry = authController.countryList
+                            .firstWhereOrNull(
+                              (e) =>
+                          e.name.toLowerCase() ==
+                              country.name.toLowerCase(),
                         );
+
+                        if (matchedCountry != null) {
+                          authController.setSelectedCountry(
+                            matchedCountry.name,
+                            matchedCountry.phonecode,
+                            matchedCountry.id.toString(),
+                          );
+                        } else {
+                          // fallback if not found
+                          authController.setSelectedCountry(
+                            country.name,
+                            country.phoneCode,
+                            '',
+                          );
+                        }
                       },
                     );
-                    print(editProfileController.selectedCountryName);
                   },
                   validator:
                       (_) =>
-                          editProfileController
-                                  .authController
-                                  .selectedCountryId
-                                  .value
-                                  .isEmpty
-                              ? 'Please select a country'
-                              : null,
-                ),
-              ),
+                  authController.selectedCountryId.value.isEmpty
+                      ? 'Please select a country'
+                      : null,
+                );
+              }),
 
               // CustomTextFormField(
               //   controller: editProfileController.country,
@@ -241,12 +270,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    print('-------------------------------');
-                    print(editProfileController.selectedCountryId);
-                     print('-------------------------------');
-                    print(editProfileController.selectedCountryName);
                     // print("object");
-                    await editProfileController.updateProfile(editProfileController.selectedCountryId.toString());
+                    await editProfileController.updateProfile();
                     // TODO: Save profile changes
                   },
                   style: ElevatedButton.styleFrom(
@@ -277,15 +302,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           children: [
             /// Avatar
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: NetworkImage(
-                customer?.image ??
-                    'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000',
-              ),
-              backgroundColor: Colors.transparent,
-            ),
-            const SizedBox(height: 12),
+          CircleAvatar(
+          radius: 40,
+          backgroundImage: NetworkImage(
+            customer?.image ??
+                'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000',
+          ),
+          onBackgroundImageError: (exception, stackTrace) {
+            print('Error loading image: $exception');
+          },
+          backgroundColor: Colors.transparent,
+        ),
+
+          const SizedBox(height: 12),
 
             /// Name and Info
             Text(
