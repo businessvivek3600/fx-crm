@@ -1,7 +1,5 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../../../controller/kyc_controller.dart';
 import '../../../../../main.dart';
@@ -64,13 +62,14 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
               child: Column(
                 children: [
                   buildStatusBanner(status),
+                
                   const SizedBox(height: 24),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade900.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -26,7 +26,7 @@ class WalletAccountScreen extends StatelessWidget {
               // Deposit Fund Cards
               Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(25),
                 ),
                 elevation: 4,
                 child: Column(
@@ -39,8 +39,8 @@ class WalletAccountScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.grey.shade700,
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
+                          topLeft: Radius.circular(25),
+                          topRight: Radius.circular(25),
                         ),
                       ),
                       child: Column(
@@ -138,8 +138,8 @@ class WalletAccountScreen extends StatelessWidget {
                         decoration: const BoxDecoration(
                           color: Colors.green,
                           borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
+                            bottomLeft: Radius.circular(25),
+                            bottomRight: Radius.circular(25),
                           ),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),

@@ -55,13 +55,13 @@ class MonthlyRewardsScreen extends StatelessWidget {
   Widget _buildScratchCard(int index) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(22),
       ),
       elevation: 4,
       color: Colors.white,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(22),
           gradient: LinearGradient(
             colors: [
               ThemeUtils.primaryColor.withOpacity(0.4),

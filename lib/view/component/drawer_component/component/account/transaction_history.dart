@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../../../../../controller/dashboard_controller.dart';
-import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
@@ -52,7 +48,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                     child: const Text(
@@ -107,12 +103,12 @@ class TransactionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(25),
       ),
       color: Colors.grey.shade100,
       elevation: 3,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(13),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

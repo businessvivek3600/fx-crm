@@ -9,7 +9,6 @@ import 'package:fx_crm/view/component/drawer_component/component/support/support
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import '../../../controller/session_controller.dart';
-import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
 import 'component/account/create_account_screen.dart';
 import 'component/account/wallet_account.dart';

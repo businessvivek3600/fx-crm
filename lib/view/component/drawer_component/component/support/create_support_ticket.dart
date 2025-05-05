@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../controller/support_controller.dart';
-import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/custom_text_form.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 

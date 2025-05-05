@@ -34,7 +34,7 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
                   elevation: 1,
                   color: Colors.grey.shade100,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/utils/theme.dart';
 
-import '../../../../../controller/app_controller.dart';
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 import 'widget/set_balance_dialog.dart';
@@ -136,7 +135,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     label: 'Account Type',
                     hint: 'Select Account Type',
                     controller: accountTypeController,
-                    readOnly: true,
+                    readOnly: false,
                     onTap: _selectAccountType,
                   ),
                   const SizedBox(height: 16),
@@ -195,7 +194,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(25),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -262,22 +261,25 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              OutlinedButton.icon(
-                onPressed: () => showSetBalanceDialog(context),
-                icon: Icon(Icons.account_balance_wallet_outlined),
-                label: Text('Set Balance'),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: () {
-                  // Show options
-                },
-                icon: Icon(Icons.more_vert),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(right:35),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () => showSetBalanceDialog(context),
+                  icon: Icon(Icons.account_balance_wallet_outlined),
+                  label: Text('Set Balance'),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () {
+                    // Show options
+                  },
+                  icon: Icon(Icons.more_vert),
+                ),
+              ],
+            ),
           ),
         ],
       ),

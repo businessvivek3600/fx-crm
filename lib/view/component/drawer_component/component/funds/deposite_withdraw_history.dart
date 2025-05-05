@@ -34,7 +34,7 @@ class DepositWithdrawHistoryScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber.shade700,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
@@ -49,7 +49,7 @@ class DepositWithdrawHistoryScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
@@ -64,7 +64,7 @@ class DepositWithdrawHistoryScreen extends StatelessWidget {
         elevation: 1,
         color: Colors.grey.shade100,
         shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
       padding: const EdgeInsets.all(16),

@@ -52,7 +52,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                           backgroundColor: Colors.amber.shade700,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child:  Padding(
@@ -74,7 +74,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                           backgroundColor: Colors.blue,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child:  Padding(
@@ -96,7 +96,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                           backgroundColor: Colors.green,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: Padding(
@@ -115,7 +115,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                   elevation: 1,
                   color: Colors.grey.shade100,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../../../controller/app_controller.dart';
 import '../../../../../models/customer_model.dart';
 import '../../../../../widgets/bg_container.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart'; // Import the flutter_html package
-import 'package:fx_crm/controller/app_controller.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../controller/dashboard_controller.dart';
@@ -41,7 +40,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             child: Card(
               elevation: 1,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(20),
               ),
               color: Colors.grey.shade100,
               child: Padding(

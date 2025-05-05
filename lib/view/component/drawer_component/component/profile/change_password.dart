@@ -71,7 +71,7 @@ class ChangePasswordScreen extends StatelessWidget {
                     backgroundColor: Colors.grey.shade800,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   icon: const Icon(Icons.lock, color: Colors.white),

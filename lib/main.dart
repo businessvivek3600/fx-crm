@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:fx_crm/view/component/auth/login_screen.dart';
-import 'package:fx_crm/view/component/auth/signup_screen.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
