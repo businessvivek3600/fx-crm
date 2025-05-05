@@ -15,9 +15,9 @@ class EmailInputScreen extends StatefulWidget {
 
 class _EmailInputScreenState extends State<EmailInputScreen> {
   final TextEditingController _emailController = TextEditingController();
-  late final AuthController authController;
+  final AuthController authController = Get.find<AuthController>();
 
-  void _sendOtp() {
+  void _sendOtp() async {
     String email = _emailController.text.trim();
     if (email.isEmpty || !email.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -25,11 +25,13 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
       );
       return;
     }
+    var res = await authController.getOtp(_emailController.text.trim());
+    if (res == null) return;
 
     // Navigate to OTP screen
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => OtpVerificationScreen(email: email)),
+      MaterialPageRoute(builder: (_) => OtpVerificationScreen(username: res)),
     );
   }
 
@@ -68,7 +70,7 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
               ),
               const SizedBox(height: 40),
               TextField(
-                controller: TextEditingController(),
+                controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
@@ -89,19 +91,22 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
                 ),
               ),
 
-              //               const SizedBox(height: 32),
-              //                 Obx(() => SizedBox(
-              //   height: 48,
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     onPressed: authController.isLoading.value
-              //         ? null
-              //         // : () => authController.getOtp(_emailController.text.trim()),
-              //     // child: authController.isLoading.value
-              //     //     ? const CircularProgressIndicator(color: Colors.white)
-              //     //     : const Text('Send OTP'),
-              //   ),
-              // )),
+              const SizedBox(height: 32),
+              Obx(
+                () => SizedBox(
+                  height: 48,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: authController.isLoading.value ? null : _sendOtp,
+                    child:
+                        authController.isLoading.value
+                            ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                            : const Text('Send OTP'),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

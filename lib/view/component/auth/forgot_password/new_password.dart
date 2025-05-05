@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/profile_controller.dart';
+import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:get/get.dart';
 
@@ -7,14 +7,18 @@ import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/custom_text_form.dart';
 
 class NewPasswordScreen extends StatefulWidget {
-  const NewPasswordScreen({super.key});
+  const NewPasswordScreen({super.key, required this.username});
+  final String username;
 
   @override
   State<NewPasswordScreen> createState() => _NewPasswordScreenState();
 }
 
 class _NewPasswordScreenState extends State<NewPasswordScreen> {
-  final controller = Get.put(ChangePasswordController());
+  final authController = Get.find<AuthController>();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +49,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               const SizedBox(height: 8),
               Text(
                 "Use at least 8 characters including letters, numbers, and symbols.",
-                style: textTheme.bodySmall?.copyWith(color: Colors.grey.shade300),
+                style: textTheme.bodySmall?.copyWith(
+                  color: Colors.grey.shade300,
+                ),
               ),
               const SizedBox(height: 32),
 
@@ -53,7 +59,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               CustomTextFormField(
                 label: "New Password",
                 hint: "Enter your new password",
-                controller: controller.newPassword,
+                controller: _newPasswordController,
               ),
               const SizedBox(height: 16),
 
@@ -61,7 +67,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               CustomTextFormField(
                 label: "Confirm Password",
                 hint: "Re-enter your new password",
-                controller: controller.confirmPassword,
+                controller: _confirmPasswordController,
               ),
               const SizedBox(height: 40),
 
@@ -69,19 +75,27 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               SizedBox(
                 width: double.infinity,
                 child: Obx(() {
-                  final isLoading = controller.isLoading.value;
+                  final isLoading = authController.isLoading.value;
                   return ElevatedButton.icon(
-                    onPressed: isLoading ? null : controller.changePassword,
-                    icon: isLoading
-                        ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                        : const Icon(Icons.lock_reset,color: Colors.white,),
+                    onPressed:
+                        isLoading
+                            ? null
+                            : () => authController.changePassword(
+                              widget.username,
+                              _newPasswordController.text.trim(),
+                              _confirmPasswordController.text.trim(),
+                            ),
+                    icon:
+                        isLoading
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : const Icon(Icons.lock_reset, color: Colors.white),
                     label: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(

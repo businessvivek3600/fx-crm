@@ -1,6 +1,5 @@
 class ApiConst {
-
-///APP INFO
+  ///APP INFO
   static const String appInfo = "app_info";
 
   ///  Auth APIs
@@ -35,11 +34,12 @@ class ApiConst {
   static const String ticketDetails = 'ticket_detail';
   static const String ticketReplay = 'ticket_reply';
   //Password
-   static const String updatepassword = 'update_password';
+  static const String updatepassword = 'update_password';
 
-   //Downloads
-   static const String downloads = 'downloads';
-   //get otp
-    static const String send_code = 'send-code';
-
+  //Downloads
+  static const String downloads = 'downloads';
+  //get otp
+  static const String send_code = 'send-code';
+  static const String verify_code = 'verify-otp';
+  static const String change_password = 'change-password';
 }
