@@ -38,7 +38,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
              Text(
                 "Old Information",
                 style: TextStyle(
-                  color: Colors.blueGrey.shade300,
+                  color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
