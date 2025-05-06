@@ -411,7 +411,7 @@ class AuthController extends GetxController {
     return null;
   }
 
-  //Forget password
+  //Verify Password
   Future<String?> verifyOtp(String username, String otp) async {
     try {
       isLoading.value = true;
@@ -450,7 +450,7 @@ class AuthController extends GetxController {
     return null;
   }
 
-  //Forget password
+  //Changepassword
   Future<bool> changePassword(
     String username,
     String pass,

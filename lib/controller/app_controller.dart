@@ -1,13 +1,9 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../constant/api_constants.dart';
 import '../controller/session_controller.dart';
-import '../database/dio/dio/dio_client.dart';
 import '../main.dart';
 import '../models/app_info_model.dart';
 import '../models/customer_model.dart';
