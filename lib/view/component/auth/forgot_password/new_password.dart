@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/utils/theme.dart';
+import 'package:fx_crm/view/component/auth/login_screen.dart';
 import 'package:get/get.dart';
-
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/custom_text_form.dart';
 
@@ -19,6 +19,44 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+
+  void _handleSetPassword() async {
+    final newPassword = _newPasswordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please fill all fields',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (newPassword != confirmPassword) {
+      Get.snackbar(
+        'Error',
+        'Passwords do not match',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    bool success = await authController.changePassword(
+      widget.username,
+      newPassword,
+      confirmPassword,
+    );
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+      ); // or push to login screen
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +98,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 label: "New Password",
                 hint: "Enter your new password",
                 controller: _newPasswordController,
+                // isPassword: true,
               ),
               const SizedBox(height: 16),
 
@@ -68,23 +107,17 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 label: "Confirm Password",
                 hint: "Re-enter your new password",
                 controller: _confirmPasswordController,
+                // isPassword: true,
               ),
               const SizedBox(height: 40),
 
-              // Change Password Button
+              // Set Password Button
               SizedBox(
                 width: double.infinity,
                 child: Obx(() {
                   final isLoading = authController.isLoading.value;
                   return ElevatedButton.icon(
-                    onPressed:
-                        isLoading
-                            ? null
-                            : () => authController.changePassword(
-                              widget.username,
-                              _newPasswordController.text.trim(),
-                              _confirmPasswordController.text.trim(),
-                            ),
+                    onPressed: isLoading ? null : _handleSetPassword,
                     icon:
                         isLoading
                             ? const SizedBox(
