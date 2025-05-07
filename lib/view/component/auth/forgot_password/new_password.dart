@@ -128,7 +128,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                            : const Icon(Icons.lock_reset, color: Colors.white),
+                            : const Icon(Icons.lock_reset,color: Colors.white),
                     label: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
