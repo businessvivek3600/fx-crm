@@ -1,21 +1,19 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/session_controller.dart';
-import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_path.dart';
 import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:go_router/go_router.dart';
+
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
 import '../models/country_model.dart';
 import '../models/customer_model.dart';
 import '../view/component/auth/login_screen.dart';
-import '../view/dashboard_screen.dart';
 import 'app_controller.dart';
-import 'package:dio/dio.dart' as dio;
 
 class AuthController extends GetxController {
   final GetStorage storage = GetStorage();
@@ -95,13 +93,16 @@ class AuthController extends GetxController {
           /// Save in AppController
           AppController.to.saveToken(loginToken);
           AppController.to.setLoginStatus(true);
-          Get.snackbar('Login Successfully', "You're all set to continue",
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              duration: Duration(seconds: 1));
+          Get.snackbar(
+            'Login Successfully',
+            "You're all set to continue",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: Duration(seconds: 1),
+          );
 
-          router.goNamed(Paths.dashboard);
+          router.push(Paths.dashboard);
         } else if (response.data['is_login'] == 2) {
           String message =
               response.data['message'] ?? 'Please verify your email address!';
@@ -111,8 +112,8 @@ class AuthController extends GetxController {
             messageText: Row(
               children: [
                 Expanded(
-                    child:
-                        Text(message, style: TextStyle(color: Colors.white))),
+                  child: Text(message, style: TextStyle(color: Colors.white)),
+                ),
                 TextButton(
                   onPressed: () {
                     usernameController.text = username;
@@ -124,9 +125,10 @@ class AuthController extends GetxController {
                       animType: AnimType.rightSlide,
                       title: 'Email Verification',
                       titleTextStyle: TextStyle(
-                          color: ThemeUtils.primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
+                        color: ThemeUtils.primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                       closeIcon: Icon(Icons.clear),
                       desc:
                           'We are sending you a new verification link. Please check your registered email inbox.',
@@ -136,8 +138,10 @@ class AuthController extends GetxController {
                       },
                     ).show();
                   },
-                  child: Text("Verify",
-                      style: TextStyle(color: Colors.yellowAccent)),
+                  child: Text(
+                    "Verify",
+                    style: TextStyle(color: Colors.yellowAccent),
+                  ),
                 ),
               ],
             ),
@@ -199,8 +203,11 @@ class AuthController extends GetxController {
         'account_type': accountType,
       });
 
-      final response =
-          await dioClient.post(ApiConst.register, data: formData, token: false);
+      final response = await dioClient.post(
+        ApiConst.register,
+        data: formData,
+        token: false,
+      );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(
@@ -240,16 +247,18 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      final response =
-          await dioClient.get(ApiConst.country); // Replace with actual endpoint
+      final response = await dioClient.get(
+        ApiConst.country,
+      ); // Replace with actual endpoint
 
       print("response Country ----${response.data}");
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final List countriesData = response.data['countries'] ?? [];
 
-        countryList.value = countriesData
-            .map((countryJson) => Country.fromJson(countryJson))
-            .toList();
+        countryList.value =
+            countriesData
+                .map((countryJson) => Country.fromJson(countryJson))
+                .toList();
       } else {
         Get.snackbar(
           'Failed to Fetch Countries',

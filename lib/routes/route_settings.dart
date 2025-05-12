@@ -37,31 +37,31 @@ final router = GoRouter(
       name: Routes.dashboard,
       builder: (context, state) => DashboardScreen(),
     ),
-   
+
     GoRoute(
       path: Paths.signup,
       name: Routes.signup,
       builder: (context, state) => SignupScreen(),
     ),
-   
+
     GoRoute(
       path: Paths.accounts,
       name: Routes.accounts,
       builder: (context, state) => CreateAccountScreen(),
     ),
-   
+
     GoRoute(
       path: Paths.wallet_account,
       name: Routes.wallet_account,
       builder: (context, state) => WalletAccountScreen(),
     ),
-   
+
     GoRoute(
       path: Paths.editprofile,
       name: Routes.editprofile,
       builder: (context, state) => EditProfileScreen(),
     ),
-   
+
     GoRoute(
       path: Paths.bank_wallet,
       name: Routes.bank_wallet,
@@ -83,8 +83,8 @@ final router = GoRouter(
       builder: (context, state) => ChangePasswordScreen(),
     ),
     GoRoute(
-      path: Paths. monthly_rewards,
-      name: Routes. monthly_rewards,
+      path: Paths.monthly_rewards,
+      name: Routes.monthly_rewards,
       builder: (context, state) => MonthlyRewardsScreen(),
     ),
     GoRoute(
@@ -92,21 +92,19 @@ final router = GoRouter(
       name: Routes.termandcondition,
       builder: (context, state) => TermsAndConditionsScreen(),
     ),
-   
-   
 
     // GoRoute(
     //   path: Paths. support,
     //   name: Routes. support,
     //   builder: (context, state) => Support(),
     // ),
-//     GoRoute(
-//       path: Paths.logout,
-//       name: Routes.logout,
-//       builder: (context, state) => (),
-//     ),
+    //     GoRoute(
+    //       path: Paths.logout,
+    //       name: Routes.logout,
+    //       builder: (context, state) => (),
+    //     ),
   ],
- );
+);
 
 // class AppPages {
 // static final routes = [
@@ -131,4 +129,5 @@ FutureOr<String?> _redirect(context, GoRouterState state) {
 
   return null; // no redirect
 }
+
 // }
