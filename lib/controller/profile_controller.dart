@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
 import 'package:fx_crm/controller/app_controller.dart';
@@ -6,7 +7,6 @@ import 'package:fx_crm/controller/session_controller.dart';
 import 'package:fx_crm/main.dart';
 import 'package:fx_crm/models/customer_model.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart' as dio;
 
 class ProfileController extends GetxController {
   AuthController authController = Get.put(AuthController(dioClient: dioClient));
@@ -65,7 +65,6 @@ class ProfileController extends GetxController {
         "customer_address_1": address1.text,
         "customer_address_2": address2.text,
         "zip": zip.text,
-
       });
 
       final response = await dioClient.post(
@@ -78,7 +77,10 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Customer customerData = Customer.fromJson(response.data['data']);
         AppController.to.saveCustomerData(customerData);
-        SessionController.to.saveSession(SessionController.to.token.value, customerData);
+        SessionController.to.saveSession(
+          SessionController.to.token.value,
+          customerData,
+        );
 
         Get.snackbar(
           'Success',
@@ -187,8 +189,8 @@ class ChangePasswordController extends GetxController {
     try {
       final formData = dio.FormData.fromMap({
         "old_password": oldPassword.text.trim(),
-        "spassword": newPassword.text.trim(),
-        "repassword": confirmPassword.text.trim(),
+        "password": newPassword.text.trim(),
+        "confirm_password": confirmPassword.text.trim(),
       });
 
       final response = await dioClient.post(

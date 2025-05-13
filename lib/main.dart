@@ -36,11 +36,11 @@ void main() async {
   Get.put<DioClient>(dioClient);
   Get.put(AppController());
   AppController.to.syncWithSession();
-  final AuthController authController = Get.put(AuthController(dioClient: dioClient));
-  await authController.getCountryList();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  final AuthController authController = Get.put(
+    AuthController(dioClient: dioClient),
   );
+  await authController.getCountryList();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 

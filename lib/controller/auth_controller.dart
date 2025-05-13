@@ -1,19 +1,19 @@
-import 'dart:developer';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/session_controller.dart';
+import 'package:fx_crm/routes/route_path.dart';
+import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:nb_utils/nb_utils.dart' hide DialogType;
 
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
 import '../models/country_model.dart';
 import '../models/customer_model.dart';
 import '../view/component/auth/login_screen.dart';
-import '../view/dashboard_screen.dart';
 import 'app_controller.dart';
 
 class AuthController extends GetxController {
@@ -41,20 +41,12 @@ class AuthController extends GetxController {
     selectedCountryName.value = name;
     selectedCountryCode.value = phoneCode;
 
-    if (id != null && id.isNotEmpty) {
-      // If ID is provided directly, use it
-      selectedCountryId.value = id;
-    } else {
-      // Otherwise, try to match based on name
-      final matchedCountry = countryList.firstWhereOrNull(
-            (c) => c.name.toLowerCase() == name.toLowerCase(),
-      );
-      selectedCountryId.value = matchedCountry?.id.toString() ?? '';
-    }
+    final matchedCountry = countryList.firstWhereOrNull(
+      (c) => c.name.toLowerCase() == name.toLowerCase(),
+    );
 
-    log("Selected Country ID: ${selectedCountryId.value}");
+    selectedCountryId.value = matchedCountry?.id.toString() ?? '';
   }
-
 
   /// ------ Login APIs Functions
   Future<void> login() async {
@@ -111,7 +103,7 @@ class AuthController extends GetxController {
             duration: Duration(seconds: 1),
           );
 
-          Get.offAll(() => DashboardScreen());
+          router.push(Paths.dashboard);
         } else if (response.data['is_login'] == 2) {
           String message =
               response.data['message'] ?? 'Please verify your email address!';
@@ -341,9 +333,165 @@ class AuthController extends GetxController {
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
+    }
+  }
+
+  //Forget password
+  Future<String?> getOtp(String username) async {
+    if (username.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please enter your username or email',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+      return null;
+    }
+
+    isLoading.value = true;
+    try {
+      dio.FormData formData = dio.FormData.fromMap({'username': username});
+
+      final response = await dioClient.post(
+        ApiConst.send_code,
+        data: formData,
+        token: false,
+      );
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'OTP sent successfully',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        // Optionally: Store the username or navigate to OTP page
+        String? username = response.data['username'];
+        if (username.validate().isNotEmpty) {
+          isLoading.value = false;
+          return username;
+        } else {
+          Get.snackbar(
+            'Error',
+            'Username not found',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.redAccent,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Failed',
+          response.data['message'] ?? 'Unable to send OTP',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
+    return null;
+  }
+
+  //Verify Password
+  Future<String?> verifyOtp(String username, String otp) async {
+    try {
+      isLoading.value = true;
+      dio.FormData formData = dio.FormData.fromMap({
+        'username': username,
+        'otp': otp,
+      });
+      final response = await dioClient.post(
+        ApiConst.verify_code,
+        data: formData,
+        token: false,
+      );
+      if (response.statusCode == 200) {
+        isLoading.value = false;
+        return username;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Unknown error',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+    return null;
+  }
+
+  Future<bool> changePassword(
+    String username,
+    String pass,
+    String confPass,
+  ) async {
+    try {
+      isLoading.value = true;
+      dio.FormData formData = dio.FormData.fromMap({
+        'username': username,
+        'password': pass,
+        "confirm_password": confPass,
+      });
+      final response = await dioClient.post(
+        ApiConst.verify_code,
+        data: formData,
+        token: false,
+      );
+      if (response.statusCode == 200) {
+        isLoading.value = false;
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Password changed successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Unknown error',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+    return false;
   }
 
   @override

@@ -150,7 +150,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 final initialCountry = authController.countryList
                     .firstWhereOrNull(
                       (e) => e.id.toString() == customerCountryId,
-                );
+                    );
 
                 if (authController.selectedCountryName.value.isEmpty &&
                     initialCountry != null) {
@@ -166,9 +166,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   readOnly: true,
                   textStyle: const TextStyle(color: Colors.black),
                   hint:
-                  authController.selectedCountryName.value.isEmpty
-                      ? 'Please select a country'
-                      : authController.selectedCountryName.value,
+                      authController.selectedCountryName.value.isEmpty
+                          ? 'Please select a country'
+                          : authController.selectedCountryName.value,
                   onTap: () {
                     showCountryPicker(
                       context: context,
@@ -178,9 +178,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         final matchedCountry = authController.countryList
                             .firstWhereOrNull(
                               (e) =>
-                          e.name.toLowerCase() ==
-                              country.name.toLowerCase(),
-                        );
+                                  e.name.toLowerCase() ==
+                                  country.name.toLowerCase(),
+                            );
 
                         if (matchedCountry != null) {
                           authController.setSelectedCountry(
@@ -201,9 +201,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   },
                   validator:
                       (_) =>
-                  authController.selectedCountryId.value.isEmpty
-                      ? 'Please select a country'
-                      : null,
+                          authController.selectedCountryId.value.isEmpty
+                              ? 'Please select a country'
+                              : null,
                 );
               }),
 
@@ -302,19 +302,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           children: [
             /// Avatar
-          CircleAvatar(
-          radius: 40,
-          backgroundImage: NetworkImage(
-            customer?.image ??
-                'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000',
-          ),
-          onBackgroundImageError: (exception, stackTrace) {
-            print('Error loading image: $exception');
-          },
-          backgroundColor: Colors.transparent,
-        ),
+            CircleAvatar(
+              radius: 40,
+              backgroundImage: NetworkImage(
+                customer?.image ??
+                    'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000',
+              ),
+              onBackgroundImageError: (exception, stackTrace) {
+                print('Error loading image: $exception');
+              },
+              backgroundColor: Colors.transparent,
+            ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
             /// Name and Info
             Text(
