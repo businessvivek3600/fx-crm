@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
+import 'package:fx_crm/routes/route_name.dart';
+import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';
-import 'package:fx_crm/view/component/auth/login_screen.dart';
 import 'package:get/get.dart';
+
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/custom_text_form.dart';
 
@@ -51,10 +53,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     );
 
     if (success) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      ); // or push to login screen
+      router.pushReplacementNamed(Routes.login); // or push to login screen
     }
   }
 
@@ -128,7 +127,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                            : const Icon(Icons.lock_reset,color: Colors.white),
+                            : const Icon(Icons.lock_reset, color: Colors.white),
                     label: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(

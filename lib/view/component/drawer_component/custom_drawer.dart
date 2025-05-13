@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/routes/route_name.dart';
+import 'package:fx_crm/routes/route_settings.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/create_account_screen.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart'
+    show WalletAccountScreen;
 import 'package:fx_crm/view/component/drawer_component/component/download/download_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposit_fund.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposite_withdraw_history.dart';
@@ -29,282 +34,302 @@ class CustomDrawer extends StatelessWidget {
     return BackgroundContainer(
       useAlternateBackground: true,
       child: Drawer(
-        elevation: 5,
-        backgroundColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(25),
-            bottomRight: Radius.circular(25),
+        child: Drawer(
+          elevation: 5,
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(25),
+              bottomRight: Radius.circular(25),
+            ),
           ),
-        ),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.transparent),
-              child: CircleAvatar(
-                radius: 40,
-                child: Text("V", style: TextStyle(fontSize: 24)),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(color: Colors.transparent),
+                child: CircleAvatar(
+                  radius: 40,
+                  child: Text("V", style: TextStyle(fontSize: 24)),
+                ),
               ),
-            ),
 
-            // Profile with submenus
-            _buildExpansionTile(
-              title: 'My Account',
-              icon: Icons.account_circle_outlined,
-              submenus: [
-                {
-                  'title': 'Accounts',
-                  'icon': Icons.school_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreateAccountScreen(),
-                      ),
-                    );
+              // Profile with submenus
+              _buildExpansionTile(
+                title: 'My Account',
+                icon: Icons.account_circle_outlined,
+                submenus: [
+                  {
+                    'title': 'Accounts',
+                    'icon': Icons.school_outlined,
+                    'onTap': () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateAccountScreen(),
+                        ),
+                      );
+                      // router.push(Routes.CreateAccountScreen);
+                    },
                   },
-                },
-                {
-                  'title': 'Wallet Account',
-                  'icon': Icons.account_balance_wallet_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WalletAccountScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'Wallet Account',
+                    'icon': Icons.account_balance_wallet_outlined,
+                    'onTap': () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WalletAccountScreen(),
+                        ),
+                      );
+                      // router.push(Routes.WalletAccountScreen);
+                    },
                   },
-                },
-                {
-                  'title': 'Transaction History',
-                  'icon': Icons.account_balance_wallet_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TransactionHistoryScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'Transaction History',
+                    'icon': Icons.account_balance_wallet_outlined,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => TransactionHistoryScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.trasaction_history);
+                    },
                   },
-                },
-              ],
-            ),
-            _buildExpansionTile(
-              title: 'Profile',
-              icon: Icons.manage_accounts_outlined,
-              submenus: [
-                {
-                  'title': 'Edit Profile',
-                  'icon': Icons.edit_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditProfileScreen(),
-                      ),
-                    );
+                ],
+              ),
+              _buildExpansionTile(
+                title: 'Profile',
+                icon: Icons.manage_accounts_outlined,
+                submenus: [
+                  {
+                    'title': 'Edit Profile',
+                    'icon': Icons.edit_outlined,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => EditProfileScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.editprofile);
+                    },
                   },
-                },
-                {
-                  'title': 'Bank/Wallet',
-                  'icon': Icons.credit_card_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WalletScreen()),
-                    );
+                  {
+                    'title': 'Bank/Wallet',
+                    'icon': Icons.credit_card_outlined,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => WalletScreen()),
+                      // );
+                      router.push(Routes.wallet_account);
+                    },
                   },
-                },
-                {
-                  'title': 'KYC',
-                  'icon': Icons.badge_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => KycUploadScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'KYC',
+                    'icon': Icons.badge_outlined,
+                    'onTap': () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => KycUploadScreen(),
+                        ),
+                      );
+                      //  router.push(Routes.kyc_verification);
+                    },
                   },
-                },
-                {
-                  'title': 'Change Password',
-                  'icon': Icons.lock_outline,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChangePasswordScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'Change Password',
+                    'icon': Icons.lock_outline,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ChangePasswordScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.changepassword);
+                    },
                   },
-                },
-              ],
-            ),
+                ],
+              ),
 
-            // Promotion
-            _buildExpansionTile(
-              title: 'Promotions',
-              icon: Icons.local_offer_outlined,
-              submenus: [
-                {
-                  'title': 'Monthly Rewards',
-                  'icon': Icons.emoji_events,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MonthlyRewardsScreen(),
-                      ),
-                    );
+              // Promotion
+              _buildExpansionTile(
+                title: 'Promotions',
+                icon: Icons.local_offer_outlined,
+                submenus: [
+                  {
+                    'title': 'Monthly Rewards',
+                    'icon': Icons.emoji_events,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => MonthlyRewardsScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.monthly_rewards);
+                    },
                   },
-                },
-                {
-                  'title': 'Terms and Condition',
-                  'icon': Icons.article,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TermsAndConditionsScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'Terms and Condition',
+                    'icon': Icons.article,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => TermsAndConditionsScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.termandcondition);
+                    },
                   },
-                },
-              ],
-            ),
+                ],
+              ),
 
-            // IB Menu
-            _buildExpansionTile(
-              title: 'IB Menu',
-              icon: Icons.menu_open_outlined,
-              submenus: [
-                {'title': 'Become IB', 'icon': Icons.group_add_outlined},
-              ],
-            ),
+              // IB Menu
+              _buildExpansionTile(
+                title: 'IB Menu',
+                icon: Icons.menu_open_outlined,
+                submenus: [
+                  {'title': 'Become IB', 'icon': Icons.group_add_outlined},
+                ],
+              ),
 
-            // Funds
-            _buildExpansionTile(
-              title: 'Funds',
-              icon: Icons.account_balance_wallet_outlined,
-              submenus: [
-                {
-                  'title': 'Wallet Ledger',
-                  'icon': Icons.account_balance_wallet_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WalletLedger()),
-                    );
+              // Funds
+              _buildExpansionTile(
+                title: 'Funds',
+                icon: Icons.account_balance_wallet_outlined,
+                submenus: [
+                  {
+                    'title': 'Wallet Ledger',
+                    'icon': Icons.account_balance_wallet_outlined,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => WalletLedger()),
+                      // );
+                      router.push(Routes.wallet_ledger);
+                    },
                   },
-                },
-                {
-                  'title': 'Deposit Fund',
-                  'icon': Icons.attach_money_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DepositFundScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'Deposit Fund',
+                    'icon': Icons.attach_money_outlined,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => DepositFundScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.deposit_fund);
+                    },
                   },
-                },
-                {
-                  'title': 'Withdraw Fund',
-                  'icon': Icons.account_balance_wallet_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WithdrawFundScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'Withdraw Fund',
+                    'icon': Icons.account_balance_wallet_outlined,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => WithdrawFundScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.withdraw_fund);
+                    },
                   },
-                },
-                {
-                  'title': 'Deposit/Withdraw History',
-                  'icon': Icons.history,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DepositWithdrawHistoryScreen(),
-                      ),
-                    );
+                  {
+                    'title': 'Deposit/Withdraw History',
+                    'icon': Icons.history,
+                    'onTap': () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => DepositWithdrawHistoryScreen(),
+                      //   ),
+                      // );
+                      router.push(Routes.deposit_withdrawhistory);
+                    },
                   },
-                },
-              ],
-            ),
+                ],
+              ),
 
-            // Support
-            _buildListTile(
-              icon: Icons.support_agent_outlined,
-              title: 'Support',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SupportPage()),
-                );
-              },
-            ),
+              // Support
+              _buildListTile(
+                icon: Icons.support_agent_outlined,
+                title: 'Support',
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => SupportPage()),
+                  // );
+                  router.push(Routes.support);
+                },
+              ),
 
-            // Economic Calendar
-            _buildListTile(
-              icon: Icons.calendar_month_outlined,
-              title: 'Economic Calendar',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EconomicCalendarScreen(),
-                  ),
-                );
-              },
-            ),
-            // download
-            _buildListTile(
-              icon: Icons.download_outlined,
-              title: 'Downloads',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DownloadScreen()),
-                );
-              },
-            ),
+              // Economic Calendar
+              _buildListTile(
+                icon: Icons.calendar_month_outlined,
+                title: 'Economic Calendar',
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => EconomicCalendarScreen(),
+                  //   ),
+                  // );
+                  router.push(Routes.economic_calendar);
+                },
+              ),
+              // download
+              _buildListTile(
+                icon: Icons.download_outlined,
+                title: 'Downloads',
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => DownloadScreen()),
+                  // );
+                  router.push(Routes.downloads);
+                },
+              ),
 
-            // Logout
-            _buildListTile(
-              icon: Icons.logout,
-              title: 'Logout',
-              onTap: () {
-                AwesomeDialog(
-                  context: Get.context!,
-                  dialogType: DialogType.warning,
-                  animType: AnimType.rightSlide,
-                  title: 'Logout',
-                  customHeader: Icon(
-                    Icons.question_mark_outlined,
-                    size: 50,
-                    color: Colors.orange,
-                  ),
-                  headerAnimationLoop: true,
-                  titleTextStyle: Theme.of(context).textTheme.headlineLarge!
-                      .copyWith(fontWeight: FontWeight.bold),
-                  desc: 'Are you sure you want to logout?',
-                  btnCancelOnPress: () {},
-                  btnOkText: 'Logout',
-                  btnOkOnPress: () {
-                    SessionController.to
-                        .clearSession(); // Clears session and navigates to login
-                  },
-                ).show();
-              },
-            ),
-          ],
+              // Logout
+              _buildListTile(
+                icon: Icons.logout,
+                title: 'Logout',
+                onTap: () {
+                  AwesomeDialog(
+                    context: Get.context!,
+                    dialogType: DialogType.warning,
+                    animType: AnimType.rightSlide,
+                    title: 'Logout',
+                    customHeader: Icon(
+                      Icons.question_mark_outlined,
+                      size: 50,
+                      color: Colors.orange,
+                    ),
+                    headerAnimationLoop: true,
+                    titleTextStyle: Theme.of(context).textTheme.headlineLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
+                    desc: 'Are you sure you want to logout?',
+                    btnCancelOnPress: () {},
+                    btnOkText: 'Logout',
+                    btnOkOnPress: () {
+                      SessionController.to
+                          .clearSession(); // Clears session and navigates to login
+                      SessionController.to
+                          .clearSession(); // Clears session and navigates to login
+                    },
+                  ).show();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

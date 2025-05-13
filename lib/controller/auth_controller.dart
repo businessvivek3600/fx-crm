@@ -2,6 +2,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/session_controller.dart';
+import 'package:fx_crm/routes/route_path.dart';
+import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -12,7 +14,6 @@ import '../database/dio/dio/dio_client.dart';
 import '../models/country_model.dart';
 import '../models/customer_model.dart';
 import '../view/component/auth/login_screen.dart';
-import '../view/dashboard_screen.dart';
 import 'app_controller.dart';
 
 class AuthController extends GetxController {
@@ -40,18 +41,11 @@ class AuthController extends GetxController {
     selectedCountryName.value = name;
     selectedCountryCode.value = phoneCode;
 
-    if (id != null && id.isNotEmpty) {
-      // If ID is provided directly, use it
-      selectedCountryId.value = id;
-    } else {
-      // Otherwise, try to match based on name
-      final matchedCountry = countryList.firstWhereOrNull(
-        (c) => c.name.toLowerCase() == name.toLowerCase(),
-      );
-      selectedCountryId.value = matchedCountry?.id.toString() ?? '';
-    }
+    final matchedCountry = countryList.firstWhereOrNull(
+      (c) => c.name.toLowerCase() == name.toLowerCase(),
+    );
 
-    log("Selected Country ID: ${selectedCountryId.value}");
+    selectedCountryId.value = matchedCountry?.id.toString() ?? '';
   }
 
   /// ------ Login APIs Functions
@@ -109,7 +103,7 @@ class AuthController extends GetxController {
             duration: Duration(seconds: 1),
           );
 
-          Get.offAll(() => DashboardScreen());
+          router.push(Paths.dashboard);
         } else if (response.data['is_login'] == 2) {
           String message =
               response.data['message'] ?? 'Please verify your email address!';
@@ -450,7 +444,6 @@ class AuthController extends GetxController {
     return null;
   }
 
-  //Changepassword
   Future<bool> changePassword(
     String username,
     String pass,
@@ -464,7 +457,7 @@ class AuthController extends GetxController {
         "confirm_password": confPass,
       });
       final response = await dioClient.post(
-        ApiConst.change_password,
+        ApiConst.verify_code,
         data: formData,
         token: false,
       );
