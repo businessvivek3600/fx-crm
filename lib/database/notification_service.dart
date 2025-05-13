@@ -17,7 +17,7 @@ class NotificationService {
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final GetStorage storage = GetStorage();
-  // Add this for Platform check
+  // Add this for Platform z
 
   Future<void> init() async {
     await _requestNotificationPermissionIfNeeded();
