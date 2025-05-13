@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1017308131693",
+    "project_id": "fx-crm",
+    "storage_bucket": "fx-crm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017308131693:android:6b8ae853bfa308d2e0aa64",
+        "android_client_info": {
+          "package_name": "com.app.fx_crm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDObnT9eA1qKiyjW1NXpUhyXGhSg74QX8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -41,7 +41,7 @@ class ThemeUtils {
       ),
     ),
     colorScheme: ColorScheme.fromSeed(
-      seedColor: primaryColor,
+      seedColor: primaryColor, 
       primary: primaryColor,
       secondary: Colors.grey,
       brightness: Brightness.light,

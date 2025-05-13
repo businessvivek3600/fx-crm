@@ -1,7 +1,6 @@
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../../../controller/kyc_controller.dart';
 import '../../../../../main.dart';
@@ -38,6 +37,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     final String kycStatus = kycController.kycData.value?.status?.toLowerCase() ?? '';
     return BackgroundContainer(
       child: Scaffold(

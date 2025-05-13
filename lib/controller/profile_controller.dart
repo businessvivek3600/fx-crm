@@ -1,11 +1,12 @@
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
 import 'package:fx_crm/controller/app_controller.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
+import 'package:fx_crm/controller/session_controller.dart';
 import 'package:fx_crm/main.dart';
 import 'package:fx_crm/models/customer_model.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart' as dio;
 
 class ProfileController extends GetxController {
   AuthController authController = Get.put(AuthController(dioClient: dioClient));
@@ -51,7 +52,7 @@ class ProfileController extends GetxController {
         "first_name": firstname.text,
         "last_name": lastname.text,
         "next_of_kin": nextofKin.text,
-        "country": authController.selectedCountryName.value,
+        "country": authController.selectedCountryId.value,
         "email": email.text,
         "phone": customerMobile.text,
         "customer_mobile": customerMobile.text,
@@ -64,12 +65,6 @@ class ProfileController extends GetxController {
         "customer_address_1": address1.text,
         "customer_address_2": address2.text,
         "zip": zip.text,
-
-        // Uncomment this part if you're uploading a file
-        // "profile_image": await MultipartFile.fromFile(
-        //   imageFile.path,
-        //   filename: "profile.jpg",
-        // ),
       });
 
       final response = await dioClient.post(
@@ -78,13 +73,15 @@ class ProfileController extends GetxController {
         token: true,
         // options: Options(contentType: 'multipart/form-data'),
       );
-
-      print("-------------------------------------------------------");
-      print(response.data);
-
+      print(formData.fields);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Customer customerData = Customer.fromJson(response.data['data']);
         AppController.to.saveCustomerData(customerData);
+        SessionController.to.saveSession(
+          SessionController.to.token.value,
+          customerData,
+        );
+
         Get.snackbar(
           'Success',
           'Profile updated successfully!',
@@ -132,27 +129,6 @@ class ProfileController extends GetxController {
     zip.clear();
     selectedDate.value = null;
   }
-
-  // /// Dispose controllers to avoid memory leaks
-  // @override
-  // void onClose() {
-  //   firstname.dispose();
-  //   lastname.dispose();
-  //   nextofKin.dispose();
-  //   email.dispose();
-  //   country.dispose();
-  //   customerMobile.dispose();
-  //   dateOfBirth.dispose();
-  //   fatherName.dispose();
-  //   company.dispose();
-  //   state.dispose();
-  //   city.dispose();
-  //   shortAddress.dispose();
-  //   address1.dispose();
-  //   address2.dispose();
-  //   zip.dispose();
-  //   super.onClose();
-  // }
 }
 
 class ChangePasswordController extends GetxController {
@@ -213,8 +189,8 @@ class ChangePasswordController extends GetxController {
     try {
       final formData = dio.FormData.fromMap({
         "old_password": oldPassword.text.trim(),
-        "spassword": newPassword.text.trim(),
-        "repassword": confirmPassword.text.trim(),
+        "password": newPassword.text.trim(),
+        "confirm_password": confirmPassword.text.trim(),
       });
 
       final response = await dioClient.post(

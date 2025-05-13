@@ -26,6 +26,8 @@ class SupportController extends GetxController{
     isLoading.value = true;
     try {
       final response = await dioClient.post(ApiConst.tickets);
+      print("support response data---------");
+      print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final ticketModel = SupportTicketModel.fromJson(response.data);
         tickets.assignAll(ticketModel.data.ticketList);

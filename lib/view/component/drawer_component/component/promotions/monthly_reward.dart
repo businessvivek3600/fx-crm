@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/utils/theme.dart';
 
+import '../../../../../controller/app_controller.dart';
 import '../../../../../widgets/bg_container.dart';
 
 class MonthlyRewardsScreen extends StatelessWidget {
-  const MonthlyRewardsScreen({super.key});
-
+   MonthlyRewardsScreen({super.key});
+  final monthlyReward = AppController.to.company.value;
   @override
   Widget build(BuildContext context) {
+
     return  BackgroundContainer(
       child:  Scaffold(
         backgroundColor: Colors.transparent,
@@ -22,15 +24,15 @@ class MonthlyRewardsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Scratch & Win Rewards!",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: ThemeUtils.primaryColor,
-                ),
-              ),
-              const SizedBox(height: 16),
+              // const Text(
+              //   "Scratch & Win Rewards!",
+              //   style: TextStyle(
+              //     fontSize: 22,
+              //     fontWeight: FontWeight.bold,
+              //     color: wh,
+              //   ),
+              // ),
+              // const SizedBox(height: 16),
               Expanded(
                 child: GridView.builder(
                   itemCount: 6, // Example: 6 scratch cards
@@ -52,59 +54,29 @@ class MonthlyRewardsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScratchCard(int index) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 4,
-      color: Colors.white,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              ThemeUtils.primaryColor.withOpacity(0.4),
-              Colors.deepPurple.withOpacity(0.6),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.card_giftcard, size: 50, color: Colors.white),
-              const SizedBox(height: 10),
-              Text(
-                "Reward #${index + 1}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  "Scratch Me!",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+   Widget _buildScratchCard(int index) {
+     return Card(
+       shape: RoundedRectangleBorder(
+         borderRadius: BorderRadius.circular(16),
+       ),
+       elevation: 4,
+       color: Colors.grey.shade900.withOpacity(0.8),
+       clipBehavior: Clip.antiAlias, // ensures image respects border radius
+       child: Image.network(
+         monthlyReward?.monthlyRewardImg ??
+             "https://png.pngtree.com/png-clipart/20200701/original/pngtree-color-splash-ink-rewards-short-sentence-copy-png-image_5364565.jpg",
+         fit: BoxFit.cover,
+         loadingBuilder: (context, child, loadingProgress) {
+           if (loadingProgress == null) return child;
+           return const Padding(
+             padding: EdgeInsets.all(16),
+             child: CircularProgressIndicator(),
+           );
+         },
+         errorBuilder: (context, error, stackTrace) =>
+         const Icon(Icons.broken_image, color: Colors.white),
+       ),
+     );
+   }
+
 }
