@@ -4,55 +4,57 @@ import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/create_account_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart'
     show WalletAccountScreen;
-import 'package:fx_crm/view/component/drawer_component/component/download/download_screen.dart';
-import 'package:fx_crm/view/component/drawer_component/component/funds/deposit_fund.dart';
-import 'package:fx_crm/view/component/drawer_component/component/funds/deposite_withdraw_history.dart';
-import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
-import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
-import 'package:fx_crm/view/component/drawer_component/component/profile/change_password.dart';
-import 'package:fx_crm/view/component/drawer_component/component/account/transaction_history.dart';
-import 'package:fx_crm/view/component/drawer_component/component/support/support_screen.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:go_router/go_router.dart';
+import '../../../controller/app_controller.dart';
 import '../../../controller/session_controller.dart';
-import '../../../utils/theme.dart';
+import '../../../routes/route_path.dart';
 import '../../../widgets/bg_container.dart';
-import 'component/account/create_account_screen.dart';
 import 'component/account/wallet_account.dart';
-import 'component/economic/economic_calander.dart';
-import 'component/profile/bank_wallet_screen.dart';
-import 'component/profile/edit_profile.dart';
 import 'component/profile/kyc_verification.dart';
-import 'component/promotions/monthly_reward.dart';
-import 'component/promotions/terms_condition.dart';
+
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BackgroundContainer(
+    final logo = AppController.to.settings;
+    return  BackgroundContainer(
       useAlternateBackground: true,
-      child: Drawer(
-        child: Drawer(
-          elevation: 5,
-          backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(25),
-              bottomRight: Radius.circular(25),
-            ),
+      child:   Drawer(
+        elevation: 5,
+
+        backgroundColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(25),
+            bottomRight: Radius.circular(25),
           ),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(color: Colors.transparent),
-                child: CircleAvatar(
-                  radius: 40,
-                  child: Text("V", style: TextStyle(fontSize: 24)),
+        ),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            SizedBox(
+              height: 130,
+              child: DrawerHeader(
+                decoration: const BoxDecoration(color: Colors.transparent),
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                child: Align(
+                  alignment: Alignment.centerLeft, // Start from left
+                  child: Image.network(
+                    logo.first.logo ?? 'https://png.pngtree.com/png-vector/20220423/ourmid/pngtree-trade-market-candle-line-png-png-image_4553954.png',
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.error, color: Colors.white),
+                  ),
                 ),
               ),
+            ),
 
               // Profile with submenus
               _buildExpansionTile(
@@ -95,7 +97,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => TransactionHistoryScreen(),
                       //   ),
                       // );
-                      router.push(Routes.trasaction_history);
+                      context.push(Paths.trasaction_history);
                     },
                   },
                 ],
@@ -114,7 +116,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => EditProfileScreen(),
                       //   ),
                       // );
-                      router.push(Routes.editprofile);
+                      context.push(Paths.editprofile);
                     },
                   },
                   {
@@ -125,7 +127,7 @@ class CustomDrawer extends StatelessWidget {
                       //   context,
                       //   MaterialPageRoute(builder: (context) => WalletScreen()),
                       // );
-                      router.push(Routes.wallet_account);
+                      context.push(Paths.bank_wallet); // Works now
                     },
                   },
                   {
@@ -151,7 +153,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => ChangePasswordScreen(),
                       //   ),
                       // );
-                      router.push(Routes.changepassword);
+                      context.push(Paths.changepassword);
                     },
                   },
                 ],
@@ -185,7 +187,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => TermsAndConditionsScreen(),
                       //   ),
                       // );
-                      router.push(Routes.termandcondition);
+                      context.push(Paths.termandcondition);
                     },
                   },
                 ],
@@ -213,7 +215,7 @@ class CustomDrawer extends StatelessWidget {
                       //   context,
                       //   MaterialPageRoute(builder: (context) => WalletLedger()),
                       // );
-                      router.push(Routes.wallet_ledger);
+                      context.push(Paths.wallet_ledger);
                     },
                   },
                   {
@@ -226,7 +228,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => DepositFundScreen(),
                       //   ),
                       // );
-                      router.push(Routes.deposit_fund);
+                      context.push(Paths.deposit_fund);
                     },
                   },
                   {
@@ -239,7 +241,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => WithdrawFundScreen(),
                       //   ),
                       // );
-                      router.push(Routes.withdraw_fund);
+                      context.push(Paths.withdraw_fund);
                     },
                   },
                   {
@@ -252,7 +254,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => DepositWithdrawHistoryScreen(),
                       //   ),
                       // );
-                      router.push(Routes.deposit_withdrawhistory);
+                      context.push(Paths.deposit_withdrawhistory);
                     },
                   },
                 ],
@@ -267,7 +269,7 @@ class CustomDrawer extends StatelessWidget {
                   //   context,
                   //   MaterialPageRoute(builder: (context) => SupportPage()),
                   // );
-                  router.push(Routes.support);
+                  context.push(Paths.support);
                 },
               ),
 
@@ -282,7 +284,7 @@ class CustomDrawer extends StatelessWidget {
                   //     builder: (context) => EconomicCalendarScreen(),
                   //   ),
                   // );
-                  router.push(Routes.economic_calendar);
+                  context.push(Paths.economic_calendar);
                 },
               ),
               // download
@@ -294,7 +296,7 @@ class CustomDrawer extends StatelessWidget {
                   //   context,
                   //   MaterialPageRoute(builder: (context) => DownloadScreen()),
                   // );
-                  router.push(Routes.downloads);
+                  context.push(Paths.downloads);
                 },
               ),
 
@@ -331,7 +333,7 @@ class CustomDrawer extends StatelessWidget {
             ],
           ),
         ),
-      ),
+
     );
   }
 
