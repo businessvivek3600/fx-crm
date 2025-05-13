@@ -10,6 +10,7 @@ import 'package:fx_crm/view/component/drawer_component/component/account/wallet_
 import 'package:fx_crm/view/component/drawer_component/component/profile/bank_wallet_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/change_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/edit_profile.dart';
+import 'package:fx_crm/view/component/drawer_component/component/profile/kyc_verification.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/monthly_reward.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/terms_condition.dart';
 import 'package:get/get.dart';
@@ -61,7 +62,11 @@ final router = GoRouter(
       name: Routes.editprofile,
       builder: (context, state) => EditProfileScreen(),
     ),
-
+    GoRoute(
+      path: Paths.kyc,
+      name: Routes.kycScreen,
+      builder: (context, state) => KycUploadScreen(),
+    ),
     GoRoute(
       path: Paths.bank_wallet,
       name: Routes.bank_wallet,

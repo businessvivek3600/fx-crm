@@ -13,6 +13,7 @@ import '../../../controller/app_controller.dart';
 import '../../../controller/session_controller.dart';
 import '../../../routes/route_path.dart';
 import '../../../widgets/bg_container.dart';
+import 'component/account/activate_screen.dart';
 import 'component/account/wallet_account.dart';
 
 
@@ -73,6 +74,19 @@ class CustomDrawer extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => CreateAccountScreen(),
+                        ),
+                      );
+                      // router.push(Routes.CreateAccountScreen);
+                    },
+                  },
+                  {
+                    'title': 'Activate Account',
+                    'icon': Icons.account_box_outlined,
+                    'onTap': () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ActivateAccountScreen(),
                         ),
                       );
                       // router.push(Routes.CreateAccountScreen);

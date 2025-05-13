@@ -10,6 +10,7 @@ class Routes {
   static const String editprofile = "editprofile";
   static const String bank_wallet = "bank_wallet";
   static const String changepassword = "changepassword";
+  static const String kycScreen = "kyc";
 
   // Promotions
   static const String monthly_rewards = "monthly_rewards";
