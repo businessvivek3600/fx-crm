@@ -1,14 +1,16 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:fx_crm/view/component/auth/forgot_password/new_password.dart';
-import 'package:pinput/pinput.dart';
-import '../../../../widgets/bg_container.dart';
-import '../../drawer_component/component/profile/change_password.dart';
 
+import 'package:flutter/material.dart';
+import 'package:fx_crm/controller/auth_controller.dart';
+import 'package:fx_crm/view/component/auth/forgot_password/new_password.dart';
+import 'package:get/get.dart';
+import 'package:pinput/pinput.dart';
+
+import '../../../../widgets/bg_container.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
-  final String email;
-  const OtpVerificationScreen({super.key, required this.email});
+  final String username;
+  const OtpVerificationScreen({super.key, required this.username});
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -16,6 +18,8 @@ class OtpVerificationScreen extends StatefulWidget {
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpController = TextEditingController();
+  final AuthController authController = Get.find<AuthController>();
+
   Timer? _timer;
   int _remainingTime = 60;
 
@@ -23,6 +27,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     super.initState();
     _startCountdown();
+    //  otpController.sendOtp(widget.email);
   }
 
   void _startCountdown() {
@@ -35,18 +40,26 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     });
   }
 
-  void _verifyOtp(String otp) {
-    if (otp == "123456") {
+  void _verifyOtp(String otp) async {
+    if (otp.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please enter OTP")));
+      return;
+    } else if (otp.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("OTP Verified!")),
+        const SnackBar(content: Text("Password must be 6 digits")),
       );
+      return;
+    }
+    var res = await authController.verifyOtp(widget.username, otp);
+    if (res == null) return;
+    if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => NewPasswordScreen()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid OTP")),
+        MaterialPageRoute(
+          builder: (_) => NewPasswordScreen(username: widget.username),
+        ),
       );
     }
   }
@@ -54,9 +67,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void _resendOtp() {
     setState(() => _remainingTime = 60);
     _startCountdown();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("OTP Resent")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("OTP Resent")));
   }
 
   @override
@@ -81,7 +94,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
     final focusedPinTheme = pinTheme.copyWith(
       decoration: pinTheme.decoration!.copyWith(
-        border: Border.all(color: Theme.of(context).colorScheme.secondary, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.secondary,
+          width: 2,
+        ),
       ),
     );
 
@@ -118,7 +134,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                widget.email,
+                widget.username,
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white,
