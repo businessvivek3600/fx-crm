@@ -69,6 +69,19 @@ class CustomDrawer extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
+                          builder: (context) => CreateAccountScreen(),
+                        ),
+                      );
+                      // router.push(Routes.CreateAccountScreen);
+                    },
+                  },
+                  {
+                    'title': 'Activate Account',
+                    'icon': Icons.account_box_outlined,
+                    'onTap': () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
                           builder: (context) => ActivateAccountScreen(),
                         ),
                       );
