@@ -10,6 +10,7 @@ class Paths {
   static const String trasaction_history = '/${Routes.trasaction_history}';
   static const String editprofile = '/${Routes.editprofile}';
   static const String bank_wallet = '/${Routes.bank_wallet}';
+  static const String kyc = '/${Routes.kycScreen}';
   static const String changepassword = '/${Routes.changepassword}';
   static const String monthly_rewards = '/${Routes.monthly_rewards}';
   static const String termandcondition = '/${Routes.termandcondition}';
