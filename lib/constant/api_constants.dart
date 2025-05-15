@@ -6,6 +6,7 @@ class ApiConst {
   static const String login = "login";
   static const String register = "signup";
   static const String verifyEmail = "send_verfication_email";
+  static const String logOut = "logout";
 
   ///Dashboard
   static const String home = 'dashboard';

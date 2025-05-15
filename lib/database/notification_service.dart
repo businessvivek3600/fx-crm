@@ -21,6 +21,8 @@ class NotificationService {
 
   Future<void> init() async {
     await _requestNotificationPermissionIfNeeded();
+    final setting = await FirebaseMessaging.instance.requestPermission();
+    print("🔐 iOS permissions: ${setting.authorizationStatus}");
 
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -112,18 +114,21 @@ class NotificationService {
 
   Future<void> _showNotification(RemoteMessage message) async {
     final notification = message.notification;
-    final android = notification?.android;
     final data = message.data;
 
-    final String? imageUrl = android?.imageUrl ?? data['image'];
+    // Prefer data fields for title/body to support data-only notifications
+    final String? title = notification?.title ?? data['title'];
+    final String? body = notification?.body ?? data['body'];
+    final String? imageUrl = data['image']; // Always fallback to data for iOS
+
     BigPictureStyleInformation? bigPictureStyleInformation;
 
-    if (Platform.isAndroid && imageUrl != null) {
+    if (imageUrl != null && Platform.isAndroid) {
       final bigImagePath = await _downloadImage(imageUrl, 'bigImage');
       bigPictureStyleInformation = BigPictureStyleInformation(
         FilePathAndroidBitmap(bigImagePath),
-        contentTitle: notification?.title,
-        summaryText: notification?.body,
+        contentTitle: title,
+        summaryText: body,
       );
     }
 
@@ -138,27 +143,32 @@ class NotificationService {
 
     final notificationDetails = NotificationDetails(
       android: androidDetails,
-      iOS: const DarwinNotificationDetails(), // iOS fallback: title & body only
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
     );
 
     await flutterLocalNotificationsPlugin.show(
-      notification.hashCode,
-      notification?.title,
-      notification?.body,
+      message.hashCode,
+      title,
+      body,
       notificationDetails,
       payload: data.toString(),
     );
 
-    // Save notification to SQLite
+    // Save notification to local DB
     await NotificationDatabase().insertNotification({
-      'title': notification?.title ?? '',
-      'body': notification?.body ?? '',
+      'title': title ?? '',
+      'body': body ?? '',
       'image': imageUrl ?? '',
       'timestamp': DateTime.now().toIso8601String(),
     });
-    print("✅ Notification saved: ${notification?.title}");
 
+    print("✅ Notification saved: $title");
   }
+
 
   Future<String> _downloadImage(String url, String fileName) async {
     final response = await http.get(Uri.parse(url));

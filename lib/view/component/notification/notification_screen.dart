@@ -58,7 +58,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           body:
           notifications.isEmpty
-          ? const Center(child: Text("No notifications found"))
+          ? const Center(child: Text("No notifications found",style: TextStyle(color: Colors.white),))
           : Padding(
             padding: const EdgeInsets.all(12),
             child: ListView.builder(

@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:go_router/go_router.dart';
 import '../../../controller/app_controller.dart';
+import '../../../controller/auth_controller.dart';
 import '../../../controller/session_controller.dart';
 import '../../../routes/route_path.dart';
 import '../../../widgets/bg_container.dart';
@@ -21,6 +22,7 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final logo = AppController.to.settings;
     return  BackgroundContainer(
       useAlternateBackground: true,
@@ -80,12 +82,7 @@ class CustomDrawer extends StatelessWidget {
                     'title': 'Activate Account',
                     'icon': Icons.account_box_outlined,
                     'onTap': () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ActivateAccountScreen(),
-                        ),
-                      );
+                      context.push(Paths.activateAccount);
                       // router.push(Routes.CreateAccountScreen);
                     },
                   },
@@ -339,8 +336,7 @@ class CustomDrawer extends StatelessWidget {
                     btnOkText: 'Logout',
                     btnOkOnPress: () {
                       Future.delayed(Duration(milliseconds: 200), () {
-                        SessionController.to.clearSession();
-                        context.go(Paths.login); // or Navigator.pushReplacement
+                        Get.find<AuthController>().logout();
                       });
                     },
                   ).show();
