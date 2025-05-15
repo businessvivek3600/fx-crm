@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
@@ -92,6 +94,7 @@ class AuthController extends GetxController {
           /// Save in AppController
           AppController.to.saveToken(loginToken);
           AppController.to.setLoginStatus(true);
+
           /// ✅ Clear input fields
           usernameController.clear();
           passwordController.clear();
@@ -406,62 +409,103 @@ class AuthController extends GetxController {
     return null;
   }
 
-  //Verify Password
+  //Verify OTP
   Future<String?> verifyOtp(String username, String otp) async {
     try {
       isLoading.value = true;
-      dio.FormData formData = dio.FormData.fromMap({
-        'username': username,
-        'otp': otp,
-      });
+
+      final formData = dio.FormData.fromMap({'username': username, 'otp': otp});
+
       final response = await dioClient.post(
         ApiConst.verify_code,
         data: formData,
         token: false,
       );
-      if (response.statusCode == 200) {
-        isLoading.value = false;
-        return username;
+
+      isLoading.value = false;
+
+      // print("🔁 Response Status: ${response.statusCode}");
+      // print("📦 Response Data: ${response.data}");
+
+      final data =
+          response.data is String ? jsonDecode(response.data) : response.data;
+
+      // ✅ Check `status == 1` means success
+      if (response.statusCode == 200 && data['status'] == 1) {
+        print("✅ OTP verified successfully");
+        return data['username'];
       } else {
         Get.snackbar(
-          'Error',
-          response.data['message'] ?? 'Unknown error',
+          'Invalid OTP',
+          data['message'] ?? 'OTP verification failed',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
         );
+        return null;
       }
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         'Error',
-        e.toString(),
+        'Something went wrong. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
+      // print("❌ Exception: $e");
+      return null;
     }
-    return null;
   }
 
+  //change password
   Future<bool> changePassword(
     String username,
     String pass,
     String confPass,
   ) async {
     try {
+      // Optional server-side validation
+      if (pass.isEmpty || confPass.isEmpty || pass != confPass) {
+        Get.snackbar(
+          'Validation Error',
+          'Passwords are either empty or do not match.',
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+
+      final strongPassRegex = RegExp(r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{8,}$');
+      if (!strongPassRegex.hasMatch(pass)) {
+        Get.snackbar(
+          'Weak Password',
+          'Password must have at least 8 characters, one uppercase letter, and one special character.',
+          backgroundColor: Colors.orangeAccent,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+
       isLoading.value = true;
-      dio.FormData formData = dio.FormData.fromMap({
+
+      final formData = dio.FormData.fromMap({
         'username': username,
         'password': pass,
-        "confirm_password": confPass,
+        'confirm_password': confPass,
       });
+
       final response = await dioClient.post(
         ApiConst.change_password,
         data: formData,
         token: false,
       );
+
+      final message = response.data['message'] ?? 'Something happened';
+      final success =
+          response.statusCode == 200 &&
+          (response.data['status'] == true || response.data['success'] == true);
+
       if (response.statusCode == 200) {
         isLoading.value = false;
         Get.snackbar(

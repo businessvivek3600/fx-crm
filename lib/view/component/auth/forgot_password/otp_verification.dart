@@ -40,29 +40,34 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     });
   }
 
-  void _verifyOtp(String otp) async {
-    if (otp.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please enter OTP")));
-      return;
-    } else if (otp.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Password must be 6 digits")),
-      );
-      return;
-    }
-    var res = await authController.verifyOtp(widget.username, otp);
-    if (res == null) return;
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => NewPasswordScreen(username: widget.username),
-        ),
-      );
-    }
+void _verifyOtp(String otp) async {
+  if (otp.isEmpty || otp.length != 6) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Please enter valid 6-digit OTP")),
+    );
+    return;
   }
+
+  // ✅ Try verifying
+  final result = await authController.verifyOtp(widget.username, otp);
+
+  
+
+  if (result != null) {
+    // ✅ Navigate only if widget is still active
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NewPasswordScreen(username: result),
+      ),
+    );
+  } else {
+    
+  }
+}
+
 
   void _resendOtp() {
     setState(() => _remainingTime = 60);

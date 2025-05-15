@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/routes/route_name.dart';
+import 'package:fx_crm/routes/route_path.dart';
 import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';
+import 'package:fx_crm/view/component/auth/login_screen.dart';
 import 'package:get/get.dart';
 
 import '../../../../../widgets/bg_container.dart';
@@ -51,9 +53,11 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
       newPassword,
       confirmPassword,
     );
-
+    router.pushReplacement(Paths.login);
     if (success) {
-      router.pushReplacementNamed(Routes.login); // or push to login screen
+      // Navigator.of(context).pushReplacement(
+      //   MaterialPageRoute(builder: (context) => LoginScreen()),
+      // ); // Direct navigation for debug
     }
   }
 
