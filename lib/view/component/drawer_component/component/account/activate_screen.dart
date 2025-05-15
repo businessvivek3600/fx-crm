@@ -6,7 +6,7 @@ import '../../../../../utils/theme.dart';
 import '../../../../../widgets/bg_container.dart';
 
 class ActivateAccountScreen extends StatelessWidget {
-  const ActivateAccountScreen({Key? key}) : super(key: key);
+  const ActivateAccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

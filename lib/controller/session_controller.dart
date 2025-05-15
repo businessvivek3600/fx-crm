@@ -37,17 +37,25 @@ class SessionController extends GetxController {
     }
   }
 
-  void clearSession({bool redirectToLogin = true,}) {
+  void clearSession({bool redirectToLogin = true}) {
     token.value = '';
     isLoggedIn.value = false;
     customer.value = null;
+
     storage.remove('token');
     storage.remove('customer');
 
     if (redirectToLogin) {
-      Get.snackbar('Session Expired', 'Please login again',backgroundColor: Colors.redAccent, colorText: Colors.white,
-          duration: Duration(seconds: 2));
-      Get.offAll(() => LoginScreen());
+      Get.snackbar(
+        'Session Expired',
+        'Please login again',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
+
+
 }
