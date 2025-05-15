@@ -4,13 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/view/component/auth/forgot_password/new_password.dart';
 import 'package:get/get.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../widgets/bg_container.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String username;
-  const OtpVerificationScreen({super.key, required this.username});
+  final String email;
+  const OtpVerificationScreen({
+    super.key,
+    required this.username,
+    required this.email,
+  });
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -40,36 +46,37 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     });
   }
 
-void _verifyOtp(String otp) async {
-  if (otp.isEmpty || otp.length != 6) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please enter valid 6-digit OTP")),
-    );
-    return;
+  void _verifyOtp(String otp) async {
+    if (authController.isLoading.value) return;
+    authController.isLoading.value = true;
+
+    print('calling...');
+    if (otp.isEmpty || otp.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter valid 6-digit OTP")),
+      );
+      return;
+    }
+
+    // ✅ Try verifying
+    final result = await authController.verifyOtp(widget.username, otp);
+
+    if (result != null) {
+      // ✅ Navigate only if widget is still active
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => NewPasswordScreen(username: result),
+        ),
+      );
+    } else {}
   }
 
-  // ✅ Try verifying
-  final result = await authController.verifyOtp(widget.username, otp);
-
-  
-
-  if (result != null) {
-    // ✅ Navigate only if widget is still active
-    if (!mounted) return;
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => NewPasswordScreen(username: result),
-      ),
-    );
-  } else {
-    
-  }
-}
-
-
-  void _resendOtp() {
+  void _resendOtp() async {
+    var res = await authController.getOtp(widget.email);
+    if (res == null) return;
     setState(() => _remainingTime = 60);
     _startCountdown();
     ScaffoldMessenger.of(
@@ -172,7 +179,7 @@ void _verifyOtp(String otp) async {
                     onPressed: _resendOtp,
                     child: Text(
                       "Resend OTP",
-                      style: TextStyle(color: Theme.of(context).primaryColor),
+                      style: TextStyle(color: white),
                     ),
                   ),
                 ),

@@ -262,10 +262,9 @@ class AuthController extends GetxController {
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final List countriesData = response.data['countries'] ?? [];
 
-        countryList.value =
-            countriesData
-                .map((countryJson) => Country.fromJson(countryJson))
-                .toList();
+        countryList.value = countriesData
+            .map((countryJson) => Country.fromJson(countryJson))
+            .toList();
       } else {
         Get.snackbar(
           'Failed to Fetch Countries',
@@ -502,8 +501,7 @@ class AuthController extends GetxController {
       );
 
       final message = response.data['message'] ?? 'Something happened';
-      final success =
-          response.statusCode == 200 &&
+      final success = response.statusCode == 200 &&
           (response.data['status'] == true || response.data['success'] == true);
 
       if (response.statusCode == 200) {
