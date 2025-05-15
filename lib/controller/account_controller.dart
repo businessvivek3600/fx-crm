@@ -1,7 +1,50 @@
 
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AccountController extends GetxController{
+import '../constant/api_constants.dart';
+import '../database/dio/dio/dio_client.dart';
 
+
+class AccountController extends GetxController {
+  final DioClient dioClient;
+
+  AccountController({required this.dioClient});
+
+  static AccountController get to => Get.find();
+
+  final RxBool isLoading = false.obs;
+  final RxInt isKyc = 0.obs;
+  final RxInt completeProfile = 0.obs;
+
+  Future<void> getActivateDetails() async {
+    isLoading.value = true;
+    try {
+      final response = await dioClient.post(ApiConst.activate);
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final data = response.data['data'];
+        isKyc.value = int.tryParse(data['is_kyc'].toString()) ?? 0;
+        completeProfile.value = int.tryParse(data['complete_profile'].toString()) ?? 0;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch Activate details',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

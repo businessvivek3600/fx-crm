@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _animationController = AnimationController(vsync: this);
 
     // You can change duration or speed here
-    _animationController.duration = const Duration(seconds: 3); // faster
+    _animationController.duration = const Duration(seconds: 3);
     _animationController.forward();
 
     _animationController.addStatusListener((status) {

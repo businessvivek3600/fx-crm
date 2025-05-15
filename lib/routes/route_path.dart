@@ -6,9 +6,13 @@ class Paths {
   static const String login = '/${Routes.login}';
   static const String signup = '/${Routes.signup}';
   static const String dashboard = '/${Routes.dashboard}';
+  ///Accounts
   static const String accounts = '/${Routes.accounts}';
   static const String wallet_account = '/${Routes.wallet_account}';
   static const String trasaction_history = '/${Routes.trasaction_history}';
+  static const String activateAccount = '/${Routes.activateAccount}';
+
+  ///Profile
   static const String editprofile = '/${Routes.editprofile}';
   static const String bank_wallet = '/${Routes.bank_wallet}';
   static const String kyc = '/${Routes.kycScreen}';

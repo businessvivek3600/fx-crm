@@ -11,6 +11,7 @@ import 'package:nb_utils/nb_utils.dart' hide DialogType;
 
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
+import '../database/notification_service.dart';
 import '../models/country_model.dart';
 import '../models/customer_model.dart';
 import '../view/component/auth/login_screen.dart';
@@ -48,6 +49,7 @@ class AuthController extends GetxController {
     selectedCountryId.value = matchedCountry?.id.toString() ?? '';
   }
 
+
   /// ------ Login APIs Functions
   Future<void> login() async {
     if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
@@ -64,9 +66,13 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
+      // Get FCM token
+      final fcmToken = await NotificationService().getDeviceToken();
+
       Map<String, dynamic> loginData = {
-        'username': usernameController.text,
+        'username': usernameController.text.toUpperCase(),
         'password': passwordController.text,
+        'fcm_token': fcmToken ?? '',
       };
 
       /// 🛑 DEBUG: Print POST Body
@@ -445,6 +451,7 @@ class AuthController extends GetxController {
     return null;
   }
 
+  /// --------------CHANGE PASSWORD--------------
   Future<bool> changePassword(
     String username,
     String pass,
@@ -494,6 +501,55 @@ class AuthController extends GetxController {
     }
     return false;
   }
+
+  /// ------------- - LOGOUT - -------------
+  Future<void> logout() async {
+    try {
+      isLoading.value = true;
+      /// Call Logout API with token in headers
+      final response = await dioClient.post(
+        ApiConst.logOut,
+        token: true);
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        /// Clear user session and data
+       SessionController.to.clearSession();
+        AppController.to.setLoginStatus(false);
+        AppController.to.saveToken('');
+        AppController.to.saveCustomerData(Customer());
+
+        /// Navigate to Login Screen
+        router.pushReplacement(Paths.login);
+
+        // Get.snackbar(
+        //   'Logged Out',
+        //   'You have been logged out successfully',
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
+      } else {
+        Get.snackbar(
+          'Logout Failed',
+          response.data['message'] ?? 'Something went wrong',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 
   @override
   void onClose() {
