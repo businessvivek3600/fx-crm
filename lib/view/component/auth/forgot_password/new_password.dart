@@ -122,6 +122,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             ? const SizedBox(
                               width: 20,
                               height: 20,
+                              
                               child: CircularProgressIndicator(
                                 color: Colors.white,
                                 strokeWidth: 2,
