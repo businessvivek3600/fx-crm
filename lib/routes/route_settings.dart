@@ -19,13 +19,19 @@ import 'package:go_router/go_router.dart';
 import '../controller/session_controller.dart';
 import '../view/component/auth/login_screen.dart';
 import '../view/dashboard_screen.dart';
+import '../view/splash_screen.dart';
 
 final router = GoRouter(
   navigatorKey: Get.key,
-  initialLocation: Paths.dashboard,
+  initialLocation: Paths.splash,
   observers: [GetObserver()],
   redirect: _redirect,
   routes: [
+    GoRoute(
+      path:Paths.splash,
+      name: Routes.splash,
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(
       path: Paths.login,
       name: Routes.login,
