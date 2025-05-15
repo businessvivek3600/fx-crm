@@ -10,6 +10,9 @@ class ApiConst {
   ///Dashboard
   static const String home = 'dashboard';
 
+  ///Accounts
+  static const String activate = 'activate';
+
   /// Country
   static const String country = "countries";
 

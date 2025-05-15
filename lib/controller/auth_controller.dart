@@ -79,8 +79,6 @@ class AuthController extends GetxController {
       );
 
       /// 🛑 DEBUG: Print API Response
-      print("------------------------------------------");
-      print(response.data);
       if (response.statusCode == 200) {
         int isSuccess = response.data['status'] ?? 0;
 
@@ -94,6 +92,9 @@ class AuthController extends GetxController {
           /// Save in AppController
           AppController.to.saveToken(loginToken);
           AppController.to.setLoginStatus(true);
+          /// ✅ Clear input fields
+          usernameController.clear();
+          passwordController.clear();
           Get.snackbar(
             'Login Successfully',
             "You're all set to continue",

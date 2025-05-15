@@ -75,6 +75,7 @@ class CustomDrawer extends StatelessWidget {
                       // router.push(Routes.CreateAccountScreen);
                     },
                   },
+
                   {
                     'title': 'Activate Account',
                     'icon': Icons.account_box_outlined,
@@ -319,6 +320,7 @@ class CustomDrawer extends StatelessWidget {
                 icon: Icons.logout,
                 title: 'Logout',
                 onTap: () {
+                  Get.closeAllSnackbars();
                   AwesomeDialog(
                     context: Get.context!,
                     dialogType: DialogType.warning,
@@ -336,10 +338,10 @@ class CustomDrawer extends StatelessWidget {
                     btnCancelOnPress: () {},
                     btnOkText: 'Logout',
                     btnOkOnPress: () {
-                      SessionController.to
-                          .clearSession(); // Clears session and navigates to login
-                      SessionController.to
-                          .clearSession(); // Clears session and navigates to login
+                      Future.delayed(Duration(milliseconds: 200), () {
+                        SessionController.to.clearSession();
+                        context.go(Paths.login); // or Navigator.pushReplacement
+                      });
                     },
                   ).show();
                 },
