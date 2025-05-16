@@ -3,6 +3,8 @@ class Routes {
   static const String login = 'login';
   static const String signup = "signup";
   static const String dashboard = "dashboard";
+  static const String notification = "notification";
+
   // Accounts
   static const String accounts = "accounts";
   static const String wallet_account = "wallet_account";

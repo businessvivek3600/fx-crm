@@ -6,6 +6,8 @@ class Paths {
   static const String login = '/${Routes.login}';
   static const String signup = '/${Routes.signup}';
   static const String dashboard = '/${Routes.dashboard}';
+  static const String notification = '/${Routes.notification}';
+
   ///Accounts
   static const String accounts = '/${Routes.accounts}';
   static const String wallet_account = '/${Routes.wallet_account}';

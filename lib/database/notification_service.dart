@@ -13,11 +13,10 @@ class NotificationService {
   NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final GetStorage storage = GetStorage();
-  // Add this for Platform check
 
   Future<void> init() async {
     await _requestNotificationPermissionIfNeeded();
@@ -25,14 +24,14 @@ class NotificationService {
     print("🔐 iOS permissions: ${setting.authorizationStatus}");
 
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
-          requestAlertPermission: true,
-          requestSoundPermission: true,
-          requestBadgePermission: true,
-        );
+    DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+    );
 
     final InitializationSettings settings = InitializationSettings(
       android: androidSettings,
@@ -53,9 +52,23 @@ class NotificationService {
     _setupInteractedMessage();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("📩 Foreground message received ${message.data}");
+      print("📥 Foreground notification message: ${message.data}");
+      print("🔔 Notification: ${message.notification?.title} - ${message.notification?.body}");
       _showNotification(message);
     });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Notification clicked!');
+      // Navigate to NotificationScreen
+    });
+
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null) {
+        print('Notification caused app to open from terminated state');
+        // Navigate to NotificationScreen
+      }
+    });
+
 
     final fcmToken = await getDeviceToken();
     print("✅ FCM token: $fcmToken");
@@ -64,7 +77,6 @@ class NotificationService {
       String? apnsToken;
       int retry = 0;
 
-      // 🔁 Wait for APNs token up to 10 times (10 seconds)
       while (apnsToken == null && retry < 10) {
         apnsToken = await _firebaseMessaging.getAPNSToken();
         if (apnsToken == null) {
@@ -84,7 +96,6 @@ class NotificationService {
     }
   }
 
-  ///user Permission
   Future<void> _requestNotificationPermissionIfNeeded() async {
     final alreadyRequested =
         storage.read('notification_permission_requested') ?? false;
@@ -99,7 +110,7 @@ class NotificationService {
 
   void _setupInteractedMessage() async {
     final RemoteMessage? initialMessage =
-        await _firebaseMessaging.getInitialMessage();
+    await _firebaseMessaging.getInitialMessage();
 
     if (initialMessage != null) {
       print("📤 getInitialMessage triggered ${initialMessage.data}");
@@ -116,10 +127,11 @@ class NotificationService {
     final notification = message.notification;
     final data = message.data;
 
-    // Prefer data fields for title/body to support data-only notifications
     final String? title = notification?.title ?? data['title'];
     final String? body = notification?.body ?? data['body'];
-    final String? imageUrl = data['image']; // Always fallback to data for iOS
+    final String? imageUrl = data['image'] ??
+        notification?.android?.imageUrl ?? // For Android
+        notification?.apple?.imageUrl;
 
     BigPictureStyleInformation? bigPictureStyleInformation;
 
@@ -158,7 +170,6 @@ class NotificationService {
       payload: data.toString(),
     );
 
-    // Save notification to local DB
     await NotificationDatabase().insertNotification({
       'title': title ?? '',
       'body': body ?? '',
@@ -168,7 +179,6 @@ class NotificationService {
 
     print("✅ Notification saved: $title");
   }
-
 
   Future<String> _downloadImage(String url, String fileName) async {
     final response = await http.get(Uri.parse(url));
@@ -211,11 +221,10 @@ class NotificationService {
     }
   }
 
-
   Future<String?> getDeviceToken() async {
     final fcmToken = await _firebaseMessaging.getToken();
     final apnsToken =
-        Platform.isIOS ? await _firebaseMessaging.getAPNSToken() : null;
+    Platform.isIOS ? await _firebaseMessaging.getAPNSToken() : null;
 
     print("📱 FCM Token: $fcmToken");
     if (apnsToken != null) {
