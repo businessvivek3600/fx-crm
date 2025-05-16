@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/utils/theme.dart';
+import 'package:get/get.dart';
 
+import '../../../../../controller/account_controller.dart';
 import '../../../../../controller/app_controller.dart';
+import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 import 'widget/set_balance_dialog.dart';
@@ -14,12 +17,12 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  late final AccountController  accountController;
   final TextEditingController accountTypeController = TextEditingController();
   final TextEditingController currencyController = TextEditingController(text: 'USD');
   final TextEditingController leverageController = TextEditingController(text: '1:1000');
   final TextEditingController depositController = TextEditingController(text: '200');
 
-  final List<String> accountTypeOptions = ['Standard Account', 'Raw Spread'];
   final List<String> currencyOptions = ['AUD', 'USD', 'EUR', 'GBP', 'CHF', 'NZD', 'JPY', 'SGD', 'CAD', 'HKD'];
   final List<String> leverageOptions = [
     '1:1000', '1:500', '1:400', '1:300', '1:200', '1:100',
@@ -30,6 +33,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     '100000', '500000', '1000000', '5000000'
   ];
   bool showCreateAccountForm = false;
+  String capitalizeWords(String value) {
+    if (value.isEmpty) return value;
+    return value
+        .split(' ')
+        .map((word) => word.isNotEmpty
+        ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+        : '')
+        .join(' ');
+  }
 
   final GlobalKey _accountTypeKey = GlobalKey();
   final GlobalKey _currencyKey = GlobalKey();
@@ -64,7 +76,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void _selectAccountType() => _showDropdownMenu(_accountTypeKey, accountTypeOptions, accountTypeController);
   void _selectCurrency() => _showDropdownMenu(_currencyKey, currencyOptions, currencyController);
   void _selectLeverage() => _showDropdownMenu(_leverageKey, leverageOptions, leverageController);
   void _selectDeposit() => _showDropdownMenu(_depositKey, depositOptions, depositController);
@@ -72,7 +83,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   void initState() {
     super.initState();
-    accountTypeController.text = 'Raw Spread'; // Default selected
+    accountController = Get.put(
+      AccountController(dioClient: dioClient),
+    ); // Provide dioClient
+    accountController.getAccountPlans();
   }
   bool _obscurePassword = true;
   @override
@@ -96,32 +110,32 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// Header with button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          showCreateAccountForm = !showCreateAccountForm; // Toggle
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: showCreateAccountForm ? Colors.redAccent.shade700 : ThemeUtils.primaryColor,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text(
-                          showCreateAccountForm ? "Cancel" : "+ Open New Account", // Toggle text
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    showCreateAccountForm ? SizedBox() : ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          showCreateAccountForm = !showCreateAccountForm; // Toggle
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: showCreateAccountForm ? Colors.redAccent.shade700 : ThemeUtils.primaryColor,
+                                        padding: const EdgeInsets.symmetric(vertical: 14),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                                        child: Text(
+                                          showCreateAccountForm ? "Cancel" : "+ Open New Account", // Toggle text
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                 const SizedBox(height: 16),
 
                 /// Account Details Section
@@ -131,18 +145,35 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                 /// Create Account Form Section
                 if (showCreateAccountForm) ...[
-                  DropDownTextFormField(
-                    key: _accountTypeKey,
-                    label: 'Account Type',
-                    hint: 'Select Account Type',
-                    controller: accountTypeController,
-                    readOnly: true,
-                    onTap: _selectAccountType,
-                  ),
+                  Obx(() {
+                    if (accountController.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final options = accountController.accountTypes
+                        .map((e) => capitalizeWords(e['name'].toString()))
+                        .toList();
+
+                    return DropDownTextFormField(
+                      key: _accountTypeKey,
+                      label: 'Account Type',
+                      hint: 'Select Account Type',
+                      colors: Colors.white70,
+                      controller: accountTypeController,
+                      // readOnly: true,
+                      onTap: options.isNotEmpty
+                          ? () => _showDropdownMenu(_accountTypeKey, options, accountTypeController)
+                          : null,
+                    );
+                  }),
+
+
+
                   const SizedBox(height: 16),
                   DropDownTextFormField(
                     key: _currencyKey,
                     label: 'Currency',
+                    colors: Colors.white70,
                     hint: 'Select Currency',
                     controller: currencyController,
                     readOnly: true,
@@ -152,15 +183,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   DropDownTextFormField(
                     key: _leverageKey,
                     label: 'Leverage',
+                    colors: Colors.white70,
                     hint: 'Select Leverage',
                     controller: leverageController,
-                    readOnly: true,
+                    // readOnly: true,
                     onTap: _selectLeverage,
                   ),
                   const SizedBox(height: 16),
                   DropDownTextFormField(
                     key: _depositKey,
                     label: 'Initial Deposit',
+                    colors: Colors.white70,
                     hint: 'Select Deposit',
                     controller: depositController,
                     readOnly: true,

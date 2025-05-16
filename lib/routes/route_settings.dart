@@ -14,6 +14,7 @@ import 'package:fx_crm/view/component/drawer_component/component/profile/edit_pr
 import 'package:fx_crm/view/component/drawer_component/component/profile/kyc_verification.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/monthly_reward.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/terms_condition.dart';
+import 'package:fx_crm/view/component/notification/notification_screen.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,6 +47,13 @@ final router = GoRouter(
       name: Routes.dashboard,
       builder: (context, state) => DashboardScreen(),
     ),
+    GoRoute(
+      path: Paths.notification,
+      name: Routes.notification,
+      builder: (context, state) => NotificationScreen(),
+    ),
+
+
 
     GoRoute(
       path: Paths.signup,

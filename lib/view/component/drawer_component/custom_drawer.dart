@@ -78,14 +78,14 @@ class CustomDrawer extends StatelessWidget {
                     },
                   },
 
-                  {
-                    'title': 'Activate Account',
-                    'icon': Icons.account_box_outlined,
-                    'onTap': () {
-                      context.push(Paths.activateAccount);
-                      // router.push(Routes.CreateAccountScreen);
-                    },
-                  },
+                  // {
+                  //   'title': 'Activate Account',
+                  //   'icon': Icons.account_box_outlined,
+                  //   'onTap': () {
+                  //     context.push(Paths.activateAccount);
+                  //     // router.push(Routes.CreateAccountScreen);
+                  //   },
+                  // },
                   {
                     'title': 'Wallet Account',
                     'icon': Icons.account_balance_wallet_outlined,

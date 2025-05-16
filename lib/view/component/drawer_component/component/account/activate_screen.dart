@@ -16,14 +16,14 @@ class ActivateAccountScreen extends StatefulWidget {
 }
 
 class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
-  late final AccountController kycController;
+  late final AccountController accountController;
   @override
   void initState() {
     super.initState();
-    kycController = Get.put(
+    accountController = Get.put(
       AccountController(dioClient: dioClient),
     ); // Provide dioClient
-    kycController.getActivateDetails();
+    accountController.getActivateDetails();
   }
 
   @override
@@ -44,8 +44,8 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Obx(() {
-            final kyc = kycController.isKyc.value;
-            final profile = kycController.completeProfile.value;
+            final kyc = accountController.isKyc.value;
+            final profile = accountController.completeProfile.value;
 
             String kycStatus = "Unknown";
             Color kycColor = Colors.grey;
