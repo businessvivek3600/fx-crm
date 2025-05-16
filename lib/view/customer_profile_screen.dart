@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/main.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:get/get.dart';
+
 import '../controller/dashboard_controller.dart';
-import '../database/dio/dio/dio_client.dart';
 
 class CustomerProfileScreen extends StatefulWidget {
   const CustomerProfileScreen({super.key});
@@ -129,6 +129,8 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   }
 
   Widget _buildCard(String title, Map<String, String> fields) {
+    final entries = fields.entries.toList();
+
     return Card(
       color: const Color(0xFF263238),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -147,29 +149,46 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            ...fields.entries.map(
-              (entry) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        entry.key,
-                        style: const TextStyle(color: Colors.white70),
-                      ),
+            ...List.generate(entries.length, (index) {
+              final entry = entries[index];
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 0,
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        entry.value,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            entry.key,
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ), // Horizontal space between key and value
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            entry.value,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                  if (index < entries.length - 1)
+                    const Divider(
+                      color: Colors.white24,
+                      thickness: 1,
+                      height: 12,
+                    ),
+                ],
+              );
+            }),
           ],
         ),
       ),
