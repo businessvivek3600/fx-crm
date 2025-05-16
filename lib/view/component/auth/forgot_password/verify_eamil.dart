@@ -28,11 +28,15 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
     if (res == null) return;
 
     // Navigate to OTP screen
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (_) => OtpVerificationScreen(
-              username: res, email: _emailController.text.trim())),
+        builder:
+            (_) => OtpVerificationScreen(
+              username: res,
+              email: _emailController.text.trim(),
+            ),
+      ),
     );
   }
 
@@ -98,11 +102,12 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: authController.isLoading.value ? null : _sendOtp,
-                    child: authController.isLoading.value
-                        ? const CircularProgressIndicator(
-                            color: Colors.white,
-                          )
-                        : const Text('Send OTP'),
+                    child:
+                        authController.isLoading.value
+                            ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                            : const Text('Send OTP'),
                   ),
                 ),
               ),

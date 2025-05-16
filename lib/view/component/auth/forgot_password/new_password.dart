@@ -55,9 +55,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     );
     router.pushReplacement(Paths.login);
     if (success) {
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(builder: (context) => LoginScreen()),
-      // ); // Direct navigation for debug
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      ); // Direct navigation for debug
     }
   }
 

@@ -262,9 +262,10 @@ class AuthController extends GetxController {
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final List countriesData = response.data['countries'] ?? [];
 
-        countryList.value = countriesData
-            .map((countryJson) => Country.fromJson(countryJson))
-            .toList();
+        countryList.value =
+            countriesData
+                .map((countryJson) => Country.fromJson(countryJson))
+                .toList();
       } else {
         Get.snackbar(
           'Failed to Fetch Countries',
@@ -423,15 +424,17 @@ class AuthController extends GetxController {
 
       isLoading.value = false;
 
-      // print("🔁 Response Status: ${response.statusCode}");
-      // print("📦 Response Data: ${response.data}");
-
       final data =
           response.data is String ? jsonDecode(response.data) : response.data;
 
-      // ✅ Check `status == 1` means success
       if (response.statusCode == 200 && data['status'] == 1) {
-        print("✅ OTP verified successfully");
+        Fluttertoast.showToast(
+          msg: "OTP Verified",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
         return data['username'];
       } else {
         Get.snackbar(
@@ -452,7 +455,6 @@ class AuthController extends GetxController {
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
-      // print("❌ Exception: $e");
       return null;
     }
   }
@@ -501,7 +503,8 @@ class AuthController extends GetxController {
       );
 
       final message = response.data['message'] ?? 'Something happened';
-      final success = response.statusCode == 200 &&
+      final success =
+          response.statusCode == 200 &&
           (response.data['status'] == true || response.data['success'] == true);
 
       if (response.statusCode == 200) {
