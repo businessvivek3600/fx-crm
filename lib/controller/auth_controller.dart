@@ -13,6 +13,7 @@ import 'package:nb_utils/nb_utils.dart' hide DialogType;
 
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
+import '../database/notification_service.dart';
 import '../models/country_model.dart';
 import '../models/customer_model.dart';
 import '../view/component/auth/login_screen.dart';
@@ -66,9 +67,13 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
+      // Get FCM token
+      final fcmToken = await NotificationService().getDeviceToken();
+
       Map<String, dynamic> loginData = {
-        'username': usernameController.text,
+        'username': usernameController.text.toUpperCase(),
         'password': passwordController.text,
+        'fcm_token': fcmToken ?? '',
       };
 
       /// 🛑 DEBUG: Print POST Body
@@ -409,7 +414,7 @@ class AuthController extends GetxController {
     return null;
   }
 
-  //Verify OTP
+  //Verify Password
   Future<String?> verifyOtp(String username, String otp) async {
     try {
       isLoading.value = true;
@@ -458,55 +463,25 @@ class AuthController extends GetxController {
       return null;
     }
   }
-
   //change password
+
   Future<bool> changePassword(
     String username,
     String pass,
     String confPass,
   ) async {
     try {
-      // Optional server-side validation
-      if (pass.isEmpty || confPass.isEmpty || pass != confPass) {
-        Get.snackbar(
-          'Validation Error',
-          'Passwords are either empty or do not match.',
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white,
-        );
-        return false;
-      }
-
-      final strongPassRegex = RegExp(r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{8,}$');
-      if (!strongPassRegex.hasMatch(pass)) {
-        Get.snackbar(
-          'Weak Password',
-          'Password must have at least 8 characters, one uppercase letter, and one special character.',
-          backgroundColor: Colors.orangeAccent,
-          colorText: Colors.white,
-        );
-        return false;
-      }
-
       isLoading.value = true;
-
-      final formData = dio.FormData.fromMap({
+      dio.FormData formData = dio.FormData.fromMap({
         'username': username,
         'password': pass,
-        'confirm_password': confPass,
+        "confirm_password": confPass,
       });
-
       final response = await dioClient.post(
         ApiConst.change_password,
         data: formData,
         token: false,
       );
-
-      final message = response.data['message'] ?? 'Something happened';
-      final success =
-          response.statusCode == 200 &&
-          (response.data['status'] == true || response.data['success'] == true);
-
       if (response.statusCode == 200) {
         isLoading.value = false;
         Get.snackbar(
@@ -538,6 +513,53 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
     return false;
+  }
+
+  /// ------------- - LOGOUT - -------------
+  Future<void> logout() async {
+    try {
+      isLoading.value = true;
+
+      /// Call Logout API with token in headers
+      final response = await dioClient.post(ApiConst.logOut, token: true);
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        /// Clear user session and data
+        SessionController.to.clearSession();
+        AppController.to.setLoginStatus(false);
+        AppController.to.saveToken('');
+        AppController.to.saveCustomerData(Customer());
+
+        /// Navigate to Login Screen
+        router.pushReplacement(Paths.login);
+
+        // Get.snackbar(
+        //   'Logged Out',
+        //   'You have been logged out successfully',
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
+      } else {
+        Get.snackbar(
+          'Logout Failed',
+          response.data['message'] ?? 'Something went wrong',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

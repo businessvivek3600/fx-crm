@@ -1,26 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../controller/account_controller.dart';
+import '../../../../../main.dart';
 import '../../../../../routes/route_path.dart';
 import '../../../../../utils/theme.dart';
 import '../../../../../widgets/bg_container.dart';
 
-class ActivateAccountScreen extends StatelessWidget {
+class ActivateAccountScreen extends StatefulWidget {
   const ActivateAccountScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const darkBg = Color(0xFF1C1F2E);
-    const darkCard = Color(0xFF2A2F40);
-    const warningColor = Color(0xFFFFC107);
-    const textColor = Colors.white;
+  State<ActivateAccountScreen> createState() => _ActivateAccountScreenState();
+}
 
+class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
+  late final AccountController kycController;
+  @override
+  void initState() {
+    super.initState();
+    kycController = Get.put(
+      AccountController(dioClient: dioClient),
+    ); // Provide dioClient
+    kycController.getActivateDetails();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const warningColor = Color(0xFFFFC107);
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
-          title: Text(
+          title: const Text(
             "Activate Account",
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
           ),
@@ -29,73 +43,102 @@ class ActivateAccountScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _sectionCard(
-                title: 'Personal Details',
-                message: 'Your profile is not complete.',
-                buttonText: 'Complete Now',
-                icon: Icons.person_outline,
-                onPressed: () {
-                  // Navigate to profile completion
-                },
-              ),
-              const SizedBox(height: 16),
-              _sectionCard(
-                title: 'KYC Status',
-                message: 'Your KYC is pending.',
-                buttonText: 'Update KYC',
-                icon: Icons.credit_card_rounded,
-                onPressed: () {
-                  context.push(Paths.kyc);
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.lock_outline),
-                label: const Text("Convert to Live Account"),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 48),
+          child: Obx(() {
+            final kyc = kycController.isKyc.value;
+            final profile = kycController.completeProfile.value;
+
+            String kycStatus = "Unknown";
+            Color kycColor = Colors.grey;
+            if (kyc == 1) {
+              kycStatus = "Your KYC is verified.";
+              kycColor = Colors.green;
+            } else if (kyc == 2) {
+              kycStatus = "Your KYC is not verified.";
+              kycColor = Colors.redAccent;
+            } else if (kyc == 3) {
+              kycStatus = "Your KYC is pending.";
+              kycColor = warningColor;
+            }
+
+            final profileText = profile == 1
+                ? "Your profile is complete."
+                : "Your profile is not complete.";
+            final profileColor = profile == 1 ? Colors.green : warningColor;
+
+            return Column(
+              children: [
+                _sectionCard(
+                  title: 'Personal Details',
+                  message: profileText,
+                  messageColor: profileColor,
+                  buttonText: 'Complete Now',
+                  icon: Icons.person_outline,
+                  onPressed: () {
+                    // Navigate to profile completion
+                  },
                 ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  border: Border.all(color: warningColor.withOpacity(0.6)),
-                  borderRadius: BorderRadius.circular(8),
+                const SizedBox(height: 16),
+                _sectionCard(
+                  title: 'KYC Status',
+                  message: kycStatus,
+                  messageColor: kycColor,
+                  buttonText: 'Update KYC',
+                  icon: Icons.credit_card_rounded,
+                  onPressed: () {
+                    context.push(Paths.kyc);
+                  },
                 ),
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      WidgetSpan(
-                        child: Icon(
-                          Icons.info_outline,
-                          size: 18,
-                          color: Colors.amber.withOpacity(0.6),
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                            '  You cannot convert to a live account until you complete all required verifications:\n\n',
-                      ),
-                      TextSpan(text: '• KYC is not approved.\n'),
-                      TextSpan(text: '• Personal profile is incomplete.'),
-                    ],
-                    style: TextStyle(color: Colors.amber.withOpacity(0.6)),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.lock_outline),
+                  label: const Text("Convert to Live Account"),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 48),
                   ),
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(height: 12),
+                if (kyc != 1 || profile != 1)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      border: Border.all(color: warningColor.withOpacity(0.6)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          WidgetSpan(
+                            child: Icon(
+                              Icons.info_outline,
+                              size: 18,
+                              color: Colors.amber.withOpacity(0.6),
+                            ),
+                          ),
+                          const TextSpan(
+                            text:
+                            '  You cannot convert to a live account until you complete all required verifications:\n\n',
+                          ),
+                          if (kyc != 1)
+                            const TextSpan(text: '• KYC is not approved.\n'),
+                          if (profile != 1)
+                            const TextSpan(text: '• Personal profile is incomplete.'),
+                        ],
+                        style: TextStyle(color: Colors.amber.withOpacity(0.6)),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          }),
         ),
       ),
     );
   }
+
 
   Widget _sectionCard({
     required String title,
