@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
-import 'package:fx_crm/database/dio/dio/dio_client.dart';
 import 'package:get/get.dart';
 
 import '../../../../widgets/bg_container.dart';
@@ -29,9 +28,15 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
     if (res == null) return;
 
     // Navigate to OTP screen
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => OtpVerificationScreen(username: res)),
+      MaterialPageRoute(
+        builder:
+            (_) => OtpVerificationScreen(
+              username: res,
+              email: _emailController.text.trim(),
+            ),
+      ),
     );
   }
 
@@ -90,7 +95,6 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 32),
               Obx(
                 () => SizedBox(
