@@ -29,6 +29,7 @@ class ApiConst {
 
   ///Profile
   static const String updateProfile = "update_profile";
+  static const String userProfile = "profile";
 
   ///TERMS AND CONDITION
   static const String termAndCondition = "terms";

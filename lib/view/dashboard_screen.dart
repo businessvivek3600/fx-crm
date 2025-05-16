@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fx_crm/view/customer_profile_screen.dart';
 import 'package:get/get.dart';
 import '../controller/dashboard_controller.dart';
 import '../main.dart';
@@ -46,9 +47,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen(),));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NotificationScreen()),
+                );
               },
               icon: Icon(Icons.notifications_outlined),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CustomerProfileScreen(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.person),
             ),
           ],
         ),
