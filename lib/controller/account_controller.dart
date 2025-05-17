@@ -17,16 +17,22 @@ class AccountController extends GetxController {
 
   final RxBool isLoading = false.obs;
 
-  var accountTypes = <Map<String, dynamic>>[].obs;
+  final accountTypes = <Map<String, dynamic>>[].obs;
   final leverageOptions = <String>[].obs;
   final selectedAccountName = ''.obs;
 
-  void updateSelectedAccount(String name, List<String> leverageList) {
+  void updateSelectedAccount(String name) {
     selectedAccountName.value = name;
-    leverageOptions.value = leverageList.map((e) => '1:$e').toList();
+
+    final selected = accountTypes.firstWhereOrNull((e) => e['name'] == name);
+    if (selected != null && selected['leverage'] is List) {
+      final List<String> levers = List<String>.from(selected['leverage']);
+      leverageOptions.value = levers.map((e) => '1:$e').toList();
+    } else {
+      leverageOptions.clear();
+    }
   }
 
-///--------------GET ACCOUNT TYPE-------------------
   Future<void> getAccountPlans() async {
     isLoading.value = true;
     try {
@@ -34,7 +40,6 @@ class AccountController extends GetxController {
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = response.data['data'];
         accountTypes.value = List<Map<String, dynamic>>.from(data);
-        leverageOptions.value = List<String>.from(data.map((e) => e['leverage']));
       } else {
         Get.snackbar(
           'Error',
@@ -56,6 +61,7 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
+
 
 
 
