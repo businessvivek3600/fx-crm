@@ -16,3 +16,14 @@ class AccountType {
     );
   }
 }
+class ApiResponse {
+  final List<String> accountTypes;
+
+  ApiResponse({required this.accountTypes});
+
+  factory ApiResponse.fromJson(Map<String, dynamic> json) {
+    return ApiResponse(
+      accountTypes: List<String>.from(json['account_type']),
+    );
+  }
+}
