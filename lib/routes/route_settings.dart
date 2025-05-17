@@ -5,7 +5,7 @@ import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_path.dart';
 import 'package:fx_crm/view/component/auth/signup_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/activate_screen.dart';
-import 'package:fx_crm/view/component/drawer_component/component/account/create_account_screen.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/transaction_history.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/bank_wallet_screen.dart';

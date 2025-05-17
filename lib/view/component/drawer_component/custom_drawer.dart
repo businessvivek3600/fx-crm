@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_settings.dart';
-import 'package:fx_crm/view/component/drawer_component/component/account/create_account_screen.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart'
     show WalletAccountScreen;
 import 'package:get/get.dart';
