@@ -34,39 +34,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
           backgroundColor: ThemeUtils.primaryColor,
-          centerTitle: true,
-          title: Text(
+          centerTitle: false,
+          title: const Text(
             "DASHBOARD",
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
           ),
           actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NotificationScreen()),
-                );
-              },
-              icon: Icon(Icons.notifications_outlined),
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CustomerProfileScreen(),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(),
+                      ),
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white,
+                    ),
                   ),
-                );
-              },
-              icon: Icon(Icons.person),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomerProfileScreen(),
+                      ),
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(right: 12.0), // adjust as needed
+                    child: Icon(Icons.person, color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+
         // backgroundColor: const Color(0xFF1A1A1A),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
