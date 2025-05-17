@@ -17,14 +17,18 @@ class AccountController extends GetxController {
 
   final RxBool isLoading = false.obs;
 
-  final accountTypes = <Map<String, dynamic>>[].obs;
+  final accountPlans = <Map<String, dynamic>>[].obs;
   final leverageOptions = <String>[].obs;
   final selectedAccountName = ''.obs;
+
+  final accountTypes = <String>[].obs;
+  final selectedAccountType = ''.obs;
+
 
   void updateSelectedAccount(String name) {
     selectedAccountName.value = name;
 
-    final selected = accountTypes.firstWhereOrNull((e) => e['name'] == name);
+    final selected = accountPlans.firstWhereOrNull((e) => e['name'] == name);
     if (selected != null && selected['leverage'] is List) {
       final List<String> levers = List<String>.from(selected['leverage']);
       leverageOptions.value = levers.map((e) => '1:$e').toList();
@@ -38,8 +42,14 @@ class AccountController extends GetxController {
     try {
       final response = await dioClient.post(ApiConst.accountPlans);
       if (response.statusCode == 200 && response.data['status'] == 1) {
-        final data = response.data['data'];
-        accountTypes.value = List<Map<String, dynamic>>.from(data);
+        final data = List<Map<String, dynamic>>.from(response.data['data']);
+        accountPlans.value = data;
+
+        // Extract and deduplicate account types
+        final types = List<String>.from(response.data['account_type'] ?? []);
+        accountTypes.value = types;
+        print("Account Types: ${accountTypes.value}");
+
       } else {
         Get.snackbar(
           'Error',
