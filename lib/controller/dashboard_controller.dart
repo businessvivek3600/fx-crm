@@ -11,13 +11,13 @@ class DashBoardController extends GetxController {
   var isLoading = false.obs;
   var dashboardData = {}.obs;
   var termsHtml = ''.obs;
+  var profileData = {}.obs;
+
+  /// Fetch Dashboard Data
   Future<void> getDashboardData() async {
     try {
       isLoading.value = true;
-
       final response = await dioClient.post(ApiConst.home);
-      print("-------------------------------");
-      print(response.data);
       if (response.statusCode == 200 && response.data != null) {
         dashboardData.value = response.data;
       } else {
@@ -29,10 +29,11 @@ class DashBoardController extends GetxController {
       isLoading.value = false;
     }
   }
-  ///terms and condition..................
+
+  /// Fetch Terms & Conditions
   Future<void> getTermsAndCondition() async {
-    isLoading.value = true;
     try {
+      isLoading.value = true;
       final response = await dioClient.post(ApiConst.termAndCondition);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         termsHtml.value = response.data['data'] ?? '';
@@ -53,6 +54,23 @@ class DashBoardController extends GetxController {
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch User Profile
+  Future<void> getUserProfile() async {
+    try {
+      isLoading.value = true;
+      final response = await dioClient.post(ApiConst.userProfile);
+      if (response.statusCode == 200 && response.data != null) {
+        profileData.value = response.data['data'] ?? {};
+      } else {
+        Get.snackbar("Error", "Failed to fetch profile");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
     } finally {
       isLoading.value = false;
     }
