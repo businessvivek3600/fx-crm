@@ -3,6 +3,7 @@ import 'package:fx_crm/utils/theme.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/change_account_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/create_account.dart';
 import 'package:get/get.dart';
+
 import '../../../../../widgets/bg_container.dart';
 import 'widget/set_balance_dialog.dart';
 
@@ -92,18 +93,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_vert, color: Colors.black),
                 onSelected: (value) {
-                  if (value == 'master') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ChangeAccountPassword(),
-                      ),
-                    );
-                    print("Master Password selected");
-                  } else if (value == 'investor') {
-                    // TODO: Handle Investor Password action
-                    print("Investor Password selected");
-                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => ChangeAccountPassword(
+                            isInvester: value != 'master',
+                          ),
+                    ),
+                  );
+                  print("Master Password selected");
                 },
                 itemBuilder:
                     (context) => [

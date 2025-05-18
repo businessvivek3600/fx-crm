@@ -1,12 +1,9 @@
-
-
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
-import '../models/account_type_model.dart';
-
 
 class AccountController extends GetxController {
   final DioClient dioClient;
@@ -62,12 +59,6 @@ class AccountController extends GetxController {
     }
   }
 
-
-
-
-
-
-
   ///--------------Currently this module is not used in the app-------------------
   final RxInt isKyc = 0.obs;
   final RxInt completeProfile = 0.obs;
@@ -79,7 +70,8 @@ class AccountController extends GetxController {
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = response.data['data'];
         isKyc.value = int.tryParse(data['is_kyc'].toString()) ?? 0;
-        completeProfile.value = int.tryParse(data['complete_profile'].toString()) ?? 0;
+        completeProfile.value =
+            int.tryParse(data['complete_profile'].toString()) ?? 0;
       } else {
         Get.snackbar(
           'Error',
@@ -100,5 +92,57 @@ class AccountController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  //change account password
+  Future<bool> changeaccountPassword(
+    int accountnumber,
+    String newpass,
+    String confPass,
+    String password_type,
+  ) async {
+    try {
+      isLoading.value = true;
+      dio.FormData formData = dio.FormData.fromMap({
+        'account_no': accountnumber,
+        'new_password': newpass,
+        "confirm_password": confPass,
+        "password_type": password_type,
+      });
+      final response = await dioClient.post(
+        ApiConst.change_acc_password,
+        data: formData,
+      );
+      if (response.statusCode == 200) {
+        isLoading.value = false;
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Password changed successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Unknown error',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+    return false;
   }
 }
