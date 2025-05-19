@@ -45,7 +45,8 @@ class AccountController extends GetxController {
         final data = List<Map<String, dynamic>>.from(response.data['data']);
         accountPlans.value = data;
 
-        // Extract and deduplicate account types
+
+
         final types = List<String>.from(response.data['account_type'] ?? []);
         accountTypes.value = types;
         print("Account Types: ${accountTypes.value}");
