@@ -16,6 +16,10 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool _obscurePassword = true;
+  TextEditingController _investorPasswordController = TextEditingController(
+    text: 'investor123',
+  );
+  bool _obscureInvestorPassword = true;
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
@@ -174,21 +178,21 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
               // Investor Password Field
               TextFormField(
-                // obscureText: _obscureInvestorPassword,
-                initialValue: 'investor123',
+                controller: _investorPasswordController,
+                obscureText: _obscureInvestorPassword,
                 readOnly: true,
                 decoration: InputDecoration(
                   labelText: 'Investor Password',
                   border: OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      // _obscureInvestorPassword
-                      //     ? Icons.visibility_off
-                      Icons.visibility_off,
+                      _obscureInvestorPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
                     onPressed: () {
                       setState(() {
-                        // _obscureInvestorPassword = !_obscureInvestorPassword;
+                        _obscureInvestorPassword = !_obscureInvestorPassword;
                       });
                     },
                   ),
