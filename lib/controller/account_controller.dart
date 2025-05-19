@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:fx_crm/models/account_model.dart';
+import 'package:fx_crm/models/customer_model.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
@@ -23,6 +25,7 @@ class AccountController extends GetxController {
   final accountTypes = <String>[].obs;
   final selectedAccountType = ''.obs;
   final initialDeposit = <String>[].obs;
+  var accountList = <AccountModel>[].obs;
 
   void updateSelectedAccount(String name) {
     selectedAccountName.value = name;
@@ -178,6 +181,29 @@ class AccountController extends GetxController {
     }
   }
 
+  // My Account
+  Future<void> fetchAccounts() async {
+    try {
+      isLoading.value = true;
+      final response = await dioClient.post(ApiConst.accounts);
+      print('API Response: ${response.data}');
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        List data = response.data['data'];
+        accountList.value =
+            data
+                .map((e) => AccountModel.fromJson(e))
+                .cast<AccountModel>()
+                .toList();
+      } else {
+        Get.snackbar("Error", "Failed to load accounts");
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   //change account password
   Future<bool> changeaccountPassword(
     int accountnumber,
@@ -193,10 +219,13 @@ class AccountController extends GetxController {
         "confirm_password": confPass,
         "password_type": password_type,
       });
+       print('POST Body: ${formData.fields}');
+
       final response = await dioClient.post(
         ApiConst.change_acc_password,
         data: formData,
       );
+
       if (response.statusCode == 200) {
         isLoading.value = false;
         Get.snackbar(
