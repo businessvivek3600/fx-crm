@@ -6,9 +6,13 @@ import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
 
 class ChangeAccountPassword extends StatefulWidget {
-  const ChangeAccountPassword({super.key, this.isInvester = false});
+  const ChangeAccountPassword({
+    super.key,
+    this.isInvester = false,
+    this.accountNo = '',
+  });
   final bool isInvester;
-
+  final String accountNo;
   @override
   State<ChangeAccountPassword> createState() => _ChangeAccountPasswordState();
 }
@@ -91,11 +95,7 @@ class _ChangeAccountPasswordState extends State<ChangeAccountPassword> {
                                 // validate only new password
                                 if (_formKey.currentState!.validate()) {
                                   controller.changeaccountPassword(
-                                    Get.find<AppController>()
-                                            .customer
-                                            .value
-                                            ?.accountNo ??
-                                        0,
+                                    widget.accountNo!.toString(),
                                     newPassword.text.trim(),
                                     confPassword.text.trim(),
                                     widget.isInvester ? '2' : '1',

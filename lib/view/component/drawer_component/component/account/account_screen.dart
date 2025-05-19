@@ -24,7 +24,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   void initState() {
     super.initState();
-    accountController.fetchAccounts(); // Fetch account list on screen load
+    accountController.fetchAccounts();
   }
 
   @override
@@ -88,9 +88,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
       // Filter demo accounts
       final demoAccounts = accountController.accountList
-          .where((account) => account.accountType.toLowerCase() == 'demo')
           .toList();
-
+      print(demoAccounts.length);
       return ListView.builder(
         itemCount: demoAccounts.length,
         itemBuilder: (context, index) {
@@ -122,6 +121,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           MaterialPageRoute(
                             builder: (_) => ChangeAccountPassword(
                               isInvester: value != 'master',
+                              accountNo: account.accountNo ?? "",
                             ),
                           ),
                         );
@@ -148,7 +148,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        account.accountType,
+                        account.accountType ?? 'dsddssd',
                         style: TextStyle(color: Colors.green.shade800, fontSize: 12),
                       ),
                     ),

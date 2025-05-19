@@ -34,12 +34,10 @@ class AccountController extends GetxController {
     if (selected != null && selected['leverage'] is List) {
       final List<String> levers = List<String>.from(selected['leverage']);
       leverageOptions.value = levers.map((e) => '1:$e').toList();
-      print(leverageOptions.value);
       final List<String> initialAmount = List<String>.from(
         selected['initial_fund'],
       );
       initialDeposit.value = initialAmount.map((e) => e.toString()).toList();
-      print(initialDeposit.value);
     } else {
       leverageOptions.clear();
     }
@@ -55,7 +53,6 @@ class AccountController extends GetxController {
 
         final types = List<String>.from(response.data['account_type'] ?? []);
         accountTypes.value = types;
-        print("Account Types: ${accountTypes.value}");
       } else {
         Get.snackbar(
           'Error',
@@ -198,6 +195,8 @@ class AccountController extends GetxController {
         Get.snackbar("Error", "Failed to load accounts");
       }
     } catch (e) {
+      print("----------------");
+      print(e.toString());
       Get.snackbar("Error", e.toString());
     } finally {
       isLoading.value = false;
@@ -206,7 +205,7 @@ class AccountController extends GetxController {
 
   //change account password
   Future<bool> changeaccountPassword(
-    int accountnumber,
+    String accountNumber,
     String newpass,
     String confPass,
     String password_type,
@@ -214,12 +213,12 @@ class AccountController extends GetxController {
     try {
       isLoading.value = true;
       dio.FormData formData = dio.FormData.fromMap({
-        'account_no': accountnumber,
+        'account_no': accountNumber,
         'new_password': newpass,
         "confirm_password": confPass,
         "password_type": password_type,
       });
-       print('POST Body: ${formData.fields}');
+       print('POST Body:--------------- ${formData.fields}');
 
       final response = await dioClient.post(
         ApiConst.change_acc_password,
