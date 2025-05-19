@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fx_crm/utils/theme.dart';
@@ -110,25 +111,30 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Demo Account ${account.accountNo}',
+                      '${account.accountType} Account ${account.accountNo}',
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     PopupMenuButton<String>(
                       icon: const Icon(Icons.more_vert, color: Colors.black),
-                      onSelected: (value) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChangeAccountPassword(
-                              isInvester: value != 'master',
-                              accountNo: account.accountNo ?? "",
-                            ),
-                          ),
-                        );
-                      },
+                        onSelected: (value) {
+                          if (value == 'leverage') {
+                            _showLeverageDialog(account.accountNo ?? "");
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChangeAccountPassword(
+                                  isInvester: value != 'master',
+                                  accountNo: account.accountNo ?? "",
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       itemBuilder: (context) => [
                         const PopupMenuItem(value: 'master', child: Text('Master Password')),
                         const PopupMenuItem(value: 'investor', child: Text('Investor Password')),
+                        PopupMenuItem(value: 'leverage', child: Text('Change Leverage')),
                       ],
                     ),
                   ],
@@ -139,7 +145,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 /// Type Label
                 Row(
                   children: [
-                    const Text('Raw Spread', style: TextStyle(fontSize: 14, color: Colors.black54)),
+                  Text('${account.accountPlan}', style: TextStyle(fontSize: 14, color: Colors.black54)),
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -159,7 +165,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                 /// Account Title
                 Text(
-                  'MT5 Demo ${account.accountNo}',
+                  'MT5 ${account.accountType} ${account.accountNo}',
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
 
@@ -216,7 +222,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   children: [
                     Expanded(
                       child: Chip(
-                        label: Text('SERVER ${account.accountGroup}',
+                        label: Text('SERVER ${account.accountGroup?? ""}',
                             style: const TextStyle(fontSize: 12)),
                         backgroundColor: Colors.grey.shade200,
                       ),
@@ -250,5 +256,55 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         },
       );
     });
+  }
+  void _showLeverageDialog(String accountNo) {
+    final leverageController = TextEditingController();
+
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.noHeader,
+      animType: AnimType.scale,
+      width: 400,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Change Leverage Account #$accountNo',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: leverageController,
+            decoration: InputDecoration(
+              labelText: 'Leverage',
+              hintText: 'e.g. 1:300',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              final newLeverage = leverageController.text.trim();
+              if (newLeverage.isNotEmpty) {
+                // TODO: Call update API here with `newLeverage` and `accountNo`
+                Navigator.of(context).pop();
+                Get.snackbar('Success', 'Leverage changed to $newLeverage',
+                    snackPosition: SnackPosition.BOTTOM);
+              } else {
+                Get.snackbar('Error', 'Leverage cannot be empty',
+                    backgroundColor: Colors.red, colorText: Colors.white);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: const Text('Submit', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    ).show();
   }
 }
