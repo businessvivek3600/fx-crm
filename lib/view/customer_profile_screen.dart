@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/main.dart';
 import 'package:fx_crm/utils/theme.dart';
+import 'package:fx_crm/view/component/drawer_component/component/profile/edit_profile.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../controller/dashboard_controller.dart';
 
@@ -28,25 +30,41 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
           backgroundColor: ThemeUtils.primaryColor,
           centerTitle: true,
-          title: Text(
+          title: const Text(
             "Customer Profile",
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 23,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
           ),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                // TODO: Handle edit tap here
+                // Example:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => EditProfileScreen()),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Icon(Icons.edit_note, color: Colors.white, size: 28),
+              ),
+            ),
+          ],
         ),
+
         body: SafeArea(
           child: Obx(() {
             if (dashController.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return _buildShimmer();
             }
 
             final data = dashController.profileData;
@@ -92,23 +110,6 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // /// Bank/BTC Details Card
-                  // _buildCard("Bank/BTC Details", {
-                  //   "Account Holder Name": data["bank_account_holder"] ?? '',
-                  //   "Account Number": data["account_number"] ?? '',
-                  //   "IFSC Code": data["ifsc_code"] ?? '',
-                  //   "Bank": data["bank_name"] ?? '',
-                  //   "Branch": data["branch_name"] ?? '',
-                  //   "Bankcode": data["bankcode"] ?? '',
-                  //   "Address": data["bank_address"] ?? '',
-                  //   "City": data["bank_city"] ?? '',
-                  //   "State": data["bank_state"] ?? '',
-                  //   "BTC Address": data["btc_address"] ?? '',
-                  //   "QBN Address": data["qbn_address"] ?? '',
-                  // }),
-
-                  // const SizedBox(height: 20),
-
                   /// Personal Details Card
                   _buildCard("Personal Details", {
                     "Username": data["username"] ?? '',
@@ -134,6 +135,61 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
             );
           }),
         ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Shimmer.fromColors(
+                baseColor: Colors.grey.shade800,
+                highlightColor: Colors.grey.shade700,
+                child: const CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(2, (index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey.shade800,
+                        highlightColor: Colors.grey.shade700,
+                        child: Container(
+                          width: double.infinity,
+                          height: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 30),
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade800,
+            highlightColor: Colors.grey.shade700,
+            child: Container(
+              height: 300,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -177,9 +233,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                             style: const TextStyle(color: Colors.white70),
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ), // Horizontal space between key and value
+                        const SizedBox(width: 10),
                         Expanded(
                           flex: 2,
                           child: Text(

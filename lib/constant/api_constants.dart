@@ -14,6 +14,7 @@ class ApiConst {
   ///Accounts
   static const String accountPlans = 'plans';
   static const String activate = 'activate';
+  static const String change_acc_password = 'change_acc_password';
 
   /// Country
   static const String country = "countries";
