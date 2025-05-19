@@ -12,6 +12,8 @@ class DropDownTextFormField extends StatelessWidget {
   final Color? colors;
   final TextEditingController? controller;
   final VoidCallback? onTap;
+  final AutovalidateMode? autovalidateMode; // <-- Add this
+  final String? Function(String?)? validator; // <-- Optional for validation
 
   const DropDownTextFormField({
     super.key,
@@ -23,6 +25,8 @@ class DropDownTextFormField extends StatelessWidget {
     this.onTap,
     this.colors,
     this.style,
+    this.autovalidateMode,
+    this.validator,
   });
 
   @override
@@ -38,6 +42,8 @@ class DropDownTextFormField extends StatelessWidget {
           absorbing: isDisabled, // ✅ disables interaction completely
           child: TextFormField(
             controller: controller,
+            autovalidateMode: autovalidateMode, // <-- Add this
+            validator: validator,
             readOnly: true, // Always true since user should not type manually
             onTap: isDisabled ? null : onTap,
             decoration: InputDecoration(
