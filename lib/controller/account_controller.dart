@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
@@ -20,7 +22,7 @@ class AccountController extends GetxController {
 
   final accountTypes = <String>[].obs;
   final selectedAccountType = ''.obs;
-
+  final initialDeposit = <String>[].obs;
 
   void updateSelectedAccount(String name) {
     selectedAccountName.value = name;
@@ -29,6 +31,12 @@ class AccountController extends GetxController {
     if (selected != null && selected['leverage'] is List) {
       final List<String> levers = List<String>.from(selected['leverage']);
       leverageOptions.value = levers.map((e) => '1:$e').toList();
+      print(leverageOptions.value);
+      final List<String> initialAmount = List<String>.from(
+        selected['initial_fund'],
+      );
+      initialDeposit.value = initialAmount.map((e) => e.toString()).toList();
+      print(initialDeposit.value);
     } else {
       leverageOptions.clear();
     }
@@ -42,12 +50,9 @@ class AccountController extends GetxController {
         final data = List<Map<String, dynamic>>.from(response.data['data']);
         accountPlans.value = data;
 
-
-
         final types = List<String>.from(response.data['account_type'] ?? []);
         accountTypes.value = types;
         print("Account Types: ${accountTypes.value}");
-
       } else {
         Get.snackbar(
           'Error',
@@ -63,6 +68,74 @@ class AccountController extends GetxController {
         e.toString(),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  ///----------------------------CREATE ACCOUNT-----------------------------
+  Future<void> createAccount({
+    required String accountPlanName,
+    required String leverageText,
+    required String initialFund,
+    required String accountType,
+  }) async {
+    isLoading.value = true;
+
+    try {
+      // Extract the selected account plan code
+      final selectedPlan = accountPlans.firstWhere(
+        (e) =>
+            e['name'].toString().toLowerCase() == accountPlanName.toLowerCase(),
+        orElse: () => {},
+      );
+
+      final planCode = selectedPlan['code'];
+
+      if (planCode == null) {
+        throw Exception('Invalid Account Plan selected.');
+      }
+
+      dio.FormData payload = dio.FormData.fromMap({
+        'account_plan': planCode,
+        'leverage': leverageText.split(':').last,
+        'initial_fund': initialFund,
+        'account_type': accountType,
+      });
+      print(payload.fields);
+      final response = await dioClient.post(
+        ApiConst.createAccount,
+        data: payload,
+      );
+
+      print(response.data['message']);
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Account created successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.to(() => CreateAccountScreen());
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to create account',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
       );
     } finally {
