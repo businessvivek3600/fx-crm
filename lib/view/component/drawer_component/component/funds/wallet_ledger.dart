@@ -54,7 +54,7 @@ class _WalletLedgerState extends State<WalletLedger> {
           }
 
           if (controller.errorMessage.isNotEmpty) {
-            return Center(child: Text(controller.errorMessage.value));
+            return Center(child: Text(controller.errorMessage.value,style: TextStyle(color: Colors.white),));
           }
 
           return Padding(
@@ -116,7 +116,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                     ),
                                   ),
                                   Text(
-                                    "Balance: \$${item.balance ?? '0.00'}",
+                                    "Balance: \$${balance.toStringAsFixed(2) ?? '0.00'}",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.green.shade700,
