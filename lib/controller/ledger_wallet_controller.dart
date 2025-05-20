@@ -1,4 +1,5 @@
 import 'package:fx_crm/constant/api_constants.dart';
+import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
@@ -8,20 +9,22 @@ import '../main.dart';
 class WalletLedgerController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-  var depositList = <WalletLedgerItem>[].obs;
-
-  int _currentPage = 1;
-  bool _hasMoreData = true;
+  var depositList = <FundRequestItem>[].obs;
+  var currentPage = 1;
+  var hasMoreData = true.obs;
 
   var ledgerList = <WalletLedgerItem>[].obs; // ✅ Correct type here
   var totalBalance = '0.00'.obs;
 
-  Future<void> fetchWalletLedger() async {
+  Future<void> fetchWalletLedger({int page = 1}) async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final response = await dioClient.post(ApiConst.wallet_ledger);
+      final response = await dioClient.post(
+        ApiConst.wallet_ledger,
+        data: {'page': page.toString()},
+      );
       print("ApiConst.wallet_ledger response data---------");
       print(response.data);
 
@@ -37,8 +40,52 @@ class WalletLedgerController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+
+    // WalletItem
+
+    Future<void> fetchWalletLedger({int page = 1}) async {
+      try {
+        isLoading.value = true;
+        errorMessage.value = '';
+
+        final response = await dioClient.post(
+          ApiConst.wallet_ledger,
+          data: {'page': page.toString()},
+        );
+
+        if (response.statusCode == 200 && response.data['status'] == 1) {
+          final data = WalletLedgerResponse.fromJson(response.data);
+
+          if (page == 1) {
+            ledgerList.assignAll(data.data?.ledger ?? []);
+          } else {
+            ledgerList.addAll(data.data?.ledger ?? []);
+          }
+
+          totalBalance.value = data.data?.balance ?? '0.00';
+          hasMoreData.value = (data.data?.ledger?.isNotEmpty ?? false);
+          currentPage = page;
+        } else {
+          errorMessage.value = response.data['message'] ?? 'Unknown error';
+          hasMoreData.value = false;
+        }
+      } catch (e) {
+        errorMessage.value = 'Error: $e';
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    void loadMore() {
+      if (hasMoreData.value && !isLoading.value) {
+        fetchWalletLedger(page: currentPage + 1);
+      }
+    }
+
+    void refreshLedger() {
+      currentPage = 1;
+      hasMoreData.value = true;
+      fetchWalletLedger(page: 1);
+    }
   }
 }
-  
-     
-
