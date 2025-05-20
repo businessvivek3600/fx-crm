@@ -14,6 +14,9 @@ class WalletLedger extends StatefulWidget {
 class _WalletLedgerState extends State<WalletLedger> {
   final WalletLedgerController controller = Get.put(WalletLedgerController());
 
+  // Track expanded state per item
+  final Map<int, bool> expandedMap = {};
+
   @override
   void initState() {
     super.initState();
@@ -58,7 +61,6 @@ class _WalletLedgerState extends State<WalletLedger> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                /// Transfer Buttons Row
                 Row(
                   children: [
                     _buildTransferButton(
@@ -73,12 +75,21 @@ class _WalletLedgerState extends State<WalletLedger> {
                 ),
                 const SizedBox(height: 16),
 
-                /// Ledger List
                 Expanded(
                   child: ListView.builder(
                     itemCount: controller.ledgerList.length,
                     itemBuilder: (context, index) {
                       final item = controller.ledgerList[index];
+
+                      final double credit =
+                          double.tryParse(item.credit?.toString() ?? '0') ?? 0;
+                      final double debit =
+                          double.tryParse(item.debit?.toString() ?? '0') ?? 0;
+                      final double balance =
+                          double.tryParse(item.balance?.toString() ?? '0') ?? 0;
+
+                      final String note = item.note ?? '';
+                      final isExpanded = expandedMap[index] ?? false;
 
                       return Card(
                         elevation: 1,
@@ -92,7 +103,6 @@ class _WalletLedgerState extends State<WalletLedger> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              /// Date and Balance
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -117,21 +127,35 @@ class _WalletLedgerState extends State<WalletLedger> {
                               ),
                               const SizedBox(height: 8),
 
-                              /// Note
+                              // Note (Expandable)
                               Text(
-                                item.note ?? '',
+                                note,
+                                maxLines: isExpanded ? null : 3,
+                                overflow: TextOverflow.fade,
+                                textAlign: TextAlign.justify,
                                 style: TextStyle(
                                   color: Colors.grey.shade700,
                                   fontSize: 13,
                                 ),
-                                textAlign: TextAlign.justify,
                               ),
-                              const SizedBox(height: 8),
+                              if (note.length > 100)
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      expandedMap[index] = !isExpanded;
+                                    });
+                                  },
+                                  child: Text(
+                                    isExpanded ? 'Show less' : 'Show more',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
 
+                              const SizedBox(height: 8),
                               Divider(color: Colors.grey.shade300),
                               const SizedBox(height: 8),
 
-                              /// Credit and Debit
+                              // Credit and Debit Row
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -145,7 +169,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        "In: \$${item.credit ?? '0.00'}",
+                                        "In: \$${credit.toStringAsFixed(2)}",
                                         style: TextStyle(
                                           color: Colors.green.shade700,
                                           fontWeight: FontWeight.w600,
@@ -162,7 +186,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        "Out: \$${item.debit ?? '0.00'}",
+                                        "Out: \$${debit.toStringAsFixed(2)}",
                                         style: TextStyle(
                                           color: Colors.red.shade700,
                                           fontWeight: FontWeight.w600,
@@ -187,13 +211,10 @@ class _WalletLedgerState extends State<WalletLedger> {
     );
   }
 
-  /// 🔁 Transfer Button Widget
   Widget _buildTransferButton(String label, Color bgColor) {
     return Expanded(
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: Add actual logic
-        },
+        onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           padding: const EdgeInsets.symmetric(vertical: 14),
