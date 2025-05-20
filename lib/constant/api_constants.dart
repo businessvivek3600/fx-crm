@@ -17,6 +17,7 @@ class ApiConst {
   static const String change_acc_password = 'change_acc_password';
   static const String accounts = 'accounts';
   static const String createAccount = 'create_account';
+  static const String changeLeverage = 'change_leverage';
 
   /// Country
   static const String country = "countries";

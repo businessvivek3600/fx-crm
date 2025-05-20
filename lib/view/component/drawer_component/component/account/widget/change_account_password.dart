@@ -94,7 +94,7 @@ class _ChangeAccountPasswordState extends State<ChangeAccountPassword> {
                               : () {
                                 // validate only new password
                                 if (_formKey.currentState!.validate()) {
-                                  controller.changeaccountPassword(
+                                  controller.changeAccountPassword(
                                     widget.accountNo!.toString(),
                                     newPassword.text.trim(),
                                     confPassword.text.trim(),
