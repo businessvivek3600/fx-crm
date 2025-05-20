@@ -52,4 +52,10 @@ class ApiConst {
   static const String send_code = 'send-code';
   static const String verify_code = 'verify-otp';
   static const String change_password = 'change-password';
+
+  //Funds
+  static const String wallet_ledger = 'wallet_ledger';
+  static const String wallet_deposit = 'wallet_deposit';
+
+
 }
