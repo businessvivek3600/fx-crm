@@ -71,7 +71,7 @@ class CustomDrawer extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreateAccountScreen(),
+                          builder: (context) => AccountScreen(),
                         ),
                       );
                       // router.push(Routes.CreateAccountScreen);

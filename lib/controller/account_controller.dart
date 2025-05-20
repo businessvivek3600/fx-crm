@@ -28,12 +28,13 @@ class AccountController extends GetxController {
   var accountList = <AccountModel>[].obs;
 
   void updateSelectedAccount(String name) {
+    print("selected Plan: $name");
     selectedAccountName.value = name;
-
-    final selected = accountPlans.firstWhereOrNull((e) => e['name'] == name);
+    final selected = accountPlans.firstWhereOrNull((e) => e['code'] == name || e['name'] == name);
     if (selected != null && selected['leverage'] is List) {
       final List<String> levers = List<String>.from(selected['leverage']);
       leverageOptions.value = levers.map((e) => '1:$e').toList();
+      print("leverages values -------------${leverageOptions.value}");
       final List<String> initialAmount = List<String>.from(
         selected['initial_fund'],
       );
@@ -119,7 +120,7 @@ class AccountController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.to(() => CreateAccountScreen());
+        Get.to(() => AccountScreen());
       } else {
         Get.snackbar(
           'Error',
@@ -142,24 +143,35 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
-
-  ///--------------Currently this module is not used in the app-------------------
-  final RxInt isKyc = 0.obs;
-  final RxInt completeProfile = 0.obs;
-
-  Future<void> getActivateDetails() async {
+///--------------Change Leverage-------------------
+  Future<void> changeLeverage({
+    required String accountNo,
+    required String leverage,
+  }) async {
     isLoading.value = true;
+    dio.FormData formData = dio.FormData.fromMap({
+      'account_no': accountNo,
+      'leverage': leverage.split(':').last,
+    });
+    print(formData.fields);
     try {
-      final response = await dioClient.post(ApiConst.activate);
+      final response = await dioClient.post(
+        ApiConst.changeLeverage, // Make sure this endpoint is defined in ApiConst
+       data: formData,
+      );
+
       if (response.statusCode == 200 && response.data['status'] == 1) {
-        final data = response.data['data'];
-        isKyc.value = int.tryParse(data['is_kyc'].toString()) ?? 0;
-        completeProfile.value =
-            int.tryParse(data['complete_profile'].toString()) ?? 0;
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Leverage updated successfully',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
       } else {
         Get.snackbar(
           'Error',
-          response.data['message'] ?? 'Failed to fetch Activate details',
+          response.data['message'] ?? 'Failed to update leverage',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
@@ -178,12 +190,12 @@ class AccountController extends GetxController {
     }
   }
 
+
   // My Account
   Future<void> fetchAccounts() async {
     try {
       isLoading.value = true;
       final response = await dioClient.post(ApiConst.accounts);
-      print('API Response: ${response.data}');
       if (response.statusCode == 200 && response.data['status'] == 1) {
         List data = response.data['data'];
         accountList.value =
@@ -195,8 +207,6 @@ class AccountController extends GetxController {
         Get.snackbar("Error", "Failed to load accounts");
       }
     } catch (e) {
-      print("----------------");
-      print(e.toString());
       Get.snackbar("Error", e.toString());
     } finally {
       isLoading.value = false;
@@ -204,7 +214,7 @@ class AccountController extends GetxController {
   }
 
   //change account password
-  Future<bool> changeaccountPassword(
+  Future<bool> changeAccountPassword(
     String accountNumber,
     String newpass,
     String confPass,
@@ -257,4 +267,42 @@ class AccountController extends GetxController {
     }
     return false;
   }
+
+
+  ///--------------Currently this module is not used in the app-------------------
+  final RxInt isKyc = 0.obs;
+  final RxInt completeProfile = 0.obs;
+
+  Future<void> getActivateDetails() async {
+    isLoading.value = true;
+    try {
+      final response = await dioClient.post(ApiConst.activate);
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final data = response.data['data'];
+        isKyc.value = int.tryParse(data['is_kyc'].toString()) ?? 0;
+        completeProfile.value =
+            int.tryParse(data['complete_profile'].toString()) ?? 0;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch Activate details',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
 }
