@@ -64,7 +64,7 @@ final router = GoRouter(
     GoRoute(
       path: Paths.accounts,
       name: Routes.accounts,
-      builder: (context, state) => CreateAccountScreen(),
+      builder: (context, state) => AccountScreen(),
     ),
 
     GoRoute(

@@ -176,16 +176,17 @@ class _CreateAccountFormScreenState extends State<CreateAccountFormScreen> {
                                 );
 
                                 if (selected != null) {
-                                  setState(() {
-                                    accountTypeController.text = selected;
-                                    accountController.updateSelectedAccount(
-                                      selected,
-                                    );
-                                    leverageController.clear();
-                                    depositController.clear(); //
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    setState(() {
+                                      accountTypeController.text = selected;
+                                      accountController.updateSelectedAccount(selected);
+                                      leverageController.clear();
+                                      depositController.clear();
+                                    });
                                   });
                                 }
-                              }
+
+                          }
                               : null,
                     );
                   }),

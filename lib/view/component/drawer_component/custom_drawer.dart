@@ -63,22 +63,23 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
 
-            // Profile with submenus
-            _buildExpansionTile(
-              title: 'My Account',
-              icon: Icons.account_circle_outlined,
-              submenus: [
-                {
-                  'title': 'Accounts',
-                  'icon': Icons.school_outlined,
-                  'onTap': () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreateAccountScreen(),
-                      ),
-                    );
-                    // router.push(Routes.CreateAccountScreen);
+              // Profile with submenus
+              _buildExpansionTile(
+                title: 'My Account',
+                icon: Icons.account_circle_outlined,
+                submenus: [
+                  {
+                    'title': 'Accounts',
+                    'icon': Icons.school_outlined,
+                    'onTap': () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AccountScreen(),
+                        ),
+                      );
+                      // router.push(Routes.CreateAccountScreen);
+                    },
                   },
                 },
 

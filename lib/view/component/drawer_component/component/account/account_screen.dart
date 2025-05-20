@@ -9,23 +9,26 @@ import '../../../../../controller/account_controller.dart';
 import '../../../../../database/dio/dio/dio_client.dart';
 import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
+import '../../../../../widgets/drop_down_text_field.dart';
 
-class CreateAccountScreen extends StatefulWidget {
-  const CreateAccountScreen({super.key});
+class AccountScreen extends StatefulWidget {
+  const AccountScreen({super.key});
 
   @override
-  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _AccountScreenState extends State<AccountScreen> {
   final accountController = Get.put(AccountController(dioClient: dioClient));
   bool _obscurePassword = true;
   bool _obscureInvestorPassword = true;
-
+  final GlobalKey _leverageKey = GlobalKey();
+  final TextEditingController accountKindController = TextEditingController();
   @override
   void initState() {
     super.initState();
     accountController.fetchAccounts();
+    accountController.getAccountPlans();
   }
 
   @override
@@ -118,7 +121,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       icon: const Icon(Icons.more_vert, color: Colors.black),
                         onSelected: (value) {
                           if (value == 'leverage') {
-                            _showLeverageDialog(account.accountNo ?? "");
+                            accountController.updateSelectedAccount(account.accountPlan.toString());
+                            Future.delayed(Duration(milliseconds: 100), () {
+                              _showLeverageDialog(account.accountNo ?? "");
+                            });
                           } else {
                             Navigator.push(
                               context,
@@ -154,7 +160,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        account.accountType ?? 'dsddssd',
+                        account.accountType ?? '',
                         style: TextStyle(color: Colors.green.shade800, fontSize: 12),
                       ),
                     ),
@@ -164,11 +170,20 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 const SizedBox(height: 8),
 
                 /// Account Title
-                Text(
-                  'MT5 ${account.accountType} ${account.accountNo}',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'MT5 ${account.accountType} ${account.accountNo}',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    /// Leverage
+                    Text(
+                      'Leverage: 1:${account.leverage ?? 'N/A'}',
+                      style: const TextStyle(fontSize: 14, color: Colors.black87),
+                    ),
+                  ],
                 ),
-
                 const SizedBox(height: 12),
 
                 /// Master Password
@@ -265,46 +280,94 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       dialogType: DialogType.noHeader,
       animType: AnimType.scale,
       width: 400,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Change Leverage Account #$accountNo',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          TextFormField(
-            controller: leverageController,
-            decoration: InputDecoration(
-              labelText: 'Leverage',
-              hintText: 'e.g. 1:300',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Change Leverage Account #$accountNo',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Obx(() {
+              return DropDownTextFormField(
+                key: _leverageKey,
+                label: 'Leverage',
+                colors: Colors.white70,
+                hint: 'Select Leverage',
+                controller: leverageController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) =>
+                (value == null || value.isEmpty) ? 'Please select account leverage' : null,
+                onTap:
+                accountController.leverageOptions.isNotEmpty
+                    ? () => _showDropdownMenu(
+                  _leverageKey,
+                  accountController.leverageOptions,
+                  leverageController,
+                )
+                    : null,
+              );
+            }),
+
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async{
+                final newLeverage = leverageController.text.trim();
+                if (newLeverage.isNotEmpty) {
+                  await accountController.changeLeverage(
+                    accountNo: accountNo,
+                    leverage: newLeverage,
+                  );
+                  Navigator.of(context).pop();
+                  Get.snackbar('Success', 'Leverage changed to $newLeverage',
+                      snackPosition: SnackPosition.BOTTOM);
+                } else {
+                  Get.snackbar('Error', 'Leverage cannot be empty',
+                      backgroundColor: Colors.red, colorText: Colors.white);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
+              child: const Text('Submit', style: TextStyle(color: Colors.white)),
             ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              final newLeverage = leverageController.text.trim();
-              if (newLeverage.isNotEmpty) {
-                // TODO: Call update API here with `newLeverage` and `accountNo`
-                Navigator.of(context).pop();
-                Get.snackbar('Success', 'Leverage changed to $newLeverage',
-                    snackPosition: SnackPosition.BOTTOM);
-              } else {
-                Get.snackbar('Error', 'Leverage cannot be empty',
-                    backgroundColor: Colors.red, colorText: Colors.white);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            child: const Text('Submit', style: TextStyle(color: Colors.white)),
-          ),
-        ],
+          ],
+        ),
       ),
     ).show();
+  }
+  void _showDropdownMenu(
+      GlobalKey key,
+      List<String> options,
+      TextEditingController controller,
+      ) async {
+    final RenderBox renderBox =
+    key.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height,
+        offset.dx + size.width,
+        offset.dy,
+      ),
+      items:
+      options
+          .map(
+            (option) =>
+            PopupMenuItem<String>(value: option, child: Text(option)),
+      )
+          .toList(),
+    );
+    if (selected != null) {
+      controller.text = selected;
+    }
+
   }
 }
