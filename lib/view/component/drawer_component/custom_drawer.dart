@@ -81,7 +81,6 @@ class CustomDrawer extends StatelessWidget {
                       // router.push(Routes.CreateAccountScreen);
                     },
                   },
-                },
 
                 // {
                 //   'title': 'Activate Account',
