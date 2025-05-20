@@ -8,6 +8,10 @@ import '../main.dart';
 class WalletLedgerController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
+  var depositList = <WalletLedgerItem>[].obs;
+
+  int _currentPage = 1;
+  bool _hasMoreData = true;
 
   var ledgerList = <WalletLedgerItem>[].obs; // ✅ Correct type here
   var totalBalance = '0.00'.obs;
@@ -35,3 +39,6 @@ class WalletLedgerController extends GetxController {
     }
   }
 }
+  
+     
+
