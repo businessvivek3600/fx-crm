@@ -3,29 +3,34 @@ import 'package:fx_crm/widgets/bg_container.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 class PaymentInfoScreen extends StatelessWidget {
-  final String status = "Complete"; // ← Change this to test other states
+  final String status = "Complete"; // Change to "Pending" to test
+
+  final Color cardColor = const Color(0xFF1C1C1E);
+  final Color textColor = Colors.white70;
+  final Color highlightColor = Colors.white;
 
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(title: const Text("Payment Information")),
+        appBar: AppBar(
+          title: const Text("Payment Information"),
+          backgroundColor: Colors.transparent,
+        ),
         body: SingleChildScrollView(
-          child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Container(
             padding: const EdgeInsets.all(16),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: status == "Complete"
-                    ? _buildCompletedContent()
-                    : _buildPendingContent(),
-              ),
+            decoration: BoxDecoration(
+              color: cardColor.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: status == "Pending"
+                  ? _buildCompletedContent()
+                  : _buildPendingContent(),
             ),
           ),
         ),
@@ -35,7 +40,7 @@ class PaymentInfoScreen extends StatelessWidget {
 
   List<Widget> _buildCompletedContent() {
     return [
-      _infoRow("Status:", "Complete"),
+      _infoRow("Status:", "Complete", valueColor: Colors.greenAccent),
       const SizedBox(height: 15),
       _infoRow("Total Amount To Send:", "1.07022000 LTCT (total confirms needed: 0)"),
       const SizedBox(height: 15),
@@ -48,17 +53,17 @@ class PaymentInfoScreen extends StatelessWidget {
       _infoRow("Seller:", "parveen115 (No Ratings)"),
       const SizedBox(height: 15),
       RichText(
-        text: const TextSpan(
+        text: TextSpan(
           text: 'Seller Email: ',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          children: [
+          style: TextStyle(color: highlightColor, fontWeight: FontWeight.bold),
+          children: const [
             TextSpan(
               text: 'touchwoodparveen@gmail.com\n',
-              style: TextStyle(color: Colors.blue),
+              style: TextStyle(color: Colors.blueAccent),
             ),
             TextSpan(
               text: 'DO NOT Send Funds to this Email Address!',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12),
+              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 12),
             ),
           ],
         ),
@@ -70,46 +75,50 @@ class PaymentInfoScreen extends StatelessWidget {
 
   List<Widget> _buildPendingContent() {
     return [
-      _infoRow("Status:", "Cancelled / Timed Out"),
+      _infoRow("Status:", "Cancelled / Timed Out", valueColor: Colors.redAccent),
       const SizedBox(height: 15),
       _infoRow("Total Amount To Send:", "10.71516000 LTCT (total confirms needed: 0)"),
       const SizedBox(height: 15),
       _infoRow("Received So Far:", "0.00000000 LTCT (unconfirmed)"),
       const SizedBox(height: 10),
-      _infoRow("Balance Remaining:", "10.71516 LTCT", valueColor: Colors.blue),
-      const Divider(height: 32),
+      _infoRow("Balance Remaining:", "10.71516 LTCT", valueColor: Colors.blueAccent),
+      const Divider(height: 32, color: Colors.grey),
       Center(
         child: SizedBox(
           height: 170,
           width: 170,
-          child: PrettyQrView.data(
-            data: "mfojhWCIn436WTwNIPfZpQSyyrvMBaA3jm", // Replace with dynamic address if needed
-            decoration: const PrettyQrDecoration(
-              image: PrettyQrDecorationImage(
-                image: AssetImage("assets/images/download.png"), // Optional logo in QR
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(10),
+            child: PrettyQrView.data(
+              data: "mfojhWCIn436WTwNIPfZpQSyyrvMBaA3jm",
+              decoration: PrettyQrDecoration(
+                shape: PrettyQrSmoothSymbol(),
+                image: const PrettyQrDecorationImage(
+                  image: AssetImage("assets/images/download.png"),
+                ),
               ),
             ),
           ),
         ),
       ),
-
       const SizedBox(height: 10),
       _infoRow("Send To Address:", "mfojhWCIn436WTwNIPfZpQSyyrvMBaA3jm"),
       const SizedBox(height: 8),
       _infoRow("Seller:", "parveen115"),
       const SizedBox(height: 8),
       RichText(
-        text: const TextSpan(
+        text: TextSpan(
           text: 'Seller Email: ',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          children: [
+          style: TextStyle(color: highlightColor, fontWeight: FontWeight.bold),
+          children: const [
             TextSpan(
               text: 'touchwoodparveen@gmail.com\n',
-              style: TextStyle(color: Colors.blue),
+              style: TextStyle(color: Colors.blueAccent),
             ),
             TextSpan(
               text: 'DO NOT Send Funds to this Email Address!',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12),
+              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 12),
             ),
           ],
         ),
@@ -121,23 +130,24 @@ class PaymentInfoScreen extends StatelessWidget {
     ];
   }
 
-  Widget _infoRow(String label, String value, {Color valueColor = Colors.black}) {
+  Widget _infoRow(String label, String value, {Color? valueColor}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(width: 4),
-        Expanded(child: Text(value, style: TextStyle(color: valueColor))),
-      ],
-    );
-  }
-
-  Widget _ratingOption(String label, Color color) {
-    return Row(
-      children: [
-        Radio(value: label, groupValue: null, onChanged: (_) {}),
-        Text(label, style: TextStyle(color: color),textAlign: TextAlign.justify,),
+        Expanded(
+            flex: 2,
+            child: Text(label,
+                style: const TextStyle(color: Colors.white60, fontWeight: FontWeight.w600))),
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: TextStyle(
+              color: valueColor ?? Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ],
     );
   }

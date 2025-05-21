@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../models/customer_model.dart';
+import '../routes/route_name.dart';
 import '../view/component/auth/login_screen.dart';
-
 
 class SessionController extends GetxController {
   static SessionController get to => Get.find();
@@ -51,11 +51,9 @@ class SessionController extends GetxController {
         'Please login again',
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 2),
       );
+
     }
   }
-
-
 }
