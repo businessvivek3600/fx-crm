@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/ledger_wallet_controller.dart';
-import 'package:get/get.dart';
 
 import '../../../../../widgets/bg_container.dart';
 
@@ -12,220 +10,191 @@ class WalletLedger extends StatefulWidget {
 }
 
 class _WalletLedgerState extends State<WalletLedger> {
-  final WalletLedgerController controller = Get.put(WalletLedgerController());
-
-  // Track expanded state per item
-  final Map<int, bool> expandedMap = {};
-
-  @override
-  void initState() {
-    super.initState();
-    controller.fetchWalletLedger(); // fetch data
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BackgroundContainer(
-      child: Scaffold(
+    return  BackgroundContainer(
+      child:  Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: const Text(
             "Ledger Wallet",
-            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+            style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 1.2),
           ),
           centerTitle: true,
           actions: [
-            Obx(
-              () => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  " \$${controller.totalBalance}",
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
+            const Text(
+              " Balance : \$0",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
               ),
             ),
+            const SizedBox(width: 8),
           ],
         ),
-        body: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (controller.errorMessage.isNotEmpty) {
-            return Center(child: Text(controller.errorMessage.value,style: TextStyle(color: Colors.white),));
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                // Row for Buttons and Wallet Balance
                 Row(
                   children: [
-                    _buildTransferButton(
-                      "Wallet to MT5",
-                      Colors.amber.shade700,
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Transfer Wallet to MT5 logic
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber.shade700,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:  Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: const Text(
+                            "Wallet to MT5",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    _buildTransferButton("MT5 to Wallet", Colors.blue),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Transfer MT5 to Wallet logic
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:  Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: const Text(
+                            "MT5 to Wallet",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    _buildTransferButton("Withdraw Funds", Colors.green),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Withdraw Funds logic
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: const Text(
+                            "Withdraw Funds",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: controller.ledgerList.length,
-                    itemBuilder: (context, index) {
-                      final item = controller.ledgerList[index];
-
-                      final double credit =
-                          double.tryParse(item.credit?.toString() ?? '0') ?? 0;
-                      final double debit =
-                          double.tryParse(item.debit?.toString() ?? '0') ?? 0;
-                      final double balance =
-                          double.tryParse(item.balance?.toString() ?? '0') ?? 0;
-
-                      final String note = item.note ?? '';
-                      final isExpanded = expandedMap[index] ?? false;
-
-                      return Card(
-                        elevation: 1,
-                        color: Colors.grey.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Date: ${item.date ?? '-'}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade800,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Balance: \$${balance.toStringAsFixed(2) ?? '0.00'}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green.shade700,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-
-                              // Note (Expandable)
-                              Text(
-                                note,
-                                maxLines: isExpanded ? null : 3,
-                                overflow: TextOverflow.fade,
-                                textAlign: TextAlign.justify,
-                                style: TextStyle(
-                                  color: Colors.grey.shade700,
-                                  fontSize: 13,
-                                ),
-                              ),
-                              if (note.length > 100)
-                                TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      expandedMap[index] = !isExpanded;
-                                    });
-                                  },
-                                  child: Text(
-                                    isExpanded ? 'Show less' : 'Show more',
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ),
-
-                              const SizedBox(height: 8),
-                              Divider(color: Colors.grey.shade300),
-                              const SizedBox(height: 8),
-
-                              // Credit and Debit Row
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.call_received,
-                                        color: Colors.green,
-                                        size: 18,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        "In: \$${credit.toStringAsFixed(2)}",
-                                        style: TextStyle(
-                                          color: Colors.green.shade700,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.call_made,
-                                        color: Colors.red,
-                                        size: 18,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        "Out: \$${debit.toStringAsFixed(2)}",
-                                        style: TextStyle(
-                                          color: Colors.red.shade700,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                Card(
+                  elevation: 1,
+                  color: Colors.grey.shade100,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Date: 12/05/2025",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade800,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              "Balance: \$345.00",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green.shade700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Withdraw your demo account funds from the MT5 platform. This is a dummy transaction for practice purposes only and does not involve real money.",
+                          style: TextStyle(
+                            color: Colors.grey.shade700,
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.justify,
+                        ),
+                        const SizedBox(height: 8),
+                        Divider(color: Colors.grey.shade300),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.call_received, color: Colors.green, size: 18),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "In: \$100.00",
+                                  style: TextStyle(
+                                    color: Colors.green.shade700,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.call_made, color: Colors.red, size: 18),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "Out: \$50.00",
+                                  style: TextStyle(
+                                    color: Colors.red.shade700,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+
+
+                // You can add more widgets below if needed
               ],
             ),
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget _buildTransferButton(String label, Color bgColor) {
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bgColor,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white),
-            textAlign: TextAlign.center,
           ),
         ),
       ),
