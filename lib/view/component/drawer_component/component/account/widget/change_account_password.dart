@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/profile_controller.dart';
+import 'package:fx_crm/controller/account_controller.dart';
+import 'package:fx_crm/controller/app_controller.dart';
+import 'package:fx_crm/widgets/bg_container.dart';
+import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
 
-import '../../../../../widgets/bg_container.dart';
-import '../../../../../widgets/custom_text_form.dart';
-
-class ChangePasswordScreen extends StatefulWidget {
-  ChangePasswordScreen({super.key});
-
+class ChangeAccountPassword extends StatefulWidget {
+  const ChangeAccountPassword({
+    super.key,
+    this.isInvester = false,
+    this.accountNo = '',
+  });
+  final bool isInvester;
+  final String accountNo;
   @override
-  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+  State<ChangeAccountPassword> createState() => _ChangeAccountPasswordState();
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  final controller = Get.put(ChangePasswordController());
+class _ChangeAccountPasswordState extends State<ChangeAccountPassword> {
+  final controller = Get.find<AccountController>();
   final _formKey = GlobalKey<FormState>();
+  final newPassword = TextEditingController();
+  final confPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +32,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
-          title: const Text(
-            'Change Password',
-            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+          title: Text(
+            '${widget.isInvester ? 'Invester' : 'Master'} Password',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
           ),
         ),
         body: SingleChildScrollView(
@@ -35,85 +45,45 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           child: Form(
             key: _formKey,
             autovalidateMode:
-                AutovalidateMode.onUserInteraction, // <== auto validation
+                AutovalidateMode.onUserInteraction, // ✅ enables auto-validation
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Old Information",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 const SizedBox(height: 20),
 
-                // Old Password Field
+                // ✅ Auto-validation for new password only
                 CustomTextFormField(
-                  label: "Old Password",
-                  hint: "Old Password",
-                  controller: controller.oldPassword,
+                  label: "New password",
+                  hint: "New Password",
+                  controller: newPassword,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter old password';
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.length < 8 ||
+                        !RegExp(r'[!@#\$&*~]').hasMatch(value)) {
+                      return "Req: 8+characters & !@#*~";
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 10),
 
-                // New Password Field with Hint and Validation
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextFormField(
-                      label: "New Password",
-                      hint: "New Password",
-                      controller: controller.newPassword,
-                      validator: (value) {
-                        if (value == null ||
-                            value.isEmpty ||
-                            value.length < 8 ||
-                            !RegExp(r'[!@#\$&*~]').hasMatch(value)) {
-                          return 'Min 8 chars & 1 special (!@#\$&*~)';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      " (!@#\$&*~), min 8 chars",
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-
-                // Confirm Password Field with Validation
+                // ❌ No auto-validation for confirm password
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomTextFormField(
                       label: "Confirm Password",
                       hint: "Confirm Password",
-                      controller: controller.confirmPassword,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm password';
-                        }
-                        if (value != controller.newPassword.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
+                      controller: confPassword,
+                      // No validator here
                     ),
                     const SizedBox(height: 4),
                   ],
                 ),
                 const SizedBox(height: 40),
 
-                // Change Password Button
+                // 🔘 Change Password Button
                 SizedBox(
                   width: double.infinity,
                   child: Obx(
@@ -122,8 +92,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           controller.isLoading.value
                               ? null
                               : () {
+                                // validate only new password
                                 if (_formKey.currentState!.validate()) {
-                                  controller.changePassword();
+                                  controller.changeAccountPassword(
+                                    widget.accountNo!.toString(),
+                                    newPassword.text.trim(),
+                                    confPassword.text.trim(),
+                                    widget.isInvester ? '2' : '1',
+                                  );
                                 }
                               },
                       style: ElevatedButton.styleFrom(

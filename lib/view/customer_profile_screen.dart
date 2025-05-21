@@ -1,0 +1,261 @@
+import 'package:flutter/material.dart';
+import 'package:fx_crm/main.dart';
+import 'package:fx_crm/utils/theme.dart';
+import 'package:fx_crm/view/component/drawer_component/component/profile/edit_profile.dart';
+import 'package:fx_crm/widgets/bg_container.dart';
+import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../controller/dashboard_controller.dart';
+
+class CustomerProfileScreen extends StatefulWidget {
+  const CustomerProfileScreen({super.key});
+
+  @override
+  State<CustomerProfileScreen> createState() => _CustomerProfileScreenState();
+}
+
+class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
+  late DashBoardController dashController;
+
+  @override
+  void initState() {
+    super.initState();
+    dashController = Get.put(DashBoardController(dioClient: dioClient));
+    dashController.getUserProfile(); // Fetch profile data
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BackgroundContainer(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: ThemeUtils.primaryColor,
+          centerTitle: true,
+          title: const Text(
+            "Customer Profile",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 23,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                // TODO: Handle edit tap here
+                // Example:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => EditProfileScreen()),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Icon(Icons.edit_note, color: Colors.white, size: 28),
+              ),
+            ),
+          ],
+        ),
+
+        body: SafeArea(
+          child: Obx(() {
+            if (dashController.isLoading.value) {
+              return _buildShimmer();
+            }
+
+            final data = dashController.profileData;
+
+            if (data.isEmpty) {
+              return const Center(
+                child: Text(
+                  "No data found",
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  /// Profile Info
+                  Column(
+                    children: [
+                      const CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.blueGrey,
+                        child: Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        data["customer_name"] ?? '',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        data["username"] ?? '',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  /// Personal Details Card
+                  _buildCard("Personal Details", {
+                    "Username": data["username"] ?? '',
+                    "Refer By": data["refer_by"] ?? '',
+                    "Parent": data["parent"] ?? '',
+                    "First Name": data["first_name"] ?? '',
+                    "Last Name": data["last_name"] ?? '',
+                    "Next of Kin": data["next_of_kin"] ?? '',
+                    "Email": data["email"] ?? '',
+                    "Mobile": data["customer_mobile"] ?? '',
+                    "Address": data["customer_short_address"] ?? '',
+                    "Address1": data["customer_address_1"] ?? '',
+                    "Address2": data["customer_address_2"] ?? '',
+                    "City": data["city"] ?? '',
+                    "State": data["state"] ?? '',
+                    "Country": data["country_text"] ?? '',
+                    "Zip": data["zip"] ?? '',
+                    "Company": data["company"] ?? '',
+                    "Date of Birth": data["date_of_birth"] ?? '',
+                  }),
+                ],
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Shimmer.fromColors(
+                baseColor: Colors.grey.shade800,
+                highlightColor: Colors.grey.shade700,
+                child: const CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(2, (index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey.shade800,
+                        highlightColor: Colors.grey.shade700,
+                        child: Container(
+                          width: double.infinity,
+                          height: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 30),
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade800,
+            highlightColor: Colors.grey.shade700,
+            child: Container(
+              height: 300,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(String title, Map<String, String> fields) {
+    final entries = fields.entries.toList();
+
+    return Card(
+      color: Colors.grey.shade900.withOpacity(0.8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 6,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...List.generate(entries.length, (index) {
+              final entry = entries[index];
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 0,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            entry.key,
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            entry.value,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (index < entries.length - 1)
+                    const Divider(
+                      color: Colors.white24,
+                      thickness: 1,
+                      height: 12,
+                    ),
+                ],
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+}

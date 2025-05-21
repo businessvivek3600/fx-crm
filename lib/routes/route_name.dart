@@ -1,9 +1,14 @@
 class Routes {
+  static const String splash = "splash";
   static const String login = 'login';
   static const String signup = "signup";
   static const String dashboard = "dashboard";
+  static const String notification = "notification";
+
+  // Accounts
   static const String accounts = "accounts";
   static const String wallet_account = "wallet_account";
+  static const String activateAccount = "activate";
   static const String trasaction_history = "trasaction_history";
 
   // Profile

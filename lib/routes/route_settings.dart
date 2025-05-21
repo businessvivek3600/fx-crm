@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_path.dart';
 import 'package:fx_crm/view/component/auth/signup_screen.dart';
-import 'package:fx_crm/view/component/drawer_component/component/account/create_account_screen.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/activate_screen.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/transaction_history.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/bank_wallet_screen.dart';
@@ -13,19 +14,27 @@ import 'package:fx_crm/view/component/drawer_component/component/profile/edit_pr
 import 'package:fx_crm/view/component/drawer_component/component/profile/kyc_verification.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/monthly_reward.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/terms_condition.dart';
+import 'package:fx_crm/view/component/notification/notification_screen.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
 import '../controller/session_controller.dart';
 import '../view/component/auth/login_screen.dart';
+import '../view/component/drawer_component/component/economic/economic_calander.dart';
 import '../view/dashboard_screen.dart';
+import '../view/splash_screen.dart';
 
 final router = GoRouter(
   navigatorKey: Get.key,
-  initialLocation: Paths.dashboard,
+  initialLocation: Paths.splash,
   observers: [GetObserver()],
   redirect: _redirect,
   routes: [
+    GoRoute(
+      path:Paths.splash,
+      name: Routes.splash,
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(
       path: Paths.login,
       name: Routes.login,
@@ -38,6 +47,13 @@ final router = GoRouter(
       name: Routes.dashboard,
       builder: (context, state) => DashboardScreen(),
     ),
+    GoRoute(
+      path: Paths.notification,
+      name: Routes.notification,
+      builder: (context, state) => NotificationScreen(),
+    ),
+
+
 
     GoRoute(
       path: Paths.signup,
@@ -48,7 +64,7 @@ final router = GoRouter(
     GoRoute(
       path: Paths.accounts,
       name: Routes.accounts,
-      builder: (context, state) => CreateAccountScreen(),
+      builder: (context, state) => AccountScreen(),
     ),
 
     GoRoute(
@@ -72,6 +88,17 @@ final router = GoRouter(
       name: Routes.bank_wallet,
       builder: (context, state) => WalletScreen(),
     ),
+    GoRoute(
+      path: Paths.economic_calendar,
+      name: Routes.economic_calendar,
+      builder: (context, state) => EconomicCalendarScreen(),
+    ),
+    GoRoute(
+      path: Paths.activateAccount,
+      name: Routes.activateAccount,
+      builder: (context, state) => ActivateAccountScreen(),
+    ),
+
     // GoRoute(
     //   path: Paths.bank_wallet,
     //   name: Routes.bank_wallet,

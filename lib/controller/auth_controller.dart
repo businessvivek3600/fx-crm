@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import 'package:nb_utils/nb_utils.dart' hide DialogType;
 
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
+import '../database/notification_service.dart';
 import '../models/country_model.dart';
 import '../models/customer_model.dart';
 import '../view/component/auth/login_screen.dart';
@@ -64,9 +67,13 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
+      // Get FCM token
+      final fcmToken = await NotificationService().getDeviceToken();
+
       Map<String, dynamic> loginData = {
-        'username': usernameController.text,
+        'username': usernameController.text.toUpperCase(),
         'password': passwordController.text,
+        'fcm_token': fcmToken ?? '',
       };
 
       /// 🛑 DEBUG: Print POST Body
@@ -79,8 +86,6 @@ class AuthController extends GetxController {
       );
 
       /// 🛑 DEBUG: Print API Response
-      print("------------------------------------------");
-      print(response.data);
       if (response.statusCode == 200) {
         int isSuccess = response.data['status'] ?? 0;
 
@@ -94,6 +99,10 @@ class AuthController extends GetxController {
           /// Save in AppController
           AppController.to.saveToken(loginToken);
           AppController.to.setLoginStatus(true);
+
+          /// ✅ Clear input fields
+          usernameController.clear();
+          passwordController.clear();
           Get.snackbar(
             'Login Successfully',
             "You're all set to continue",
@@ -409,40 +418,52 @@ class AuthController extends GetxController {
   Future<String?> verifyOtp(String username, String otp) async {
     try {
       isLoading.value = true;
-      dio.FormData formData = dio.FormData.fromMap({
-        'username': username,
-        'otp': otp,
-      });
+
+      final formData = dio.FormData.fromMap({'username': username, 'otp': otp});
+
       final response = await dioClient.post(
         ApiConst.verify_code,
         data: formData,
         token: false,
       );
-      if (response.statusCode == 200) {
-        isLoading.value = false;
-        return username;
+
+      isLoading.value = false;
+
+      final data =
+          response.data is String ? jsonDecode(response.data) : response.data;
+
+      if (response.statusCode == 200 && data['status'] == 1) {
+        Fluttertoast.showToast(
+          msg: "OTP Verified",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+        return data['username'];
       } else {
         Get.snackbar(
-          'Error',
-          response.data['message'] ?? 'Unknown error',
+          'Invalid OTP',
+          data['message'] ?? 'OTP verification failed',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
         );
+        return null;
       }
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         'Error',
-        e.toString(),
+        'Something went wrong. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
+      return null;
     }
-    return null;
   }
+  //change password
 
   Future<bool> changePassword(
     String username,
@@ -457,7 +478,7 @@ class AuthController extends GetxController {
         "confirm_password": confPass,
       });
       final response = await dioClient.post(
-        ApiConst.verify_code,
+        ApiConst.change_password,
         data: formData,
         token: false,
       );
@@ -492,6 +513,53 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
     return false;
+  }
+
+  /// ------------- - LOGOUT - -------------
+  Future<void> logout() async {
+    try {
+      isLoading.value = true;
+
+      /// Call Logout API with token in headers
+      final response = await dioClient.post(ApiConst.logOut, token: true);
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        /// Clear user session and data
+        SessionController.to.clearSession();
+        AppController.to.setLoginStatus(false);
+        AppController.to.saveToken('');
+        AppController.to.saveCustomerData(Customer());
+
+        /// Navigate to Login Screen
+        router.pushReplacement(Paths.login);
+
+        // Get.snackbar(
+        //   'Logged Out',
+        //   'You have been logged out successfully',
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
+      } else {
+        Get.snackbar(
+          'Logout Failed',
+          response.data['message'] ?? 'Something went wrong',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

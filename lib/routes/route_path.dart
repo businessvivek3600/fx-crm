@@ -1,13 +1,20 @@
 import 'package:fx_crm/routes/route_name.dart';
-import 'package:fx_crm/view/component/drawer_component/component/account/create_account_screen.dart';
+import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 
 class Paths {
+  static const String splash = '/';
   static const String login = '/${Routes.login}';
   static const String signup = '/${Routes.signup}';
   static const String dashboard = '/${Routes.dashboard}';
+  static const String notification = '/${Routes.notification}';
+
+  ///Accounts
   static const String accounts = '/${Routes.accounts}';
   static const String wallet_account = '/${Routes.wallet_account}';
   static const String trasaction_history = '/${Routes.trasaction_history}';
+  static const String activateAccount = '/${Routes.activateAccount}';
+
+  ///Profile
   static const String editprofile = '/${Routes.editprofile}';
   static const String bank_wallet = '/${Routes.bank_wallet}';
   static const String kyc = '/${Routes.kycScreen}';

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -8,6 +9,10 @@ class NotificationDatabase {
   NotificationDatabase._internal();
 
   Database? _database;
+  final StreamController<List<Map<String, dynamic>>> _notificationController =
+  StreamController.broadcast();
+
+  Stream<List<Map<String, dynamic>>> get notificationStream => _notificationController.stream;
 
   Future<Database> get database async {
     return _database ??= await _initDB();
@@ -37,15 +42,31 @@ class NotificationDatabase {
   Future<void> insertNotification(Map<String, dynamic> data) async {
     final db = await database;
     await db.insert('notifications', data);
+    _pushUpdate(); // Update the stream
+  }
+
+  Future<void> deleteNotification(int id) async {
+    final db = await database;
+    await db.delete('notifications', where: 'id = ?', whereArgs: [id]);
+    _pushUpdate();
+  }
+
+  Future<void> _pushUpdate() async {
+    final db = await database;
+    final data = await db.query('notifications', orderBy: 'id DESC');
+    _notificationController.add(data);
   }
 
   Future<List<Map<String, dynamic>>> getAllNotifications() async {
     final db = await database;
-    return await db.query('notifications', orderBy: 'id DESC');
+    final data = await db.query('notifications', orderBy: 'id DESC');
+    _notificationController.add(data); // Initial push
+    return data;
   }
 
   Future<void> clearNotifications() async {
     final db = await database;
     await db.delete('notifications');
+    _pushUpdate();
   }
 }

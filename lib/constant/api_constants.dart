@@ -6,9 +6,18 @@ class ApiConst {
   static const String login = "login";
   static const String register = "signup";
   static const String verifyEmail = "send_verfication_email";
+  static const String logOut = "logout";
 
   ///Dashboard
   static const String home = 'dashboard';
+
+  ///Accounts
+  static const String accountPlans = 'plans';
+  static const String activate = 'activate';
+  static const String change_acc_password = 'change_acc_password';
+  static const String accounts = 'accounts';
+  static const String createAccount = 'create_account';
+  static const String changeLeverage = 'change_leverage';
 
   /// Country
   static const String country = "countries";
@@ -24,6 +33,7 @@ class ApiConst {
 
   ///Profile
   static const String updateProfile = "update_profile";
+  static const String userProfile = "profile";
 
   ///TERMS AND CONDITION
   static const String termAndCondition = "terms";
@@ -42,4 +52,10 @@ class ApiConst {
   static const String send_code = 'send-code';
   static const String verify_code = 'verify-otp';
   static const String change_password = 'change-password';
+
+  //Funds
+  static const String wallet_ledger = 'wallet_ledger';
+  static const String wallet_deposit = 'wallet_deposit';
+
+
 }
