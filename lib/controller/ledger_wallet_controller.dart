@@ -61,46 +61,55 @@ class WalletLedgerController extends GetxController {
     // );
   }
 
-  // WalletItem
+  Future<void> fetchWalletDeposits({
+    bool refresh = true,
+    bool loading = false,
+  }) async {
+    try {
+      if (refresh) {
+        currentPage = 1;
+        depositList.clear();
+      }
 
-  /*     Future<void> fetchWalletLedger({int page = 1}) async {
-      try {
-        isLoading.value = true;
-        errorMessage.value = '';
+      errorMessage.value = '';
+      isLoading.value = loading;
 
-        final response = await dioClient.post(
-          ApiConst.wallet_ledger,
-          data: {'page': page.toString()},
-        );
+      final data = {'page': currentPage.toString()};
+      print("ApiConst.wallet_deposit data request: $data");
 
-        if (response.statusCode == 200 && response.data['status'] == 1) {
-          final data = WalletLedgerResponse.fromJson(response.data);
+      final response = await dioClient.post(ApiConst.wallet_deposit, data: data);
+      print("ApiConst.wallet_deposit response data:");
+      print(response.data);
 
-          if (page == 1) {
-            ledgerList.assignAll(data.data?.ledger ?? []);
-          } else {
-            ledgerList.addAll(data.data?.ledger ?? []);
-          }
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final parsed = FundRequestResponse.fromJson(response.data);
+        final List<FundRequestItem> list = parsed.data?.fundRequest ?? [];
 
-          totalBalance.value = data.data?.balance ?? '0.00';
-          hasMoreData.value = (data.data?.ledger?.isNotEmpty ?? false);
-          currentPage = page;
+        if (list.isNotEmpty) currentPage++;
+        if (refresh) {
+          depositList.value = list;
         } else {
-          errorMessage.value = response.data['message'] ?? 'Unknown error';
-          hasMoreData.value = false;
+          depositList.addAll(list);
         }
-      } catch (e) {
-        errorMessage.value = 'Error: $e';
-      } finally {
-        isLoading.value = false;
-      }
-    }
 
-    void loadMore() {
-      if (hasMoreData.value && !isLoading.value) {
-        fetchWalletLedger(page: currentPage + 1);
+        hasMoreData.value = list.isNotEmpty;
+      } else {
+        errorMessage.value = response.data['message'] ?? 'Unknown error';
+        hasMoreData.value = false;
       }
+    } catch (e) {
+      errorMessage.value = 'Error: $e';
+    } finally {
+      isLoading.value = false;
     }
+  }
+
+  void loadMore() {
+    if (hasMoreData.value && !isLoading.value) {
+      fetchWalletDeposits(refresh: false);
+    }
+  }
+
 
     void refreshLedger() {
       currentPage = 1;

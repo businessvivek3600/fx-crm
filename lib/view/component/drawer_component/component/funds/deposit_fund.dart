@@ -1,42 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:get/get.dart';
 
 import '../../../../../widgets/bg_container.dart';
 import 'component/payment_info.dart';
 
 class DepositFundScreen extends StatelessWidget {
-  const DepositFundScreen({super.key});
+  DepositFundScreen({super.key});
 
-  // Dummy list of deposit records
-  final List<Map<String, dynamic>> depositRecords = const [
-    {
-      "requestId": "REQ12345",
-      "date": "12/05/2025",
-      "amount": 500.0,
-      "status": "Pending",
-    },
-    {
-      "requestId": "REQ67890",
-      "date": "10/05/2025",
-      "amount": 1000.0,
-      "status": "Approved",
-    },
-    {
-      "requestId": "REQ11121",
-      "date": "08/05/2025",
-      "amount": 250.0,
-      "status": "Rejected",
-    },
-  ];
+  final WalletLedgerController controller = Get.put(WalletLedgerController());
 
   @override
   Widget build(BuildContext context) {
-    return  BackgroundContainer(
-      child:  Scaffold(
+    // Trigger fetch when screen is built
+    controller.fetchWalletDeposits();
+
+    return BackgroundContainer(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
-          title: const Text("Deposit Funds" ,style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 1.2),
-        ),
+          title: const Text(
+            "Deposit Funds",
+            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+          ),
           elevation: 0,
           centerTitle: true,
         ),
@@ -45,20 +32,18 @@ class DepositFundScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Row
+              // Top Row with Deposit Fund button
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // const Text(
-                  //   "Deposit Fund",
-                  //   style: TextStyle(
-                  //     fontSize: 18,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
                   ElevatedButton(
                     onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInfoScreen(),));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentInfoScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber.shade700,
@@ -75,81 +60,102 @@ class DepositFundScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Deposit Fund Cards
+              // Deposit Fund Cards — now dynamic
               Expanded(
-                child: depositRecords.isEmpty
-                    ? const Center(child: Text("No record available"))
-                    : ListView.builder(
-                  itemCount: depositRecords.length,
-                  itemBuilder: (context, index) {
-                    final record = depositRecords[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: Card(
-                        elevation: 1,
-                        color: Colors.grey.shade100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Date: ${record['date']}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: _getStatusColor(record['status']),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      record['status'],
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (controller.errorMessage.isNotEmpty) {
+                    return Center(child: Text(controller.errorMessage.value));
+                  }
+
+                  if (controller.depositList.isEmpty) {
+                    return const Center(child: Text("No record available"));
+                  }
+
+                  return ListView.builder(
+                    itemCount: controller.depositList.length,
+                    itemBuilder: (context, index) {
+                      final record = controller.depositList[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Card(
+                          elevation: 1,
+                          color: Colors.grey.shade100,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Date: ${record.createdAt ?? '-'}",
                                       style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  const Icon(Icons.account_balance_wallet_outlined, size: 18, color: Colors.black87),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    "Amount: \$${record['amount']}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: statusColor(record.status),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        statusText(record.status),  // Use mapped status text here
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.account_balance_wallet_outlined,
+                                      size: 18,
                                       color: Colors.black87,
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Request ID: ${record['requestId']}",
-                                style: const TextStyle(
-                                  color: Colors.black54,
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "Amount: ₹${record.amount ?? '0.00'}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Request ID: ${record.orderId ?? '-'}",
+                                  style: const TextStyle(color: Colors.black54),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  );
+                }),
               ),
             ],
           ),
@@ -158,16 +164,31 @@ class DepositFundScreen extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
+  // Function to map numeric status to text
+  String statusText(String? status) {
     switch (status) {
-      case "Pending":
-        return Colors.orange;
-      case "Approved":
-        return Colors.green;
-      case "Rejected":
-        return Colors.red;
+      case '0':
+        return 'Pending';
+      case '1':
+        return 'Complete';
+      case '2':
+        return 'Rejected';
       default:
-        return Colors.grey;
+        return 'Unknown';
+    }
+  }
+
+  // Function to get color based on status
+  Color statusColor(String? status) {
+    switch (status) {
+      case '0':
+        return Colors.orange; // Pending
+      case '1':
+        return Colors.green; // Complete
+      case '2':
+        return Colors.red; // Rejected
+      default:
+        return Colors.black;
     }
   }
 }
