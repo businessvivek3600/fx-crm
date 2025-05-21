@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
 import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
@@ -114,8 +115,8 @@ class WalletLedgerController extends GetxController {
     void refreshLedger() {
       currentPage = 1;
       hasMoreData.value = true;
-      fetchWalletLedger(page: 1);
-    } */
+      fetchWalletLedger();
+    }
 
 ///--------------WithDraw -- History ----------------
   Future<void> getWithDrawList({
@@ -158,5 +159,32 @@ class WalletLedgerController extends GetxController {
       isLoading.value = false;
     }
   }
+///-------------GET  _ STATUS _ COLOR-----------------
+  // Function to map numeric status to text
+  String statusText(String? status) {
+    switch (status) {
+      case '0':
+        return 'Pending';
+      case '1':
+        return 'Complete';
+      case '2':
+        return 'Rejected';
+      default:
+        return 'Unknown';
+    }
+  }
 
+  // Function to get color based on status
+  Color statusColor(String? status) {
+    switch (status) {
+      case '0':
+        return Colors.orange; // Pending
+      case '1':
+        return Colors.green; // Complete
+      case '2':
+        return Colors.red; // Rejected
+      default:
+        return Colors.black;
+    }
+  }
 }
