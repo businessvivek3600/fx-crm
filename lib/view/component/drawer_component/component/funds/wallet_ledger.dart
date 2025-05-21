@@ -111,7 +111,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                       itemCount: controller.ledgerList.length,
                       itemBuilder: (context, index) {
                         final item = controller.ledgerList[index];
-
+                  
                         final double credit =
                             double.tryParse(item.credit?.toString() ?? '0') ??
                             0;
@@ -120,10 +120,10 @@ class _WalletLedgerState extends State<WalletLedger> {
                         final double balance =
                             double.tryParse(item.balance?.toString() ?? '0') ??
                             0;
-
+                  
                         final String note = item.note ?? '';
                         final isExpanded = expandedMap[index] ?? false;
-
+                  
                         return Card(
                           elevation: 1,
                           color: Colors.grey.shade100,
@@ -158,8 +158,8 @@ class _WalletLedgerState extends State<WalletLedger> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 170),
-
+                                const SizedBox(height: 14),
+                  
                                 // Note (Expandable)
                                 Text(
                                   note,
@@ -183,11 +183,11 @@ class _WalletLedgerState extends State<WalletLedger> {
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ),
-
+                  
                                 const SizedBox(height: 8),
                                 Divider(color: Colors.grey.shade300),
                                 const SizedBox(height: 8),
-
+                  
                                 // Credit and Debit Row
                                 Row(
                                   mainAxisAlignment:
