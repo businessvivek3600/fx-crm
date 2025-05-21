@@ -149,7 +149,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                       ),
                                     ),
                                     Text(
-                                      "Balance: \$${item.balance ?? '0.00'}",
+                                      "Balance: \$${balance.toStringAsFixed(2)}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green.shade700,
@@ -158,7 +158,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 170),
 
                                 // Note (Expandable)
                                 Text(
