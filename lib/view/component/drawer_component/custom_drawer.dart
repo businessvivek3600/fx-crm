@@ -4,8 +4,6 @@ import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/create_account_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart'
     show WalletAccountScreen;
-import 'package:fx_crm/view/component/drawer_component/component/account/widget/activate_account.dart';
-
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:go_router/go_router.dart';
@@ -118,19 +116,6 @@ class CustomDrawer extends StatelessWidget {
                       context.push(Paths.trasaction_history);
                     },
                   },
-                  {
-                    'title': 'Activate Account',
-                   'icon': Icons.account_balance_wallet_outlined,
-                    'onTap': () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ActivateAccount(),
-                        ),
-                      );
-                      // context.push(Paths.activate_account());
-                    },
-                  }
                 ],
               ),
               _buildExpansionTile(
