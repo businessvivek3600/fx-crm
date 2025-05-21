@@ -59,58 +59,58 @@ class WalletLedgerController extends GetxController {
     // );
   }
 
-  // Future<void> fetchWalletDeposits({
-  //   bool refresh = true,
-  //   bool loading = false,
-  // }) async {
-  //   try {
-  //     if (refresh) {
-  //       currentPage = 1;
-  //       depositList.clear();
-  //     }
+  Future<void> fetchWalletDeposits({
+    bool refresh = true,
+    bool loading = false,
+  }) async {
+    try {
+      if (refresh) {
+        currentPage = 1;
+        depositList.clear();
+      }
 
-  //     errorMessage.value = '';
-  //     isLoading.value = loading;
+      errorMessage.value = '';
+      isLoading.value = loading;
 
-  //     final data = {'page': currentPage.toString()};
-  //     print("ApiConst.wallet_deposit data request: $data");
+      final data = {'page': currentPage.toString()};
+      print("ApiConst.wallet_deposit data request: $data");
 
-  //     final response = await dioClient.post(ApiConst.wallet_deposit, data: data);
-  //     print("ApiConst.wallet_deposit response data:");
-  //     print(response.data);
+      final response = await dioClient.post(ApiConst.wallet_deposit, data: data);
+      print("ApiConst.wallet_deposit response data:");
+      print(response.data);
 
-  //     if (response.statusCode == 200 && response.data['status'] == 1) {
-  //       final parsed = FundRequestResponse.fromJson(response.data);
-  //       final List<FundRequestItem> list = parsed.data?.fundRequest ?? [];
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final parsed = FundRequestResponse.fromJson(response.data);
+        final List<FundRequestItem> list = parsed.data?.fundRequest ?? [];
 
-  //       if (list.isNotEmpty) currentPage++;
-  //       if (refresh) {
-  //         depositList.value = list;
-  //       } else {
-  //         depositList.addAll(list);
-  //       }
+        if (list.isNotEmpty) currentPage++;
+        if (refresh) {
+          depositList.value = list;
+        } else {
+          depositList.addAll(list);
+        }
 
-  //       hasMoreData.value = list.isNotEmpty;
-  //     } else {
-  //       errorMessage.value = response.data['message'] ?? 'Unknown error';
-  //       hasMoreData.value = false;
-  //     }
-  //   } catch (e) {
-  //     errorMessage.value = 'Error: $e';
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
+        hasMoreData.value = list.isNotEmpty;
+      } else {
+        errorMessage.value = response.data['message'] ?? 'Unknown error';
+        hasMoreData.value = false;
+      }
+    } catch (e) {
+      errorMessage.value = 'Error: $e';
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-  // void loadMore() {
-  //   if (hasMoreData.value && !isLoading.value) {
-  //     fetchWalletDeposits(refresh: false);
-  //   }
-  // }
+  void loadMore() {
+    if (hasMoreData.value && !isLoading.value) {
+      fetchWalletDeposits(refresh: false);
+    }
+  }
 
-  // void refreshDeposits() {
-  //   currentPage = 1;
-  //   hasMoreData.value = true;
-  //   fetchWalletDeposits(refresh: true);
-  // }
+  void refreshDeposits() {
+    currentPage = 1;
+    hasMoreData.value = true;
+    fetchWalletDeposits(refresh: true);
+  }
 }
