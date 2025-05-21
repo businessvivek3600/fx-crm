@@ -112,11 +112,11 @@ class DepositFundScreen extends StatelessWidget {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: statusColor(record.status),
+                                        color: controller.statusColor(record.status),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
-                                        statusText(record.status),  // Use mapped status text here
+                                        controller.statusText(record.status),  // Use mapped status text here
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 12,
@@ -164,31 +164,5 @@ class DepositFundScreen extends StatelessWidget {
     );
   }
 
-  // Function to map numeric status to text
-  String statusText(String? status) {
-    switch (status) {
-      case '0':
-        return 'Pending';
-      case '1':
-        return 'Complete';
-      case '2':
-        return 'Rejected';
-      default:
-        return 'Unknown';
-    }
-  }
 
-  // Function to get color based on status
-  Color statusColor(String? status) {
-    switch (status) {
-      case '0':
-        return Colors.orange; // Pending
-      case '1':
-        return Colors.green; // Complete
-      case '2':
-        return Colors.red; // Rejected
-      default:
-        return Colors.black;
-    }
-  }
 }
