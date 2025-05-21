@@ -56,7 +56,7 @@ class DioClient {
     log('updateUserToken : ${dio.options.headers}');
   }
 
-  void _checkSessionExpired(Response response) {
+  void _checkSessionExpired(Response response,) {
     if (response.data is Map<String, dynamic> &&
         response.data['is_login'] == 0) {
       SessionController.to.clearSession();

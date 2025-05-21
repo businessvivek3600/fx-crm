@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../widgets/bg_container.dart';
+import 'component/payment_info.dart';
 
 class DepositFundScreen extends StatelessWidget {
   const DepositFundScreen({super.key});
@@ -57,7 +58,7 @@ class DepositFundScreen extends StatelessWidget {
                   // ),
                   ElevatedButton(
                     onPressed: () {
-                      // Add Deposit Fund logic
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInfoScreen(),));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber.shade700,

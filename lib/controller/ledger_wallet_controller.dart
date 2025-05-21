@@ -9,13 +9,13 @@ class WalletLedgerController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var depositList = <FundRequestItem>[].obs;
-  var currentPage = 1;
+  var currentPage = 0;
   var hasMoreData = true.obs;
 
   var ledgerList = <WalletLedgerItem>[].obs; // ✅ Correct type here
   var totalBalance = '0.00'.obs;
 
-  int wallerLedgerPage = 1;
+  int wallerLedgerPage = 0;
 
   Future<void> fetchWalletLedger({
     bool refresh = true,
@@ -23,7 +23,7 @@ class WalletLedgerController extends GetxController {
   }) async {
     try {
       if (refresh) {
-        wallerLedgerPage = 1;
+        wallerLedgerPage = 0;
         ledgerList.clear();
       }
       errorMessage.value = '';
@@ -35,17 +35,18 @@ class WalletLedgerController extends GetxController {
       print("ApiConst.wallet_ledger response data---------");
       print(response.data);
 
-      if (response.statusCode == 200 && response.data['status'] == 1) {
+      if (response.statusCode == 200 ) {
         final data = WalletLedgerResponse.fromJson(response.data);
         totalBalance.value = data.data?.balance ?? '0.00';
         var list = data.data?.ledger ?? [];
         if (list.isNotEmpty) wallerLedgerPage++;
-        if (wallerLedgerPage == 1) {
+        if (wallerLedgerPage == 0) {
           ledgerList.value = list;
         } else {
           ledgerList.addAll(list);
         }
       } else {
+        print("this---is show");
         errorMessage.value = response.data['message'] ?? 'Unknown error';
       }
     } catch (e) {
