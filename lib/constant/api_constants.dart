@@ -56,6 +56,7 @@ class ApiConst {
   //Funds
   static const String wallet_ledger = 'wallet_ledger';
   static const String wallet_deposit = 'wallet_deposit';
+  static const String withDrawHistory = "wallet_withdraw";
 
 
 }
