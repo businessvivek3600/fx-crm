@@ -58,6 +58,7 @@ class ApiConst {
   static const String wallet_deposit = 'wallet_deposit';
   static const String withDrawHistory = "wallet_withdraw";
   static const String fundWays = "fund_add_ways";
+  static const String transferWallet = "mt5_transfer";
 
 
 }
