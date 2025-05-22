@@ -13,11 +13,11 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:go_router/go_router.dart';
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
-import '../../../controller/session_controller.dart';
 import '../../../routes/route_path.dart';
 import '../../../widgets/bg_container.dart';
-import 'component/account/activate_screen.dart';
 import 'component/account/wallet_account.dart';
+
+
 import 'component/profile/kyc_verification.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -401,3 +401,5 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 }
+
+
