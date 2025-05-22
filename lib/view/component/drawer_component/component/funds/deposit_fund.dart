@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/view/component/drawer_component/component/funds/component/payment_info.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../../../../widgets/bg_container.dart';
-import 'component/payment_info.dart';
 
 class DepositFundScreen extends StatefulWidget {
   @override
@@ -36,7 +36,6 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
     scrollController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
@@ -61,12 +60,7 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PaymentInfoScreen(),
-                        ),
-                      );
+                      _showDepositDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber.shade700,
@@ -115,76 +109,91 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                       final record = controller.depositList[index];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Card(
-                          elevation: 1,
-                          color: Colors.grey.shade100,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentInfoScreen(),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Card(
+                            elevation: 1,
+                            color: Colors.grey.shade100,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Date: ${record.createdAt ?? '-'}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: controller.statusColor(
-                                          record.status,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        controller.statusText(record.status),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Date: ${record.createdAt ?? '-'}",
                                         style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.account_balance_wallet_outlined,
-                                      size: 18,
-                                      color: Colors.black87,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "Amount: ₹${record.amount ?? '0.00'}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: controller.statusColor(
+                                            record.status,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          controller.statusText(record.status),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.account_balance_wallet_outlined,
+                                        size: 18,
                                         color: Colors.black87,
                                       ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        "Amount: ₹${record.amount ?? '0.00'}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Request ID: ${record.orderId ?? '-'}",
+                                    style: const TextStyle(
+                                      color: Colors.black54,
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  "Request ID: ${record.orderId ?? '-'}",
-                                  style: const TextStyle(color: Colors.black54),
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -197,6 +206,98 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showDepositDialog(BuildContext context) {
+    final TextEditingController amountController = TextEditingController();
+    String? selectedPaymentType;
+    final List<String> paymentTypes = ['UPI', 'Bank Transfer', 'BitCoin'];
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Deposit Fund",
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: amountController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Amount',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: selectedPaymentType,
+                      items: paymentTypes.map((type) {
+                        return DropdownMenuItem<String>(
+                          value: type,
+                          child: Text(type),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedPaymentType = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Payment Type',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
+                        onPressed: () {
+                          if (amountController.text.trim().isEmpty ||
+                              selectedPaymentType == null) {
+                            toast("Please enter all fields");
+                            return;
+                          }
+
+                          toast(
+                              "Submitting ₹${amountController.text} via $selectedPaymentType");
+
+                          Navigator.pop(context);
+
+                          // Optionally call API or navigate to next screen
+                        },
+                        child: const Text("Submit"),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
