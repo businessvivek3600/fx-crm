@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:fx_crm/constant/app_constant.dart';
+
 import '../../../controller/session_controller.dart';
 import 'logging_interceptor.dart';
-
-
 
 class DioClient {
   final String baseUrl;
@@ -39,7 +39,7 @@ class DioClient {
     dio.options.headers = {
       Headers.acceptHeader: '*/*',
       Headers.contentTypeHeader:
-      contentType ?? 'application/json; charset=UTF-8',
+          contentType ?? 'application/json; charset=UTF-8',
       if (token != null) HttpHeaders.authorizationHeader: 'Bearer $token',
       'X-API-KEY': AppConst.apiKey,
     };
@@ -49,11 +49,14 @@ class DioClient {
   void updateUserToken(String? userToken) {
     _userToken = userToken ?? _userToken;
     dio.options.headers.update(
-        HttpHeaders.authorizationHeader, (val) => 'Bearer $_userToken',
-        ifAbsent: () => 'Bearer $_userToken');
+      HttpHeaders.authorizationHeader,
+      (val) => 'Bearer $_userToken',
+      ifAbsent: () => 'Bearer $_userToken',
+    );
     log('updateUserToken : ${dio.options.headers}');
   }
-  void _checkSessionExpired(Response response) {
+
+  void _checkSessionExpired(Response response,) {
     if (response.data is Map<String, dynamic> &&
         response.data['is_login'] == 0) {
       SessionController.to.clearSession();
@@ -106,8 +109,9 @@ class DioClient {
       CancelToken cancelToken = CancelToken();
       FormData formData = FormData();
       if (data is Map<String, dynamic>) {
-        formData.fields
-            .addAll(data.entries.toList().map((e) => MapEntry(e.key, e.value)));
+        formData.fields.addAll(
+          data.entries.toList().map((e) => MapEntry(e.key, e.value)),
+        );
       } else {
         if (data == null) {
           formData = FormData();
@@ -117,11 +121,15 @@ class DioClient {
       }
       if (token) {
         formData.fields.add(
-            MapEntry('login_token', SessionController.to.token.value));
+          MapEntry('login_token', SessionController.to.token.value),
+        );
         updateUserToken(SessionController.to.token.value);
       }
 
-      log('🟢 FormData fields: ${formData.fields} Headers: ${dio.options.headers}');
+      print('🟢token : ${SessionController.to.token.value}');
+      log(
+        '🟢 FormData fields: ${formData.fields} Headers: ${dio.options.headers}',
+      );
       var response = await dio.post(
         uri,
         data: formData,
