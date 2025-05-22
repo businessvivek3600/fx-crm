@@ -194,7 +194,7 @@ class ChangePasswordController extends GetxController {
       });
 
       final response = await dioClient.post(
-        ApiConst.updatepassword,
+        ApiConst.updatePassword,
         data: formData,
         token: true,
       );
