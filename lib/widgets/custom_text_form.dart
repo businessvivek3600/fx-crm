@@ -39,6 +39,7 @@ class CustomTextFormField extends StatelessWidget {
         Text(label, style: TextStyle(color: labelColor ?? Colors.white70, fontSize: 14)),
         const SizedBox(height: 6),
         TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
           initialValue: controller == null ? initialValue : null, // 🛑 Important
           readOnly: readOnly || isDate,
