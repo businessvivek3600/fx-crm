@@ -478,7 +478,7 @@ class AuthController extends GetxController {
         "confirm_password": confPass,
       });
       final response = await dioClient.post(
-        ApiConst.change_password,
+        ApiConst.changePassword,
         data: formData,
         token: false,
       );

@@ -1,9 +1,14 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
-import 'package:nb_utils/nb_utils.dart';
+import 'package:nb_utils/nb_utils.dart' as nb;
+import 'package:shimmer/shimmer.dart';
 
 import '../../../../../widgets/bg_container.dart';
+import '../../../../../widgets/drop_down_text_field.dart';
+import 'component/wallet_card_shimmer.dart';
 
 class WalletLedger extends StatefulWidget {
   const WalletLedger({super.key});
@@ -22,12 +27,13 @@ class _WalletLedgerState extends State<WalletLedger> {
   @override
   void initState() {
     super.initState();
-    afterBuildCreated(() {
+    nb.afterBuildCreated(() {
       refresh();
       if (scrollController.hasClients) {
         scrollController.addListener(_listener);
       }
     });
+    controller.getFundWays();
   }
 
   void _listener() {
@@ -72,38 +78,41 @@ class _WalletLedgerState extends State<WalletLedger> {
             ),
           ],
         ),
-        body: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  _buildTransferButton("Wallet to MT5", Colors.amber.shade700,() {
+                    showTransferWalletDialog("Wallet to MT5");
+                  },),
+                  const SizedBox(width: 8),
+                  _buildTransferButton("MT5 to Wallet", Colors.blue,() {
+                    showTransferWalletDialog("MT5 to Wallet");
+                  },),
+                  const SizedBox(width: 8),
+                  _buildTransferButton("Withdraw Funds", Colors.green,() {
 
-          if (controller.errorMessage.isNotEmpty) {
-            return Center(
-              child: Text(
-                controller.errorMessage.value,
-                style: TextStyle(color: Colors.white),
+                  },),
+                ],
               ),
-            );
-          }
+              const SizedBox(height: 16),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return LedgerShimmerCard();
+                }
 
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    _buildTransferButton(
-                      "Wallet to MT5",
-                      Colors.amber.shade700,
+                if (controller.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Text(
+                      controller.errorMessage.value,
+                      style: TextStyle(color: Colors.white),
                     ),
-                    const SizedBox(width: 8),
-                    _buildTransferButton("MT5 to Wallet", Colors.blue),
-                    const SizedBox(width: 8),
-                    _buildTransferButton("Withdraw Funds", Colors.green),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Expanded(
+                  );
+                }
+
+                return Expanded(
                   child: RefreshIndicator(
                     onRefresh: () async => refresh(loading: false),
                     child: ListView.builder(
@@ -111,7 +120,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                       itemCount: controller.ledgerList.length,
                       itemBuilder: (context, index) {
                         final item = controller.ledgerList[index];
-                  
+
                         final double credit =
                             double.tryParse(item.credit?.toString() ?? '0') ??
                             0;
@@ -120,10 +129,10 @@ class _WalletLedgerState extends State<WalletLedger> {
                         final double balance =
                             double.tryParse(item.balance?.toString() ?? '0') ??
                             0;
-                  
+
                         final String note = item.note ?? '';
                         final isExpanded = expandedMap[index] ?? false;
-                  
+
                         return Card(
                           elevation: 1,
                           color: Colors.grey.shade100,
@@ -159,7 +168,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                   ],
                                 ),
                                 const SizedBox(height: 14),
-                  
+
                                 // Note (Expandable)
                                 Text(
                                   note,
@@ -183,11 +192,11 @@ class _WalletLedgerState extends State<WalletLedger> {
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ),
-                  
+
                                 const SizedBox(height: 8),
                                 Divider(color: Colors.grey.shade300),
                                 const SizedBox(height: 8),
-                  
+
                                 // Credit and Debit Row
                                 Row(
                                   mainAxisAlignment:
@@ -236,19 +245,129 @@ class _WalletLedgerState extends State<WalletLedger> {
                       },
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                );
+              }),
+            ],
+          ),
+        ),
       ),
     );
   }
+  void showTransferWalletDialog(String title) {
+    String? selectedValue;
+    final accountKindController = TextEditingController(); // Use a controller
+    final _accountKindKey = GlobalKey<FormFieldState<String>>();
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.info,
+      animType: AnimType.scale,
+      width: 400,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Obx(() {
+          if (controller.transferWalletList.isEmpty) {
+            return const Center(child: LedgerShimmerCard());
+          }
 
-  Widget _buildTransferButton(String label, Color bgColor) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+               Text(
+               title ??  'Select Wallet',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              DropDownTextFormField(
+                key: _accountKindKey,
+                label: 'Wallet',
+                hint: 'Choose Wallet',
+                colors: Colors.white70,
+                controller: accountKindController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) =>
+                (value == null || value.isEmpty) ? 'Please select a wallet' : null,
+                onTap: controller.transferWalletList.isNotEmpty
+                    ? () {
+                  _showDropdownMenu(
+                    _accountKindKey,
+                    controller.transferWalletList.map((e) => e.name ?? '').toList(),
+                    accountKindController,
+                  );
+                }
+                    : null,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFormField(label: "Amount", hint: "Enter the amount",fillColor: Colors.white,),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (selectedValue != null) {
+                        Navigator.pop(context);
+                        // Proceed with your logic
+                        print("Selected Wallet Value: $selectedValue");
+                      } else {
+                        Get.snackbar('Error', 'Please select a wallet',
+                            backgroundColor: Colors.red, colorText: Colors.white);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    child: const Text('Continue', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
+          );
+        }),
+      ),
+    ).show();
+  }
+
+  void _showDropdownMenu(
+      GlobalKey key,
+      List<String> options,
+      TextEditingController controller,
+      ) async {
+    final RenderBox renderBox =
+    key.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height,
+        offset.dx + size.width,
+        offset.dy,
+      ),
+      items:
+      options
+          .map(
+            (option) =>
+            PopupMenuItem<String>(value: option, child: Text(option)),
+      )
+          .toList(),
+    );
+    if (selected != null) {
+      controller.text = selected;
+    }
+
+  }
+  Widget _buildTransferButton(String label, Color bgColor,VoidCallback onPressed) {
     return Expanded(
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -266,3 +385,5 @@ class _WalletLedgerState extends State<WalletLedger> {
     );
   }
 }
+
+
