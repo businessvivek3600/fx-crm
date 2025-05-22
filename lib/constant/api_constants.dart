@@ -44,19 +44,21 @@ class ApiConst {
   static const String ticketDetails = 'ticket_detail';
   static const String ticketReplay = 'ticket_reply';
   //Password
-  static const String updatepassword = 'update_password';
+  static const String updatePassword = 'update_password';
 
   //Downloads
   static const String downloads = 'downloads';
   //get otp
   static const String send_code = 'send-code';
   static const String verify_code = 'verify-otp';
-  static const String change_password = 'change-password';
+  static const String changePassword = 'change-password';
 
   //Funds
   static const String wallet_ledger = 'wallet_ledger';
   static const String wallet_deposit = 'wallet_deposit';
   static const String withDrawHistory = "wallet_withdraw";
+  static const String fundWays = "fund_add_ways";
+  static const String transferWallet = "mt5_transfer";
 
 
 }

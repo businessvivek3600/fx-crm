@@ -20,17 +20,6 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
     super.initState();
     controller.getWithDrawList(loading: true);
   }
-  String formatDate(String inputDate) {
-    try {
-      DateTime dateTime = DateTime.parse(inputDate);
-
-      // Convert to desired format: "1:29 5 May 25"
-      String formatted = DateFormat('h:mma dMMMyy').format(dateTime);
-      return formatted;
-    } catch (e) {
-      return inputDate; // fallback if parsing fails
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +78,7 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
                             Flexible(
                               flex: 2,
                               child: Text(
-                                "Date: ${formatDate(item.createdAt.toString())}",
+                                "Date: ${controller.formatDate(item.createdAt.toString())}",
                                 style: TextStyle(
                                   color: Colors.grey.shade700,
                                   fontSize: 13,
@@ -144,13 +133,13 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.orange.shade100,
+                                color:  controller.statusColor(item.status),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                "Pending",
+                                controller.statusText(item.status),
                                 style: TextStyle(
-                                  color: Colors.orange.shade800,
+                                  color: Colors.white70                   ,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
                                 ),

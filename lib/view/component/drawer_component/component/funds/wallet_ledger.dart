@@ -1,12 +1,10 @@
-// lib/wallet_ledger_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
-import 'package:fx_crm/view/component/drawer_component/component/funds/component/withdraw__funds_screen.dart';
-import 'package:fx_crm/widgets/bg_container.dart';
+import 'package:fx_crm/view/component/drawer_component/component/funds/component/wallet_card_shimmer.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
- // Import the new screen
+
+import '../../../../../widgets/bg_container.dart';
 
 class WalletLedger extends StatefulWidget {
   const WalletLedger({super.key});
@@ -23,12 +21,13 @@ class _WalletLedgerState extends State<WalletLedger> {
   @override
   void initState() {
     super.initState();
-    afterBuildCreated(() {
+    nb.afterBuildCreated(() {
       refresh();
       if (scrollController.hasClients) {
         scrollController.addListener(_listener);
       }
     });
+    controller.getFundWays();
   }
 
   void _listener() {
@@ -71,16 +70,38 @@ class _WalletLedgerState extends State<WalletLedger> {
                 )),
           ],
         ),
-        body: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  _buildTransferButton(
+                    "Wallet to MT5",
+                    Colors.amber.shade700,
+                    () {
+                      showTransferWalletDialog("Wallet to MT5",context);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  _buildTransferButton("MT5 to Wallet", Colors.blue, () {
+                    showTransferWalletDialog("MT5 to Wallet",context);
+                  }),
+                  const SizedBox(width: 8),
+                  _buildTransferButton("Withdraw Funds", Colors.green, () {}),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return LedgerShimmerCard();
+                }
 
           if (controller.errorMessage.isNotEmpty) {
             return Center(
               child: Text(
                 controller.errorMessage.value,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white),
               ),
             );
           }
@@ -91,13 +112,14 @@ class _WalletLedgerState extends State<WalletLedger> {
               children: [
                 Row(
                   children: [
-                    _buildTransferButton("Wallet to MT5", Colors.amber.shade700),
+                    _buildTransferButton(
+                      "Wallet to MT5",
+                      Colors.amber.shade700,
+                    ),
                     const SizedBox(width: 8),
                     _buildTransferButton("MT5 to Wallet", Colors.blue),
                     const SizedBox(width: 8),
-                    _buildTransferButton("Withdraw Funds", Colors.green, onTap: () {
-                      Get.to(() =>  WithdrawFundsScreen());
-                    }),
+                    _buildTransferButton("Withdraw Funds", Colors.green),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -115,7 +137,9 @@ class _WalletLedgerState extends State<WalletLedger> {
                         final double debit =
                             double.tryParse(item.debit?.toString() ?? '0') ?? 0;
                         final double balance =
-                            double.tryParse(item.balance?.toString() ?? '0') ?? 0;
+                            double.tryParse(item.balance?.toString() ?? '0') ??
+                            0;
+                  
                         final String note = item.note ?? '';
                         final isExpanded = expandedMap[index] ?? false;
 
@@ -154,6 +178,8 @@ class _WalletLedgerState extends State<WalletLedger> {
                                   ],
                                 ),
                                 const SizedBox(height: 14),
+                  
+                                // Note (Expandable)
                                 Text(
                                   note,
                                   maxLines: isExpanded ? null : 3,
@@ -176,9 +202,12 @@ class _WalletLedgerState extends State<WalletLedger> {
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ),
+                  
                                 const SizedBox(height: 8),
                                 Divider(color: Colors.grey.shade300),
                                 const SizedBox(height: 8),
+                  
+                                // Credit and Debit Row
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -220,19 +249,19 @@ class _WalletLedgerState extends State<WalletLedger> {
                       },
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                );
+              }),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildTransferButton(String label, Color bgColor, {VoidCallback? onTap}) {
+  Widget _buildTransferButton(String label, Color bgColor) {
     return Expanded(
       child: ElevatedButton(
-        onPressed: onTap ?? () {},
+        onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           padding: const EdgeInsets.symmetric(vertical: 14),

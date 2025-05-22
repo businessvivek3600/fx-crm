@@ -3,8 +3,10 @@ import 'package:fx_crm/constant/api_constants.dart';
 import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
 import 'package:get/get.dart';
-
+import 'package:intl/intl.dart';
+import 'package:dio/dio.dart' as dio;
 import '../main.dart';
+import '../models/get_fund_ways.dart';
 import '../models/withdraw_history_model.dart';
 
 class WalletLedgerController extends GetxController {
@@ -17,7 +19,7 @@ class WalletLedgerController extends GetxController {
   var ledgerList = <WalletLedgerItem>[].obs;
   var withDrawHistory = <WithdrawHistory>[].obs;
   var totalBalance = '0.00'.obs;
-
+  var transferWalletList = <FundOption>[].obs;
   int wallerLedgerPage = 0;
 
   Future<void> fetchWalletLedger({
@@ -40,7 +42,9 @@ class WalletLedgerController extends GetxController {
 
       if (response.statusCode == 200 ) {
         final data = WalletLedgerResponse.fromJson(response.data);
-        totalBalance.value = data.data?.balance ?? '0.00';
+        if (wallerLedgerPage == 0) {
+          totalBalance.value = data.data?.balance ?? '0.00';
+        }
         var list = data.data?.ledger ?? [];
         if (list.isNotEmpty) wallerLedgerPage++;
         if (wallerLedgerPage == 0) {
@@ -159,6 +163,99 @@ class WalletLedgerController extends GetxController {
       isLoading.value = false;
     }
   }
+  ///--------------------Wallet Transfer----------------
+
+  Future<void> addWalletFund({
+    required String accountNo,
+    required String amount,
+    required String accountType,
+  }) async {
+    isLoading.value = true;
+
+    try {
+      // Extract the selected account plan cod
+
+      dio.FormData formData = dio.FormData.fromMap({
+        'account_no': accountNo,
+        'amount': amount,
+        'type': accountType,
+      });
+      print("DATA-------------TRANSFER WALLET");
+      print(formData.fields);
+      final response = await dioClient.post(
+        ApiConst.transferWallet,
+        data: formData,
+      );
+      print(response.data);
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Account created successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to create account',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+///--------------------GET FUND WAYS----------------
+  Future<void> getFundWays() async {
+    isLoading.value = true;
+    try {
+      final response = await dioClient.post(ApiConst.fundWays);
+      print("ApiConst.GET FUND WAYS response data---------");
+      print(response.data);
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final data = response.data['data'];
+
+        // Parse transfer_wallet list
+        final List walletList = data['transfer_wallet'] ?? [];
+        transferWalletList.value =
+            walletList.map((e) => FundOption.fromJson(e)).toList();
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch Fund Ways',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
 ///-------------GET  _ STATUS _ COLOR-----------------
   // Function to map numeric status to text
   String statusText(String? status) {
@@ -187,4 +284,17 @@ class WalletLedgerController extends GetxController {
         return Colors.black;
     }
   }
+  ///-----------------------TIme formate
+  String formatDate(String inputDate) {
+    try {
+      DateTime dateTime = DateTime.parse(inputDate);
+
+      // Convert to desired format: "1:29 5 May 25"
+      String formatted = DateFormat('h:mma dMMMyy').format(dateTime);
+      return formatted;
+    } catch (e) {
+      return inputDate; // fallback if parsing fails
+    }
+  }
+
 }
