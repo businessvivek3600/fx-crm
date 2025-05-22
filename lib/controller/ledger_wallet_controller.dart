@@ -4,6 +4,7 @@ import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import '../main.dart';
 import '../models/withdraw_history_model.dart';
@@ -12,7 +13,7 @@ class WalletLedgerController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var depositList = <FundRequestItem>[].obs;
-  var currentPage = 0;
+  var depositFundPage = 0;
   var hasMoreData = true.obs;
 
   var ledgerList = <WalletLedgerItem>[].obs;
@@ -39,7 +40,7 @@ class WalletLedgerController extends GetxController {
       print("ApiConst.wallet_ledger response data---------");
       print(response.data);
 
-      if (response.statusCode == 200 ) {
+      if (response.statusCode == 200) {
         final data = WalletLedgerResponse.fromJson(response.data);
         totalBalance.value = data.data?.balance ?? '0.00';
         var list = data.data?.ledger ?? [];
@@ -69,35 +70,39 @@ class WalletLedgerController extends GetxController {
   }) async {
     try {
       if (refresh) {
-        currentPage = 1;
+        depositFundPage = 0;
         depositList.clear();
+        hasMoreData.value = true;
       }
 
       errorMessage.value = '';
       isLoading.value = loading;
 
-      final data = {'page': currentPage.toString()};
-      print("ApiConst.wallet_deposit data request: $data");
+      if (!hasMoreData.value) return;
 
-      final response = await dioClient.post(ApiConst.wallet_deposit, data: data);
-      print("ApiConst.wallet_deposit response data:");
-      print(response.data);
+      var data = {'page': depositFundPage.toString()};
+      final response = await dioClient.post(
+        ApiConst.wallet_deposit,
+        data: data,
+      );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final parsed = FundRequestResponse.fromJson(response.data);
         final List<FundRequestItem> list = parsed.data?.fundRequest ?? [];
 
-        if (list.isNotEmpty) currentPage++;
-        if (refresh) {
-          depositList.value = list;
+        if (list.isEmpty) {
+          hasMoreData.value = false;
+          if (depositFundPage == 0) {
+            errorMessage.value = "No record found.";
+            toast("No record found");
+          }
         } else {
+          depositFundPage++;
           depositList.addAll(list);
         }
-
-        hasMoreData.value = list.isNotEmpty;
       } else {
+        print("this---is show");
         errorMessage.value = response.data['message'] ?? 'Unknown error';
-        hasMoreData.value = false;
       }
     } catch (e) {
       errorMessage.value = 'Error: $e';
@@ -106,20 +111,7 @@ class WalletLedgerController extends GetxController {
     }
   }
 
-  void loadMore() {
-    if (hasMoreData.value && !isLoading.value) {
-      fetchWalletDeposits(refresh: false);
-    }
-  }
-
-
-    void refreshLedger() {
-      currentPage = 1;
-      hasMoreData.value = true;
-      fetchWalletLedger();
-    }
-
-///--------------WithDraw -- History ----------------
+  ///--------------WithDraw -- History ----------------
   Future<void> getWithDrawList({
     bool refresh = true,
     bool loading = false,
@@ -133,7 +125,10 @@ class WalletLedgerController extends GetxController {
       isLoading.value = loading;
 
       var data = {'page': wallerLedgerPage.toString()};
-      final response = await dioClient.post(ApiConst.withDrawHistory, data: data);
+      final response = await dioClient.post(
+        ApiConst.withDrawHistory,
+        data: data,
+      );
 
       if (response.statusCode == 200) {
         final responseData = response.data;
@@ -160,7 +155,8 @@ class WalletLedgerController extends GetxController {
       isLoading.value = false;
     }
   }
-///-------------GET  _ STATUS _ COLOR-----------------
+
+  ///-------------GET  _ STATUS _ COLOR-----------------
   // Function to map numeric status to text
   String statusText(String? status) {
     switch (status) {
@@ -188,6 +184,7 @@ class WalletLedgerController extends GetxController {
         return Colors.black;
     }
   }
+
   ///-----------------------TIme formate
   String formatDate(String inputDate) {
     try {
@@ -200,5 +197,4 @@ class WalletLedgerController extends GetxController {
       return inputDate; // fallback if parsing fails
     }
   }
-
 }

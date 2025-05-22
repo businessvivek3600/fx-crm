@@ -1,20 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
 import 'package:get/get.dart';
-
+import 'package:nb_utils/nb_utils.dart';
 import '../../../../../widgets/bg_container.dart';
 import 'component/payment_info.dart';
 
-class DepositFundScreen extends StatelessWidget {
-  DepositFundScreen({super.key});
+class DepositFundScreen extends StatefulWidget {
+  @override
+  State<DepositFundScreen> createState() => _DepositFundScreenState();
+}
 
+class _DepositFundScreenState extends State<DepositFundScreen> {
   final WalletLedgerController controller = Get.put(WalletLedgerController());
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    afterBuildCreated(() {
+      controller.fetchWalletDeposits();
+      scrollController.addListener(_scrollListener);
+    });
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels >=
+        scrollController.position.maxScrollExtent - 100) {
+      controller.fetchWalletDeposits(refresh: false, loading: false);
+    }
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_scrollListener);
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Trigger fetch when screen is built
-    controller.fetchWalletDeposits();
-
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -32,7 +56,6 @@ class DepositFundScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Row with Deposit Fund button
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -59,25 +82,36 @@ class DepositFundScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-
-              // Deposit Fund Cards — now dynamic
               Expanded(
                 child: Obx(() {
-                  if (controller.isLoading.value) {
+                  if (controller.isLoading.value &&
+                      controller.depositList.isEmpty) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (controller.errorMessage.isNotEmpty) {
+                  if (controller.errorMessage.isNotEmpty &&
+                      controller.depositList.isEmpty) {
                     return Center(child: Text(controller.errorMessage.value));
                   }
 
-                  if (controller.depositList.isEmpty) {
-                    return const Center(child: Text("No record available"));
-                  }
-
                   return ListView.builder(
+                    controller: scrollController,
                     itemCount: controller.depositList.length,
                     itemBuilder: (context, index) {
+                      if (index == controller.depositList.length) {
+                        if (controller.hasMoreData.value) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        } else {
+                          return const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(child: Text("No more records")),
+                          );
+                        }
+                      }
+
                       final record = controller.depositList[index];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12.0),
@@ -112,11 +146,13 @@ class DepositFundScreen extends StatelessWidget {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: controller.statusColor(record.status),
+                                        color: controller.statusColor(
+                                          record.status,
+                                        ),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
-                                        controller.statusText(record.status),  // Use mapped status text here
+                                        controller.statusText(record.status),
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 12,
@@ -163,6 +199,4 @@ class DepositFundScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }
