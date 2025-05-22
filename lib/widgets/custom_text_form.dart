@@ -11,6 +11,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextStyle? textStyle;
   final Color? labelColor;
   final Icon? icon;
+  final Color? fillColor;
   final String? Function(String?)? validator;       // 🛑 validator callback
   final void Function(String)? onChanged;
 
@@ -27,7 +28,7 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged,
     this.textStyle,
     this.icon,
-    this.labelColor
+    this.labelColor, this.fillColor
   });
 
   @override
@@ -38,6 +39,7 @@ class CustomTextFormField extends StatelessWidget {
         Text(label, style: TextStyle(color: labelColor ?? Colors.white70, fontSize: 14)),
         const SizedBox(height: 6),
         TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
           initialValue: controller == null ? initialValue : null, // 🛑 Important
           readOnly: readOnly || isDate,
@@ -49,7 +51,7 @@ class CustomTextFormField extends StatelessWidget {
             hintText: hint,
             hintStyle: textStyle ?? const TextStyle(color: Colors.grey),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: fillColor ?? Colors.grey.shade100,
             suffixIcon: isDate
                 ? const Icon(Icons.calendar_today, color: Colors.grey, size: 20)
                 : null,
