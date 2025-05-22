@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
+import 'package:fx_crm/models/account_statement.dart';
 import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,9 @@ class WalletLedgerController extends GetxController {
   var withDrawHistory = <WithdrawHistory>[].obs;
   var totalBalance = '0.00'.obs;
   var transferWalletList = <FundOption>[].obs;
+  var accountStatement = <AccountStatement>[].obs;
   int wallerLedgerPage = 0;
+  int accountStatementPage = 0;
 
   Future<void> fetchWalletLedger({
     bool refresh = true,
@@ -34,13 +37,8 @@ class WalletLedgerController extends GetxController {
       errorMessage.value = '';
       isLoading.value = loading;
       var data = {'page': wallerLedgerPage.toString()};
-      print("ApiConst.wallet_ledger data--------- $data");
-
       final response = await dioClient.post(ApiConst.wallet_ledger, data: data);
-      print("ApiConst.wallet_ledger response data---------");
-      print(response.data);
-
-      if (response.statusCode == 200 ) {
+      if (response.statusCode == 200) {
         final data = WalletLedgerResponse.fromJson(response.data);
         if (wallerLedgerPage == 0) {
           totalBalance.value = data.data?.balance ?? '0.00';
@@ -66,6 +64,7 @@ class WalletLedgerController extends GetxController {
     // );
   }
 
+  ///----------------------------------Fetch Wallet Deposit-------------------------
   Future<void> fetchWalletDeposits({
     bool refresh = true,
     bool loading = false,
@@ -82,7 +81,10 @@ class WalletLedgerController extends GetxController {
       final data = {'page': currentPage.toString()};
       print("ApiConst.wallet_deposit data request: $data");
 
-      final response = await dioClient.post(ApiConst.wallet_deposit, data: data);
+      final response = await dioClient.post(
+        ApiConst.wallet_deposit,
+        data: data,
+      );
       print("ApiConst.wallet_deposit response data:");
       print(response.data);
 
@@ -115,14 +117,13 @@ class WalletLedgerController extends GetxController {
     }
   }
 
+  void refreshLedger() {
+    currentPage = 1;
+    hasMoreData.value = true;
+    fetchWalletLedger();
+  }
 
-    void refreshLedger() {
-      currentPage = 1;
-      hasMoreData.value = true;
-      fetchWalletLedger();
-    }
-
-///--------------WithDraw -- History ----------------
+  ///--------------WithDraw -- History ----------------
   Future<void> getWithDrawList({
     bool refresh = true,
     bool loading = false,
@@ -136,7 +137,10 @@ class WalletLedgerController extends GetxController {
       isLoading.value = loading;
 
       var data = {'page': wallerLedgerPage.toString()};
-      final response = await dioClient.post(ApiConst.withDrawHistory, data: data);
+      final response = await dioClient.post(
+        ApiConst.withDrawHistory,
+        data: data,
+      );
 
       if (response.statusCode == 200) {
         final responseData = response.data;
@@ -163,6 +167,7 @@ class WalletLedgerController extends GetxController {
       isLoading.value = false;
     }
   }
+
   ///--------------------Wallet Transfer----------------
 
   Future<void> addWalletFund({
@@ -218,8 +223,7 @@ class WalletLedgerController extends GetxController {
     }
   }
 
-
-///--------------------GET FUND WAYS----------------
+  ///--------------------GET FUND WAYS----------------
   Future<void> getFundWays() async {
     isLoading.value = true;
     try {
@@ -255,8 +259,57 @@ class WalletLedgerController extends GetxController {
     }
   }
 
+  ///------------------------GET ACCOUNT STATEMENT ------------------------
+  Future<void> getAccountStatement({
+    bool refresh = true,
+    bool loading = false,
+  }) async {
+    try {
+      if (refresh) {
+        accountStatementPage = 0;
+        accountStatement.clear();
+      }
 
-///-------------GET  _ STATUS _ COLOR-----------------
+      final data = {'page': accountStatementPage.toString()};
+      final response = await dioClient.post(ApiConst.accountStatement, data: data);
+
+      if (response.statusCode == 200) {
+        final dynamic rawData = response.data['data'];
+
+        if (rawData is List && rawData.isNotEmpty) {
+          final List<dynamic> dataList = rawData;
+          accountStatement.addAll(
+            dataList.map((e) => AccountStatement.fromJson(e)).toList(),
+          );
+          accountStatementPage++;
+        } else {
+          // No more data
+          print("No more data available");
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch Account Statement',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  ///-------------GET  _ STATUS _ COLOR-----------------
   // Function to map numeric status to text
   String statusText(String? status) {
     switch (status) {
@@ -284,6 +337,7 @@ class WalletLedgerController extends GetxController {
         return Colors.black;
     }
   }
+
   ///-----------------------TIme formate
   String formatDate(String inputDate) {
     try {
@@ -296,5 +350,4 @@ class WalletLedgerController extends GetxController {
       return inputDate; // fallback if parsing fails
     }
   }
-
 }
