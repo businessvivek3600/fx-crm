@@ -12,6 +12,7 @@ import '../models/kyc_model.dart';
 class KycController extends GetxController {
   final DioClient dioClient;
 
+
   KycController({required this.dioClient});
 
   final isLoading = false.obs;
