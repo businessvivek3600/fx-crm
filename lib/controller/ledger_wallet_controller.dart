@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
 import 'package:fx_crm/models/account_statement.dart';
+import 'package:fx_crm/models/payment_informaton_model.dart';
 import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,8 @@ class WalletLedgerController extends GetxController {
   var totalBalance = '0.00'.obs;
   var transferWalletList = <FundOption>[].obs;
   var accountStatement = <AccountStatement>[].obs;
+  var paymentList = <PaymentInformation>[].obs;
+
   int wallerLedgerPage = 0;
   int accountStatementPage = 0;
 
@@ -111,17 +114,54 @@ class WalletLedgerController extends GetxController {
     }
   }
 
-  // void loadMore() {
-  //   if (hasMoreData.value && !isLoading.value) {
-  //     fetchWalletDeposits(refresh: false);
-  //   }
-  // }
-  //
-  // void refreshLedger() {
-  //   currentPage = 1;
-  //   hasMoreData.value = true;
-  //   fetchWalletLedger();
-  // }
+  ///-----------PaymentInformation----------------------
+   Future<void> fetchPaymentInformation({
+    required String txnId,
+  }) async {
+    isLoading.value = true;
+
+    try {
+      final formData = dio.FormData.fromMap({
+        'txn_id': txnId,
+      });
+
+      final response = await dioClient.post(
+        ApiConst.payment_information,
+        data: formData,
+      );
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final payment = PaymentInformation.fromJson(response.data);
+        paymentList.add(payment);
+
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Payment info fetched!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch payment info',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   ///--------------WithDraw -- History ----------------
   Future<void> getWithDrawList({

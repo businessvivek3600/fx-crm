@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/models/payment_informaton_model.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/payment_info.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -36,6 +37,7 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
     scrollController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
@@ -118,6 +120,7 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                               ),
                             );
                           },
+
                           borderRadius: BorderRadius.circular(8),
                           child: Card(
                             elevation: 1,
@@ -220,7 +223,8 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: StatefulBuilder(
@@ -232,7 +236,9 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                     const Text(
                       "Deposit Fund",
                       style: TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -248,12 +254,13 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: selectedPaymentType,
-                      items: paymentTypes.map((type) {
-                        return DropdownMenuItem<String>(
-                          value: type,
-                          child: Text(type),
-                        );
-                      }).toList(),
+                      items:
+                          paymentTypes.map((type) {
+                            return DropdownMenuItem<String>(
+                              value: type,
+                              child: Text(type),
+                            );
+                          }).toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedPaymentType = value;
@@ -272,7 +279,9 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
                         ),
                         onPressed: () {
                           if (amountController.text.trim().isEmpty ||
@@ -282,7 +291,8 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                           }
 
                           toast(
-                              "Submitting ₹${amountController.text} via $selectedPaymentType");
+                            "Submitting ₹${amountController.text} via $selectedPaymentType",
+                          );
 
                           Navigator.pop(context);
 
