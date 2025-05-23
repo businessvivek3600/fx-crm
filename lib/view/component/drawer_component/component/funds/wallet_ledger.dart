@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/view/component/drawer_component/component/funds/component/common_transfer_wallet.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/wallet_card_shimmer.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -250,7 +251,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                       },
                     ),
                   ),
-                );
+            )]));
               }),
             ],
           ),
