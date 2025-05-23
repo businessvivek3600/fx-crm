@@ -45,6 +45,7 @@ class _WalletLedgerState extends State<WalletLedger> {
   }
 
   Future<void> refresh({bool refresh = true, bool loading = true}) async {
+    controller.accountStatementPage = 0;
     await controller.fetchWalletLedger(refresh: refresh, loading: loading);
   }
 

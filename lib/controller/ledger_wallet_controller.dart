@@ -111,17 +111,17 @@ class WalletLedgerController extends GetxController {
     }
   }
 
-  void loadMore() {
-    if (hasMoreData.value && !isLoading.value) {
-      fetchWalletDeposits(refresh: false);
-    }
-  }
-
-  void refreshLedger() {
-    currentPage = 1;
-    hasMoreData.value = true;
-    fetchWalletLedger();
-  }
+  // void loadMore() {
+  //   if (hasMoreData.value && !isLoading.value) {
+  //     fetchWalletDeposits(refresh: false);
+  //   }
+  // }
+  //
+  // void refreshLedger() {
+  //   currentPage = 1;
+  //   hasMoreData.value = true;
+  //   fetchWalletLedger();
+  // }
 
   ///--------------WithDraw -- History ----------------
   Future<void> getWithDrawList({
@@ -275,7 +275,7 @@ class WalletLedgerController extends GetxController {
 
       if (response.statusCode == 200) {
         final dynamic rawData = response.data['data'];
-
+print(rawData);
         if (rawData is List && rawData.isNotEmpty) {
           final List<dynamic> dataList = rawData;
           accountStatement.addAll(
