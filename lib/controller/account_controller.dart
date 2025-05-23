@@ -218,7 +218,7 @@ class AccountController extends GetxController {
     String accountNumber,
     String newpass,
     String confPass,
-    String password_type,
+    String passwordType,
   ) async {
     try {
       isLoading.value = true;
@@ -226,7 +226,7 @@ class AccountController extends GetxController {
         'account_no': accountNumber,
         'new_password': newpass,
         "confirm_password": confPass,
-        "password_type": password_type,
+        "password_type": passwordType,
       });
        print('POST Body:--------------- ${formData.fields}');
 

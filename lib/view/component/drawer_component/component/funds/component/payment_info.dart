@@ -9,6 +9,8 @@ class PaymentInfoScreen extends StatelessWidget {
   final Color textColor = Colors.white70;
   final Color highlightColor = Colors.white;
 
+  const PaymentInfoScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(

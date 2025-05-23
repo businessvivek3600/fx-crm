@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
+import 'package:fx_crm/models/account_statement.dart';
 import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import 'package:nb_utils/nb_utils.dart';
-
-
 import 'package:dio/dio.dart' as dio;
-
 import '../main.dart';
 import '../models/get_fund_ways.dart';
 import '../models/withdraw_history_model.dart';
@@ -18,14 +14,16 @@ class WalletLedgerController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var depositList = <FundRequestItem>[].obs;
-  var depositFundPage = 0;
+  var currentPage = 0;
   var hasMoreData = true.obs;
 
   var ledgerList = <WalletLedgerItem>[].obs;
   var withDrawHistory = <WithdrawHistory>[].obs;
   var totalBalance = '0.00'.obs;
   var transferWalletList = <FundOption>[].obs;
+  var accountStatement = <AccountStatement>[].obs;
   int wallerLedgerPage = 0;
+  int accountStatementPage = 0;
 
   Future<void> fetchWalletLedger({
     bool refresh = true,
@@ -39,12 +37,7 @@ class WalletLedgerController extends GetxController {
       errorMessage.value = '';
       isLoading.value = loading;
       var data = {'page': wallerLedgerPage.toString()};
-      print("ApiConst.wallet_ledger data--------- $data");
-
       final response = await dioClient.post(ApiConst.wallet_ledger, data: data);
-      print("ApiConst.wallet_ledger response data---------");
-      print(response.data);
-
       if (response.statusCode == 200) {
         final data = WalletLedgerResponse.fromJson(response.data);
         if (wallerLedgerPage == 0) {
@@ -71,45 +64,45 @@ class WalletLedgerController extends GetxController {
     // );
   }
 
+  ///----------------------------------Fetch Wallet Deposit-------------------------
   Future<void> fetchWalletDeposits({
     bool refresh = true,
     bool loading = false,
   }) async {
     try {
       if (refresh) {
-        depositFundPage = 0;
+        currentPage = 1;
         depositList.clear();
-        hasMoreData.value = true;
       }
 
       errorMessage.value = '';
       isLoading.value = loading;
 
-      if (!hasMoreData.value) return;
+      final data = {'page': currentPage.toString()};
+      print("ApiConst.wallet_deposit data request: $data");
 
-      var data = {'page': depositFundPage.toString()};
       final response = await dioClient.post(
         ApiConst.wallet_deposit,
         data: data,
       );
+      print("ApiConst.wallet_deposit response data:");
+      print(response.data);
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final parsed = FundRequestResponse.fromJson(response.data);
         final List<FundRequestItem> list = parsed.data?.fundRequest ?? [];
 
-        if (list.isEmpty) {
-          hasMoreData.value = false;
-          if (depositFundPage == 0) {
-            errorMessage.value = "No record found.";
-            toast("No record found");
-          }
+        if (list.isNotEmpty) currentPage++;
+        if (refresh) {
+          depositList.value = list;
         } else {
-          depositFundPage++;
           depositList.addAll(list);
         }
+
+        hasMoreData.value = list.isNotEmpty;
       } else {
-        print("this---is show");
         errorMessage.value = response.data['message'] ?? 'Unknown error';
+        hasMoreData.value = false;
       }
     } catch (e) {
       errorMessage.value = 'Error: $e';
@@ -117,6 +110,18 @@ class WalletLedgerController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  // void loadMore() {
+  //   if (hasMoreData.value && !isLoading.value) {
+  //     fetchWalletDeposits(refresh: false);
+  //   }
+  // }
+  //
+  // void refreshLedger() {
+  //   currentPage = 1;
+  //   hasMoreData.value = true;
+  //   fetchWalletLedger();
+  // }
 
   ///--------------WithDraw -- History ----------------
   Future<void> getWithDrawList({
@@ -218,8 +223,7 @@ class WalletLedgerController extends GetxController {
     }
   }
 
-
-///--------------------GET FUND WAYS----------------
+  ///--------------------GET FUND WAYS----------------
   Future<void> getFundWays() async {
     isLoading.value = true;
     try {
@@ -255,9 +259,57 @@ class WalletLedgerController extends GetxController {
     }
   }
 
+  ///------------------------GET ACCOUNT STATEMENT ------------------------
+  Future<void> getAccountStatement({
+    bool refresh = true,
+    bool loading = false,
+  }) async {
+    try {
+      if (refresh) {
+        accountStatementPage = 0;
+        accountStatement.clear();
+      }
 
-///-------------GET  _ STATUS _ COLOR-----------------
+      final data = {'page': accountStatementPage.toString()};
+      final response = await dioClient.post(ApiConst.accountStatement, data: data);
 
+      if (response.statusCode == 200) {
+        final dynamic rawData = response.data['data'];
+print(rawData);
+        if (rawData is List && rawData.isNotEmpty) {
+          final List<dynamic> dataList = rawData;
+          accountStatement.addAll(
+            dataList.map((e) => AccountStatement.fromJson(e)).toList(),
+          );
+          accountStatementPage++;
+        } else {
+          // No more data
+          print("No more data available");
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch Account Statement',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  ///-------------GET  _ STATUS _ COLOR-----------------
   // Function to map numeric status to text
   String statusText(String? status) {
     switch (status) {

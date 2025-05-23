@@ -186,6 +186,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
                         GetBuilder<KycController>(
                           builder: (_) {
                             if (kycController.selfieImageFile != null) {
+                              
                               return Stack(
                                 children: [
                                   Image.file(

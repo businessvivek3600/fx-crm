@@ -86,7 +86,7 @@ class _SupportPageState extends State<SupportPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ChatPage(ticketId: ticket.ticketId!),
+                              builder: (context) => ChatPage(ticketId: ticket.ticketId),
                             ),
                           );
                         },
