@@ -1,3 +1,5 @@
+import 'package:nb_utils/nb_utils.dart';
+
 class PaymentInformation {
   final int? status;
   final int? isLogin;
@@ -27,7 +29,7 @@ class PaymentInformation {
 class PaymentData {
   final String? orderId;
   final String? txnId;
-  final int? amount;
+  final double? amount;
   final String? coinAmt;
   final int? recived;
   final String? types;
@@ -55,7 +57,7 @@ class PaymentData {
     return PaymentData(
       orderId: json['order_id'],
       txnId: json['txn_id'],
-      amount: json['amount'],
+      amount: json['amount']?.toString().toDouble(),
       coinAmt: json['coin_amt'],
       recived: json['recived'],
       types: json['types'],

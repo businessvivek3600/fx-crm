@@ -1,9 +1,10 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
-import 'package:fx_crm/models/payment_informaton_model.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/payment_info.dart';
 import 'package:get/get.dart';
-import 'package:nb_utils/nb_utils.dart';
+import 'package:nb_utils/nb_utils.dart' hide DialogType;
+
 import '../../../../../widgets/bg_container.dart';
 
 class DepositFundScreen extends StatefulWidget {
@@ -113,10 +114,17 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                         padding: const EdgeInsets.only(bottom: 12.0),
                         child: InkWell(
                           onTap: () {
+                            if (record.txnId == null || record.txnId!.isEmpty) {
+                              toast("Transaction ID is not available");
+                              return;
+                            }
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PaymentInfoScreen(),
+                                builder:
+                                    (context) => PaymentInfoScreen(
+                                      trxId: record.orderId!,
+                                    ),
                               ),
                             );
                           },
@@ -213,101 +221,133 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
   }
 
   void _showDepositDialog(BuildContext context) {
-    final TextEditingController amountController = TextEditingController();
-    String? selectedPaymentType;
-    final List<String> paymentTypes = ['UPI', 'Bank Transfer', 'BitCoin'];
-
-    showDialog(
+    AwesomeDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: StatefulBuilder(
-              builder: (context, setState) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Deposit Fund",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Amount',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: selectedPaymentType,
-                      items:
-                          paymentTypes.map((type) {
-                            return DropdownMenuItem<String>(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedPaymentType = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Payment Type',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                        ),
-                        onPressed: () {
-                          if (amountController.text.trim().isEmpty ||
-                              selectedPaymentType == null) {
-                            toast("Please enter all fields");
+      dialogType: DialogType.info,
+      animType: AnimType.scale,
+      width: 400,
+      body: DepositFundDialog(),
+    ).show();
+  }
+}
+
+class DepositFundDialog extends StatefulWidget {
+  const DepositFundDialog({super.key});
+
+  @override
+  State<DepositFundDialog> createState() => _DepositFundDialogState();
+}
+
+class _DepositFundDialogState extends State<DepositFundDialog> {
+  final TextEditingController amountController = TextEditingController();
+  String? selectedPaymentType;
+  final List<String> paymentTypes = ['UPI', 'Bank Transfer', 'BitCoin', "USDT"];
+  bool isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Deposit Fund",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Amount',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter an amount';
+                }
+                final amount = double.tryParse(value);
+                if (amount == null || amount <= 0) {
+                  return 'Please enter a valid amount';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: selectedPaymentType,
+              items:
+                  paymentTypes.map((type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedPaymentType = value;
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Payment Type',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a payment type';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+                onPressed:
+                    isLoading
+                        ? null
+                        : () async {
+                          if (!_formKey.currentState!.validate()) {
                             return;
                           }
 
                           toast(
                             "Submitting ₹${amountController.text} via $selectedPaymentType",
                           );
-
-                          Navigator.pop(context);
+                          var id = await Get.find<WalletLedgerController>()
+                              .depositFundRequest(
+                                amount: amountController.text.trim(),
+                                paymentMethod: selectedPaymentType!,
+                              );
+                          if (id == null) {
+                            toast("Failed to submit deposit request");
+                            return;
+                          }
+                          if (context.mounted) Navigator.pop(context, true);
 
                           // Optionally call API or navigate to next screen
                         },
-                        child: const Text("Submit"),
-                      ),
-                    ),
-                  ],
-                );
-              },
+                child: const Text("Submit"),
+              ),
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
 import 'package:fx_crm/models/account_statement.dart';
@@ -6,7 +7,7 @@ import 'package:fx_crm/models/wallet_deposit_model.dart';
 import 'package:fx_crm/models/wallet_ledger_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:dio/dio.dart' as dio;
+
 import '../main.dart';
 import '../models/get_fund_ways.dart';
 import '../models/withdraw_history_model.dart';
@@ -54,7 +55,7 @@ class WalletLedgerController extends GetxController {
           ledgerList.addAll(list);
         }
       } else {
-        print("this---is show");
+        // print("this---is show");
         errorMessage.value = response.data['message'] ?? 'Unknown error';
       }
     } catch (e) {
@@ -74,7 +75,7 @@ class WalletLedgerController extends GetxController {
   }) async {
     try {
       if (refresh) {
-        currentPage = 1;
+        currentPage = 0;
         depositList.clear();
       }
 
@@ -115,15 +116,13 @@ class WalletLedgerController extends GetxController {
   }
 
   ///-----------PaymentInformation----------------------
-   Future<void> fetchPaymentInformation({
+  Future<PaymentInformation?> fetchPaymentInformation({
     required String txnId,
   }) async {
     isLoading.value = true;
-
+    PaymentInformation? paymentInfo;
     try {
-      final formData = dio.FormData.fromMap({
-        'txn_id': txnId,
-      });
+      final formData = dio.FormData.fromMap({'order_id': txnId});
 
       final response = await dioClient.post(
         ApiConst.payment_information,
@@ -131,12 +130,11 @@ class WalletLedgerController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
-        final payment = PaymentInformation.fromJson(response.data);
-        paymentList.add(payment);
+        paymentInfo = PaymentInformation.fromJson(response.data);
 
         Get.snackbar(
           'Success',
-          response.data['message'] ?? 'Payment info fetched!',
+          'Payment info fetched!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -161,6 +159,61 @@ class WalletLedgerController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+    return paymentInfo;
+  }
+  //------------------deposit--funds-------------------
+
+  Future<String?> depositFundRequest({
+    required String paymentMethod,
+    required String amount,
+  }) async {
+    isLoading.value = true;
+    String? orderId;
+    try {
+      final formData = dio.FormData.fromMap({
+        'payment_type': paymentMethod,
+        'amount': amount,
+      });
+
+      final response = await dioClient.post(
+        ApiConst.deposit_fund,
+        data: formData,
+      );
+
+      orderId = response.data['order_id'];
+      if (response.statusCode == 200 &&
+          response.data['status'] == 1 &&
+          orderId != null &&
+          orderId != '') {
+        fetchWalletDeposits(loading: false);
+        Get.snackbar(
+          'Success',
+          'Payment info fetched!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to fetch payment info',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+    return orderId;
   }
 
   ///--------------WithDraw -- History ----------------
@@ -311,11 +364,14 @@ class WalletLedgerController extends GetxController {
       }
 
       final data = {'page': accountStatementPage.toString()};
-      final response = await dioClient.post(ApiConst.accountStatement, data: data);
+      final response = await dioClient.post(
+        ApiConst.accountStatement,
+        data: data,
+      );
 
       if (response.statusCode == 200) {
         final dynamic rawData = response.data['data'];
-print(rawData);
+        print(rawData);
         if (rawData is List && rawData.isNotEmpty) {
           final List<dynamic> dataList = rawData;
           accountStatement.addAll(

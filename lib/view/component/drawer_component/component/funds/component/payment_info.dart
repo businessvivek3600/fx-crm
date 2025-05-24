@@ -1,50 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/models/payment_informaton_model.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
+import 'package:get/get.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-class PaymentInfoScreen extends StatelessWidget {
-  final String status = "Complete"; // Change to "Pending" to test
+class PaymentInfoScreen extends StatefulWidget {
+  const PaymentInfoScreen({super.key, required this.trxId});
+  final String trxId;
 
+  @override
+  State<PaymentInfoScreen> createState() => _PaymentInfoScreenState();
+}
+
+class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
+  final controller = Get.find<WalletLedgerController>();
+  PaymentInformation? inf;
+  bool loading = true;
+  // Change to "Pending" to test
   final Color cardColor = const Color(0xFF1C1C1E);
+
   final Color textColor = Colors.white70;
+
   final Color highlightColor = Colors.white;
 
-  const PaymentInfoScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    afterBuildCreated(() {
+      controller
+          .fetchPaymentInformation(txnId: widget.trxId)
+          .then(
+            (v) => setState(() {
+              inf = v;
+              loading = false;
+            }),
+          );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BackgroundContainer(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text("Payment Information"),
-          backgroundColor: Colors.transparent,
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: cardColor.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(15),
+    return GetBuilder<WalletLedgerController>(
+      builder: (controller) {
+        final status = inf?.data?.status ?? -1;
+        return BackgroundContainer(
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              title: const Text("Payment Information"),
+              backgroundColor: Colors.transparent,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: status == "Pending"
-                  ? _buildCompletedContent()
-                  : _buildPendingContent(),
-            ),
+            body:
+                loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : inf == null
+                    ? const Center(
+                      child: Text(
+                        "No Payment Information Found",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                    : SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: cardColor.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:
+                              status == 1 || status == 2
+                                  ? _buildCompletedContent(status)
+                                  : _buildPendingContent(status),
+                        ),
+                      ),
+                    ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  List<Widget> _buildCompletedContent() {
+  List<Widget> _buildCompletedContent(int status) {
     return [
       _infoRow("Status:", "Complete", valueColor: Colors.greenAccent),
       const SizedBox(height: 15),
-      _infoRow("Total Amount To Send:", "1.07022000 LTCT (total confirms needed: 0)"),
+      _infoRow(
+        "Total Amount To Send:",
+        "${inf?.data?.amount ?? 0} ${inf?.data?.coin ?? ''} (total confirms needed: 0)",
+      ),
       const SizedBox(height: 15),
       _infoRow("Received So Far:", "1.07022000 LTCT (unconfirmed)"),
       const SizedBox(height: 15),
@@ -65,7 +113,11 @@ class PaymentInfoScreen extends StatelessWidget {
             ),
             TextSpan(
               text: 'DO NOT Send Funds to this Email Address!',
-              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 12),
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
             ),
           ],
         ),
@@ -75,15 +127,26 @@ class PaymentInfoScreen extends StatelessWidget {
     ];
   }
 
-  List<Widget> _buildPendingContent() {
+  List<Widget> _buildPendingContent(int status) {
     return [
-      _infoRow("Status:", "Cancelled / Timed Out", valueColor: Colors.redAccent),
+      _infoRow(
+        "Status:",
+        "Cancelled / Timed Out",
+        valueColor: Colors.redAccent,
+      ),
       const SizedBox(height: 15),
-      _infoRow("Total Amount To Send:", "10.71516000 LTCT (total confirms needed: 0)"),
+      _infoRow(
+        "Total Amount To Send:",
+        "10.71516000 LTCT (total confirms needed: 0)",
+      ),
       const SizedBox(height: 15),
       _infoRow("Received So Far:", "0.00000000 LTCT (unconfirmed)"),
       const SizedBox(height: 10),
-      _infoRow("Balance Remaining:", "10.71516 LTCT", valueColor: Colors.blueAccent),
+      _infoRow(
+        "Balance Remaining:",
+        "10.71516 LTCT",
+        valueColor: Colors.blueAccent,
+      ),
       const Divider(height: 32, color: Colors.grey),
       Center(
         child: SizedBox(
@@ -120,13 +183,20 @@ class PaymentInfoScreen extends StatelessWidget {
             ),
             TextSpan(
               text: 'DO NOT Send Funds to this Email Address!',
-              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 12),
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
             ),
           ],
         ),
       ),
       const SizedBox(height: 20),
-      _infoRow("Leave Feedback:", "You will be able to leave feedback once this transaction is completed."),
+      _infoRow(
+        "Leave Feedback:",
+        "You will be able to leave feedback once this transaction is completed.",
+      ),
       const SizedBox(height: 10),
       _infoRow("Payment ID:", "CPJE46Q00RL9O2G531R5QTC1R6"),
     ];
@@ -137,9 +207,15 @@ class PaymentInfoScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-            flex: 2,
-            child: Text(label,
-                style: const TextStyle(color: Colors.white60, fontWeight: FontWeight.w600))),
+          flex: 2,
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white60,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
         Expanded(
           flex: 3,
           child: Text(
