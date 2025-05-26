@@ -14,8 +14,8 @@ void showTransferWalletDialog(String title,BuildContext context) {
   String? selectedValue;
   final accountKindController = TextEditingController();
   final amountController = TextEditingController();
-  final _accountKindKey = GlobalKey<FormFieldState<String>>();
-  final _formKey = GlobalKey<FormState>();
+  final accountKindKey = GlobalKey<FormFieldState<String>>();
+  final formKey = GlobalKey<FormState>();
   AwesomeDialog(
     context: context,
     dialogType: DialogType.info,
@@ -29,7 +29,7 @@ void showTransferWalletDialog(String title,BuildContext context) {
         }
 
         return Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -39,7 +39,7 @@ void showTransferWalletDialog(String title,BuildContext context) {
               ),
               const SizedBox(height: 20),
               DropDownTextFormField(
-                key: _accountKindKey,
+                key: accountKindKey,
                 label: 'Wallet',
                 hint: 'Choose Wallet',
                 colors: Colors.white70,
@@ -54,7 +54,7 @@ void showTransferWalletDialog(String title,BuildContext context) {
                 controller.transferWalletList.isNotEmpty
                     ? () {
                   _showDropdownMenu(context,
-                    _accountKindKey,
+                    accountKindKey,
                     controller.transferWalletList
                         .map((e) => e.name ?? '')
                         .toList(),
@@ -71,8 +71,9 @@ void showTransferWalletDialog(String title,BuildContext context) {
                 controller: amountController,
                 // keyboardType: TextInputType.number,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty)
+                  if (value == null || value.trim().isEmpty) {
                     return "Please enter an amount";
+                  }
                   final enteredAmount = double.tryParse(value.trim());
                   if (enteredAmount == null) return "Enter a valid number";
 
@@ -82,8 +83,9 @@ void showTransferWalletDialog(String title,BuildContext context) {
                           controller.totalBalance.value.toString(),
                         ) ??
                             0.0;
-                    if (enteredAmount > balance)
+                    if (enteredAmount > balance) {
                       return "Amount exceeds wallet balance";
+                    }
                   }
                   return null;
                 },
@@ -99,7 +101,7 @@ void showTransferWalletDialog(String title,BuildContext context) {
                   const SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (formKey.currentState!.validate()) {
                         Navigator.pop(context);
                         // Proceed with your logic here
                         print(

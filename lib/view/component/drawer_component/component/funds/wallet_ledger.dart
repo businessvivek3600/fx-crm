@@ -10,6 +10,7 @@ import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 import 'component/common_transfer_wallet.dart';
 import 'component/wallet_card_shimmer.dart';
+import 'component/withdraw__funds_screen.dart';
 
 class WalletLedger extends StatefulWidget {
   const WalletLedger({super.key});
@@ -98,7 +99,9 @@ class _WalletLedgerState extends State<WalletLedger> {
                     showTransferWalletDialog("MT5 to Wallet",context);
                   }),
                   const SizedBox(width: 8),
-                  _buildTransferButton("Withdraw Funds", Colors.green, () {}),
+                  _buildTransferButton("Withdraw Funds", Colors.green, () {
+                    Get.to(() => WithdrawFundsScreen());
+                  }),
                 ],
               ),
               const SizedBox(height: 16),
