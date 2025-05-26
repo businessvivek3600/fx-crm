@@ -1,7 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
-import 'package:fx_crm/view/component/drawer_component/component/funds/component/withdraw__funds_screen.dart';
 import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' as nb;
@@ -11,7 +10,7 @@ import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 import 'component/common_transfer_wallet.dart';
 import 'component/wallet_card_shimmer.dart';
-
+import 'component/withdraw__funds_screen.dart';
 
 class WalletLedger extends StatefulWidget {
   const WalletLedger({super.key});
@@ -24,6 +23,7 @@ class _WalletLedgerState extends State<WalletLedger> {
   final WalletLedgerController controller = Get.put(WalletLedgerController());
   final scrollController = ScrollController();
 
+  // Track expanded state per item
   final Map<int, bool> expandedMap = {};
 
   @override
@@ -39,12 +39,14 @@ class _WalletLedgerState extends State<WalletLedger> {
   }
 
   void _listener() {
-    if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
       refresh(refresh: false, loading: false);
     }
   }
 
   Future<void> refresh({bool refresh = true, bool loading = true}) async {
+    controller.accountStatementPage = 0;
     await controller.fetchWalletLedger(refresh: refresh, loading: loading);
   }
 
@@ -85,16 +87,20 @@ class _WalletLedgerState extends State<WalletLedger> {
             children: [
               Row(
                 children: [
-                  _buildTransferButton("Wallet to MT5", Colors.amber.shade700, () {
-                    showTransferWalletDialog("Wallet to MT5", context);
-                  }),
+                  _buildTransferButton(
+                    "Wallet to MT5",
+                    Colors.amber.shade700,
+                    () {
+                      showTransferWalletDialog("Wallet to MT5",context);
+                    },
+                  ),
                   const SizedBox(width: 8),
                   _buildTransferButton("MT5 to Wallet", Colors.blue, () {
-                    showTransferWalletDialog("MT5 to Wallet", context);
+                    showTransferWalletDialog("MT5 to Wallet",context);
                   }),
                   const SizedBox(width: 8),
                   _buildTransferButton("Withdraw Funds", Colors.green, () {
-                    Get.to(() => const WithdrawFundsScreen());
+                    Get.to(() => WithdrawFundsScreen());
                   }),
                 ],
               ),
@@ -108,7 +114,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                   return Center(
                     child: Text(
                       controller.errorMessage.value,
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                   );
                 }
@@ -121,16 +127,25 @@ class _WalletLedgerState extends State<WalletLedger> {
                       itemCount: controller.ledgerList.length,
                       itemBuilder: (context, index) {
                         final item = controller.ledgerList[index];
-                        final double credit = double.tryParse(item.credit?.toString() ?? '0') ?? 0;
-                        final double debit = double.tryParse(item.debit?.toString() ?? '0') ?? 0;
-                        final double balance = double.tryParse(item.balance?.toString() ?? '0') ?? 0;
+
+                        final double credit =
+                            double.tryParse(item.credit?.toString() ?? '0') ??
+                            0;
+                        final double debit =
+                            double.tryParse(item.debit?.toString() ?? '0') ?? 0;
+                        final double balance =
+                            double.tryParse(item.balance?.toString() ?? '0') ??
+                            0;
+
                         final String note = item.note ?? '';
                         final isExpanded = expandedMap[index] ?? false;
 
                         return Card(
                           elevation: 1,
                           color: Colors.grey.shade100,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           margin: const EdgeInsets.only(bottom: 12),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
@@ -138,27 +153,39 @@ class _WalletLedgerState extends State<WalletLedger> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("Date: ${item.date ?? '-'}",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.grey.shade800,
-                                            fontSize: 14)),
-                                    Text("Balance: \$${balance.toStringAsFixed(2)}",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green.shade700,
-                                            fontSize: 14)),
+                                    Text(
+                                      "Date: ${item.date ?? '-'}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey.shade800,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Balance: \$${balance.toStringAsFixed(2)}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green.shade700,
+                                        fontSize: 14,
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 14),
+
+                                // Note (Expandable)
                                 Text(
                                   note,
                                   maxLines: isExpanded ? null : 3,
                                   overflow: TextOverflow.fade,
                                   textAlign: TextAlign.justify,
-                                  style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 13,
+                                  ),
                                 ),
                                 if (note.length > 100)
                                   TextButton(
@@ -167,33 +194,53 @@ class _WalletLedgerState extends State<WalletLedger> {
                                         expandedMap[index] = !isExpanded;
                                       });
                                     },
-                                    child: Text(isExpanded ? 'Show less' : 'Show more',
-                                        style: const TextStyle(fontSize: 12)),
+                                    child: Text(
+                                      isExpanded ? 'Show less' : 'Show more',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
                                   ),
+
                                 const SizedBox(height: 8),
                                 Divider(color: Colors.grey.shade300),
                                 const SizedBox(height: 8),
+
+                                // Credit and Debit Row
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
-                                        const Icon(Icons.call_received, color: Colors.green, size: 18),
+                                        Icon(
+                                          Icons.call_received,
+                                          color: Colors.green,
+                                          size: 18,
+                                        ),
                                         const SizedBox(width: 4),
-                                        Text("In: \$${credit.toStringAsFixed(2)}",
-                                            style: TextStyle(
-                                                color: Colors.green.shade700,
-                                                fontWeight: FontWeight.w600)),
+                                        Text(
+                                          "In: \$${credit.toStringAsFixed(2)}",
+                                          style: TextStyle(
+                                            color: Colors.green.shade700,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                     Row(
                                       children: [
-                                        const Icon(Icons.call_made, color: Colors.red, size: 18),
+                                        Icon(
+                                          Icons.call_made,
+                                          color: Colors.red,
+                                          size: 18,
+                                        ),
                                         const SizedBox(width: 4),
-                                        Text("Out: \$${debit.toStringAsFixed(2)}",
-                                            style: TextStyle(
-                                                color: Colors.red.shade700,
-                                                fontWeight: FontWeight.w600)),
+                                        Text(
+                                          "Out: \$${debit.toStringAsFixed(2)}",
+                                          style: TextStyle(
+                                            color: Colors.red.shade700,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -214,7 +261,13 @@ class _WalletLedgerState extends State<WalletLedger> {
     );
   }
 
-  Widget _buildTransferButton(String label, Color bgColor, VoidCallback onPressed) {
+
+
+  Widget _buildTransferButton(
+    String label,
+    Color bgColor,
+    VoidCallback onPressed,
+  ) {
     return Expanded(
       child: ElevatedButton(
         onPressed: onPressed,
@@ -225,8 +278,11 @@ class _WalletLedgerState extends State<WalletLedger> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(label,
-              style: const TextStyle(color: Colors.white), textAlign: TextAlign.center),
+          child: Text(
+            label,
+            style: const TextStyle(color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

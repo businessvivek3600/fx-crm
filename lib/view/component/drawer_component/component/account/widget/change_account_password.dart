@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/account_controller.dart';
-import 'package:fx_crm/controller/app_controller.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
 import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';

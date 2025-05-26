@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import '../../../../../controller/ledger_wallet_controller.dart';
 import '../../../../../widgets/bg_container.dart';
@@ -15,10 +16,33 @@ class WithdrawFundScreen extends StatefulWidget {
 
 class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
   final WalletLedgerController controller = Get.put(WalletLedgerController());
+
+  final scrollController = ScrollController();
+
+  final Map<int, bool> expandedMap = {};
   @override
   void initState() {
     super.initState();
-    controller.getWithDrawList(loading: true);
+    controller.getFundWays();
+    afterBuildCreated(() {
+      refresh();
+      if (scrollController.hasClients) {
+        scrollController.addListener(_listener);
+      }
+    });
+
+
+  }
+
+  void _listener() {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      refresh(refresh: false, loading: false);
+    }
+  }
+
+  Future<void> refresh({bool refresh = true, bool loading = true}) async {
+    await controller.getWithDrawList(refresh: refresh, loading: loading);
   }
 
   @override
@@ -47,6 +71,7 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
             }
 
             return ListView.builder(
+              controller: scrollController,
               itemCount: controller.withDrawHistory.length,
               itemBuilder: (context, index) {
                 final item = controller.withDrawHistory[index];

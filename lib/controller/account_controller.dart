@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/models/account_model.dart';
-import 'package:fx_crm/models/customer_model.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
 
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
