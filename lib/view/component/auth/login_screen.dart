@@ -1,14 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:fx_crm/view/component/auth/forgot_password/otp_verification.dart';
 import 'package:fx_crm/view/component/auth/forgot_password/verify_eamil.dart';
 import 'package:fx_crm/view/component/auth/signup_screen.dart';
 import 'package:get/get.dart';
-import '../../../constant/api_constants.dart';
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
 import '../../../main.dart';
-import '../../../models/country_model.dart';
 import '../../../widgets/bg_container.dart';
 
 class LoginScreen extends StatefulWidget {

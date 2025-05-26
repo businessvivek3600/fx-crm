@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_path.dart';
 import 'package:fx_crm/view/component/auth/signup_screen.dart';

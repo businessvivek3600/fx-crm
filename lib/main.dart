@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/account_controller.dart';
 import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';
-import 'package:fx_crm/view/component/auth/login_screen.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -16,7 +15,6 @@ import 'database/dio/dio/dio_client.dart';
 import 'database/dio/dio/logging_interceptor.dart';
 import 'database/notification_service.dart';
 import 'firebase_options.dart';
-import 'view/dashboard_screen.dart';
 
 late DioClient dioClient;
 

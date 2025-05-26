@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
-import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_path.dart';
 import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';

@@ -6,7 +6,7 @@ import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/custom_text_form.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  ChangePasswordScreen({super.key});
+  const ChangePasswordScreen({super.key});
 
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
