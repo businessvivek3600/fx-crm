@@ -23,6 +23,9 @@ class WalletLedgerController extends GetxController {
   var withDrawHistory = <WithdrawHistory>[].obs;
   var totalBalance = '0.00'.obs;
   var transferWalletList = <FundOption>[].obs;
+  var withDrawFundList = <WithdrawOption>[].obs;
+
+  final Rx<WithdrawOption?> selectedWithdrawOption = Rx<WithdrawOption?>(null);
   var accountStatement = <AccountStatement>[].obs;
   var paymentList = <PaymentInformation>[].obs;
 
@@ -330,6 +333,9 @@ class WalletLedgerController extends GetxController {
         final List walletList = data['transfer_wallet'] ?? [];
         transferWalletList.value =
             walletList.map((e) => FundOption.fromJson(e)).toList();
+        final List withDrawList = data['withdraw_fund'] ?? [];
+        withDrawFundList.value =
+            withDrawList.map((e) => WithdrawOption.fromJson(e)).toList();
       } else {
         Get.snackbar(
           'Error',

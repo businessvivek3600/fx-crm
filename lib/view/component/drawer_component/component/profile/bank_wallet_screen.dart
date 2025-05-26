@@ -15,14 +15,11 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
-  late final BankController bankController;
+  final BankController bankController = Get.put(BankController());
 
   @override
   void initState() {
-    super.initState();
-    bankController = Get.put(
-      BankController(dioClient: dioClient),
-    ); // Provide dioClient
+    super.initState(); // Provide dioClient
     bankController.getBankDetails();
   }
 
