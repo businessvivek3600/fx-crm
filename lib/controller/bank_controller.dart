@@ -3,12 +3,11 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import '../constant/api_constants.dart';
 import '../database/dio/dio/dio_client.dart';
+import '../main.dart';
 import '../models/bank_model.dart';
 
 class BankController extends GetxController {
-  final DioClient dioClient;
 
-  BankController({required this.dioClient});
 
   final isLoading = false.obs;
   final otpLoading = false.obs;
