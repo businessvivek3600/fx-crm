@@ -87,20 +87,36 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
 
   List<Widget> _buildCompletedContent(int status) {
     return [
-      _infoRow("Status:", "Complete", valueColor: Colors.greenAccent),
+      _infoRow(
+        "Status:",
+        "${inf?.data?.status ?? 0} ${inf?.data?.statusText ?? ''}Complete",
+        valueColor: Colors.greenAccent,
+      ),
       const SizedBox(height: 15),
       _infoRow(
         "Total Amount To Send:",
-        "${inf?.data?.amount ?? 0} ${inf?.data?.coin ?? ''} (total confirms needed: 0)",
+        " (total confirms needed: 0)",
       ),
       const SizedBox(height: 15),
-      _infoRow("Received So Far:", "1.07022000 LTCT (unconfirmed)"),
+      _infoRow(
+        "Received So Far:",
+        "${inf?.data?.recived ?? 0} ${inf?.data?.recived ?? ''} (unconfirmed)",
+      ),
       const SizedBox(height: 15),
-      _infoRow("Send To Address:", "mtD2P7zwdGy6KUaHE3qxd3KaQiQeKMbxu"),
+      _infoRow(
+        "Send To Address:",
+        "${inf?.data?.walletAddress ?? 0} ${inf?.data?.walletAddress ?? ''}mtD2P7zwdGy6KUaHE3qxd3KaQiQeKMbxu",
+      ),
       const SizedBox(height: 15),
-      _infoRow("Time Completed:", "May 20, 2025 05:43:04pm"),
+      _infoRow(
+        "Time Completed:",
+        "${inf?.data?.statusText ?? 0} ${inf?.data?.statusText ?? ''}May 20, 2025 05:43:04pm",
+      ),
       const SizedBox(height: 15),
-      _infoRow("Seller:", "parveen115 (No Ratings)"),
+      _infoRow(
+        "Seller:",
+        "${inf?.data?.orderId ?? 0} ${inf?.data?.orderId ?? ''} (No Ratings)",
+      ),
       const SizedBox(height: 15),
       RichText(
         text: TextSpan(
@@ -131,16 +147,16 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
     return [
       _infoRow(
         "Status:",
-        "Cancelled / Timed Out",
+        "${inf?.data?.statusText ?? 0} ${inf?.data?.statusText ?? ''}",
         valueColor: Colors.redAccent,
       ),
       const SizedBox(height: 15),
       _infoRow(
         "Total Amount To Send:",
-        "10.71516000 LTCT (total confirms needed: 0)",
+        "${inf?.data?.amount ?? 0} ${inf?.data?.amount ?? ''}",
       ),
       const SizedBox(height: 15),
-      _infoRow("Received So Far:", "0.00000000 LTCT (unconfirmed)"),
+      _infoRow("Received So Far:", "${inf?.data?.coinAmt ?? 0} ${inf?.data?.coinAmt ?? ''}"),
       const SizedBox(height: 10),
       _infoRow(
         "Balance Remaining:",
@@ -168,7 +184,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         ),
       ),
       const SizedBox(height: 10),
-      _infoRow("Send To Address:", "mfojhWCIn436WTwNIPfZpQSyyrvMBaA3jm"),
+      _infoRow("Send To Address:", "${inf?.data?.walletAddress ?? 0} ${inf?.data?.walletAddress ?? ''}"),
       const SizedBox(height: 8),
       _infoRow("Seller:", "parveen115"),
       const SizedBox(height: 8),

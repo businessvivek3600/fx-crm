@@ -188,7 +188,7 @@ class WalletLedgerController extends GetxController {
         fetchWalletDeposits(loading: false);
         Get.snackbar(
           'Success',
-          'Payment info fetched!',
+          'Deposit request created successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -196,7 +196,7 @@ class WalletLedgerController extends GetxController {
       } else {
         Get.snackbar(
           'Error',
-          response.data['message'] ?? 'Failed to fetch payment info',
+          response.data['message'] ?? 'Unable to create deposit request.',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
