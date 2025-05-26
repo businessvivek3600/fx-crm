@@ -93,10 +93,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         valueColor: Colors.greenAccent,
       ),
       const SizedBox(height: 15),
-      _infoRow(
-        "Total Amount To Send:",
-        " (total confirms needed: 0)",
-      ),
+      _infoRow("Total Amount To Send:", " (total confirms needed: 0)"),
       const SizedBox(height: 15),
       _infoRow(
         "Received So Far:",
@@ -147,16 +144,13 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
     return [
       _infoRow(
         "Status:",
-        "${inf?.data?.statusText ?? 0} ${inf?.data?.statusText ?? ''}",
+        "${inf?.data?.statusText ?? 0}",
         valueColor: Colors.redAccent,
       ),
       const SizedBox(height: 15),
-      _infoRow(
-        "Total Amount To Send:",
-        "${inf?.data?.amount ?? 0} ${inf?.data?.amount ?? ''}",
-      ),
+      _infoRow("Total Amount To Send:", "${inf?.data?.amount ?? 0} "),
       const SizedBox(height: 15),
-      _infoRow("Received So Far:", "${inf?.data?.coinAmt ?? 0} ${inf?.data?.coinAmt ?? ''}"),
+      _infoRow("Received So Far:", "${inf?.data?.coinAmt ?? 0}"),
       const SizedBox(height: 10),
       _infoRow(
         "Balance Remaining:",
@@ -184,7 +178,10 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         ),
       ),
       const SizedBox(height: 10),
-      _infoRow("Send To Address:", "${inf?.data?.walletAddress ?? 0} ${inf?.data?.walletAddress ?? ''}"),
+      _infoRow(
+        "Send To Address:",
+        "${inf?.data?.walletAddress ?? 0} ${inf?.data?.walletAddress ?? ''}",
+      ),
       const SizedBox(height: 8),
       _infoRow("Seller:", "parveen115"),
       const SizedBox(height: 8),

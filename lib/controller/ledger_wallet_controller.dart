@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
@@ -130,15 +132,16 @@ class WalletLedgerController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
+        log(response.data.toString());
         paymentInfo = PaymentInformation.fromJson(response.data);
 
-        Get.snackbar(
-          'Success',
-          'Payment info fetched!',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'Success',
+        //   'Payment info fetched!',
+        //   snackPosition: SnackPosition.TOP,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
       } else {
         Get.snackbar(
           'Error',

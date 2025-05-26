@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../database/dio/dio/dio_client.dart';
+
 import '../constant/api_constants.dart';
+import '../database/dio/dio/dio_client.dart';
 
 class DashBoardController extends GetxController {
   final DioClient dioClient;
@@ -40,7 +43,8 @@ class DashBoardController extends GetxController {
       } else {
         Get.snackbar(
           'Error',
-          response.data['message'] ?? 'Failed to fetch Terms & Conditions details',
+          response.data['message'] ??
+              'Failed to fetch Terms & Conditions details',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
@@ -65,6 +69,7 @@ class DashBoardController extends GetxController {
       isLoading.value = true;
       final response = await dioClient.post(ApiConst.userProfile);
       if (response.statusCode == 200 && response.data != null) {
+        log("Profile Data: ${response.data}");
         profileData.value = response.data['data'] ?? {};
       } else {
         Get.snackbar("Error", "Failed to fetch profile");

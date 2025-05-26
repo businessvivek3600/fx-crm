@@ -31,7 +31,7 @@ class PaymentData {
   final String? txnId;
   final double? amount;
   final String? coinAmt;
-  final int? recived;
+  final double? recived;
   final String? types;
   final String? coin;
   final String? walletAddress;
@@ -59,7 +59,7 @@ class PaymentData {
       txnId: json['txn_id'],
       amount: json['amount']?.toString().toDouble(),
       coinAmt: json['coin_amt'],
-      recived: json['recived'],
+      recived: json['recived']?.toString().toDouble(),
       types: json['types'],
       coin: json['coin'],
       walletAddress: json['wallet_address'],
@@ -76,7 +76,7 @@ class Order {
   final String? createdAt;
   final String? customerId;
   final String? username;
-  final String? amount;
+  final double? amount;
   final String? paymentType;
   final String? paymentUrl;
   final String? qrUrl;
@@ -108,7 +108,7 @@ class Order {
       createdAt: json['created_at'],
       customerId: json['customer_id'],
       username: json['username'],
-      amount: json['amount'],
+      amount: json['amount']?.toString().toDouble(),
       paymentType: json['payment_type'],
       paymentUrl: json['payment_url'],
       qrUrl: json['qr_url'],
