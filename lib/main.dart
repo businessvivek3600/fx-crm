@@ -38,7 +38,9 @@ void main() async {
   Get.put(AccountController(dioClient: dioClient));
   AppController.to.syncWithSession();
   final AuthController authController = Get.put(
-    AuthController(dioClient: dioClient),
+    AuthController(
+
+    ),
   );
   await authController.getCountryList();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -59,7 +61,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeUtils.lightTheme,
       title: 'FXCRM',
-      routerConfig: router, // This uses your GoRouter config
+      routerConfig: router,
     );
   }
 }

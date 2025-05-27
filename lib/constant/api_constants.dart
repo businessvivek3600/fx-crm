@@ -62,4 +62,5 @@ class ApiConst {
   static const String accountStatement = "account_statement";
   static const String payment_information = "payment_detail";
   static const String deposit_fund = "fund_request";
+  static const String withdrawRequest = 'withdraw_request';
 }
