@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
@@ -133,15 +135,16 @@ class WalletLedgerController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
+        log(response.data.toString());
         paymentInfo = PaymentInformation.fromJson(response.data);
 
-        Get.snackbar(
-          'Success',
-          'Payment info fetched!',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'Success',
+        //   'Payment info fetched!',
+        //   snackPosition: SnackPosition.TOP,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
       } else {
         Get.snackbar(
           'Error',
@@ -191,7 +194,7 @@ class WalletLedgerController extends GetxController {
         fetchWalletDeposits(loading: false);
         Get.snackbar(
           'Success',
-          'Payment info fetched!',
+          'Deposit request created successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -199,7 +202,7 @@ class WalletLedgerController extends GetxController {
       } else {
         Get.snackbar(
           'Error',
-          response.data['message'] ?? 'Failed to fetch payment info',
+          response.data['message'] ?? 'Unable to create deposit request.',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
