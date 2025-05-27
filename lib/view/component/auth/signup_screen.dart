@@ -20,7 +20,7 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   final AuthController authController = Get.put(
-    AuthController(dioClient: dioClient),
+    AuthController(),
   );
 
   String accountType = 'Live';

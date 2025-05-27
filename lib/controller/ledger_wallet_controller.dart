@@ -319,6 +319,67 @@ class WalletLedgerController extends GetxController {
     }
   }
 
+  ///-------------------------Withdraw Request-------------------
+  Future<bool> withdrawRequest({
+    required String emailOtp,
+    required String amount,
+    required String paymentType,
+  }) async {
+    isLoading.value = true;
+
+    try {
+      dio.FormData formData = dio.FormData.fromMap({
+        'email_otp': emailOtp,
+        'amount': amount,
+        'payment_type': paymentType,
+      });
+
+      print("DATA-------------Withdraw Request");
+      print(formData.fields);
+
+      final response = await dioClient.post(
+        ApiConst.withdrawRequest,
+        data: formData,
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Withdraw Request created successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to create Withdraw Request',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+
   ///--------------------GET FUND WAYS----------------
   Future<void> getFundWays() async {
     isLoading.value = true;

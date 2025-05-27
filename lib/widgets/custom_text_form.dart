@@ -11,6 +11,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextStyle? textStyle;
   final Color? labelColor;
   final Icon? icon;
+  final FocusNode? focusNode;
   final Color? fillColor;
   final String? Function(String?)? validator;       // 🛑 validator callback
   final void Function(String)? onChanged;
@@ -28,7 +29,7 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged,
     this.textStyle,
     this.icon,
-    this.labelColor, this.fillColor
+    this.labelColor, this.fillColor, this.focusNode
   });
 
   @override
@@ -46,6 +47,7 @@ class CustomTextFormField extends StatelessWidget {
           onTap:  onTap,
           validator: validator, // 🛑 attach validator
           onChanged: onChanged,
+          focusNode: focusNode,
           decoration: InputDecoration(
             prefixIcon: icon,
             hintText: hint,

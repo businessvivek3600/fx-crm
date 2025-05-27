@@ -19,7 +19,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   ProfileController editProfileController = Get.put(ProfileController());
-  AuthController authController = Get.put(AuthController(dioClient: dioClient));
+  AuthController authController = Get.put(AuthController());
 
   @override
   void initState() {
