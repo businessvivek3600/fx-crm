@@ -180,12 +180,10 @@ class WalletLedgerController extends GetxController {
         'payment_type': paymentMethod,
         'amount': amount,
       });
-
       final response = await dioClient.post(
         ApiConst.deposit_fund,
         data: formData,
       );
-
       orderId = response.data['order_id'];
       if (response.statusCode == 200 &&
           response.data['status'] == 1 &&
@@ -240,7 +238,6 @@ class WalletLedgerController extends GetxController {
         ApiConst.withDrawHistory,
         data: data,
       );
-
       if (response.statusCode == 200) {
         final responseData = response.data;
         if (responseData['status'] == 1 && responseData['data'] != null) {
