@@ -17,7 +17,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final AuthController authController = Get.put(
-    AuthController(dioClient: dioClient),
+    AuthController(
+
+    ),
   );
 
   @override

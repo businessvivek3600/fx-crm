@@ -9,7 +9,7 @@ import 'package:fx_crm/models/customer_model.dart';
 import 'package:get/get.dart';
 
 class ProfileController extends GetxController {
-  AuthController authController = Get.put(AuthController(dioClient: dioClient));
+  AuthController authController = Get.put(AuthController());
   var isLoading = false.obs;
   var ProfileData = {}.obs;
 

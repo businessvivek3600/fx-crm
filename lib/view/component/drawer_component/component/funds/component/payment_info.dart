@@ -87,24 +87,27 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
 
   List<Widget> _buildCompletedContent(int status) {
     return [
-      _infoRow("Status:", "Complete", valueColor: Colors.greenAccent),
-      const SizedBox(height: 15),
       _infoRow(
-        "Total Amount To Send:",
-        "${inf?.data?.amount ?? 0} ${inf?.data?.coin ?? ''} (total confirms needed: 0)",
+        "Status:",
+        "${inf?.data?.statusText ?? 0}",
+        valueColor: Colors.greenAccent,
       ),
       const SizedBox(height: 15),
-      _infoRow("Received So Far:", "1.07022000 LTCT (unconfirmed)"),
+      _infoRow("Total Amount To Send:", " (total confirms needed: 0)"),
       const SizedBox(height: 15),
-      _infoRow("Send To Address:", "mtD2P7zwdGy6KUaHE3qxd3KaQiQeKMbxu"),
+      _infoRow("Received So Far:", "${inf?.data?.recived ?? 0}"),
       const SizedBox(height: 15),
-      _infoRow("Time Completed:", "May 20, 2025 05:43:04pm"),
+      _infoRow("Send To Address:", "${inf?.data?.walletAddress ?? 0}"),
       const SizedBox(height: 15),
-      _infoRow("Seller:", "parveen115 (No Ratings)"),
+      _infoRow("Time Completed:", "${inf?.order?.updatedAt ?? 0}"),
+      const SizedBox(height: 15),
+      _infoRow("Seller:", "${inf?.data?.sellerUsername ?? 0} "),
       const SizedBox(height: 15),
       RichText(
         text: TextSpan(
-          text: 'Seller Email: ',
+          text:
+              'Seller Email: '
+              "${inf?.data?.sellerEmail ?? 0} ",
           style: TextStyle(color: highlightColor, fontWeight: FontWeight.bold),
           children: const [
             TextSpan(
@@ -123,7 +126,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         ),
       ),
       const SizedBox(height: 10),
-      _infoRow("Payment ID:", "CPJE4S6WBRNHGVGOY6LDRIAH5S"),
+      _infoRow("Payment ID:", "${inf?.order?.orderId ?? 0}"),
     ];
   }
 
@@ -131,20 +134,17 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
     return [
       _infoRow(
         "Status:",
-        "Cancelled / Timed Out",
+        "${inf?.data?.statusText ?? 0}",
         valueColor: Colors.redAccent,
       ),
       const SizedBox(height: 15),
-      _infoRow(
-        "Total Amount To Send:",
-        "10.71516000 LTCT (total confirms needed: 0)",
-      ),
+      _infoRow("Total Amount To Send:", "${inf?.data?.coinAmt ?? 0} "),
       const SizedBox(height: 15),
-      _infoRow("Received So Far:", "0.00000000 LTCT (unconfirmed)"),
+      _infoRow("Received So Far:", "${inf?.data?.coinAmt ?? 0}"),
       const SizedBox(height: 10),
       _infoRow(
         "Balance Remaining:",
-        "10.71516 LTCT",
+        "${inf?.data?.coin ?? 0}",
         valueColor: Colors.blueAccent,
       ),
       const Divider(height: 32, color: Colors.grey),
@@ -156,31 +156,31 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
             color: Colors.white,
             padding: EdgeInsets.all(10),
             child: PrettyQrView.data(
-              data: "mfojhWCIn436WTwNIPfZpQSyyrvMBaA3jm",
+              data: "${inf?.data?.qrUrl ?? 0}", // 👈 Dynamic value here
               decoration: PrettyQrDecoration(
                 shape: PrettyQrSmoothSymbol(),
-                image: const PrettyQrDecorationImage(
-                  image: AssetImage("assets/images/download.png"),
-                ),
+                // image: const PrettyQrDecorationImage(
+                //   image: AssetImage("assets/images/download.png"),
+                // ),
               ),
             ),
           ),
         ),
       ),
+
       const SizedBox(height: 10),
-      _infoRow("Send To Address:", "mfojhWCIn436WTwNIPfZpQSyyrvMBaA3jm"),
+      _infoRow("Send To Address:", "${inf?.data?.walletAddress ?? 0} "),
       const SizedBox(height: 8),
-      _infoRow("Seller:", "parveen115"),
+      _infoRow("Seller:", "${inf?.data?.sellerUsername ?? 0}"),
       const SizedBox(height: 8),
       RichText(
         text: TextSpan(
-          text: 'Seller Email: ',
+          text:
+              'Seller Email: '
+              "${inf?.data?.sellerEmail ?? 0}",
           style: TextStyle(color: highlightColor, fontWeight: FontWeight.bold),
           children: const [
-            TextSpan(
-              text: 'touchwoodparveen@gmail.com\n',
-              style: TextStyle(color: Colors.blueAccent),
-            ),
+            TextSpan(style: TextStyle(color: Colors.blueAccent)),
             TextSpan(
               text: 'DO NOT Send Funds to this Email Address!',
               style: TextStyle(
@@ -198,7 +198,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         "You will be able to leave feedback once this transaction is completed.",
       ),
       const SizedBox(height: 10),
-      _infoRow("Payment ID:", "CPJE46Q00RL9O2G531R5QTC1R6"),
+      _infoRow("Payment ID:", "${inf?.data?.orderId ?? 0}"),
     ];
   }
 

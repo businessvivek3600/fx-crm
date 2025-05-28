@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
@@ -133,15 +135,16 @@ class WalletLedgerController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
+        log(response.data.toString());
         paymentInfo = PaymentInformation.fromJson(response.data);
 
-        Get.snackbar(
-          'Success',
-          'Payment info fetched!',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   'Success',
+        //   'Payment info fetched!',
+        //   snackPosition: SnackPosition.TOP,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
       } else {
         Get.snackbar(
           'Error',
@@ -177,12 +180,10 @@ class WalletLedgerController extends GetxController {
         'payment_type': paymentMethod,
         'amount': amount,
       });
-
       final response = await dioClient.post(
         ApiConst.deposit_fund,
         data: formData,
       );
-
       orderId = response.data['order_id'];
       if (response.statusCode == 200 &&
           response.data['status'] == 1 &&
@@ -191,7 +192,7 @@ class WalletLedgerController extends GetxController {
         fetchWalletDeposits(loading: false);
         Get.snackbar(
           'Success',
-          'Payment info fetched!',
+          'Deposit request created successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -199,7 +200,7 @@ class WalletLedgerController extends GetxController {
       } else {
         Get.snackbar(
           'Error',
-          response.data['message'] ?? 'Failed to fetch payment info',
+          response.data['message'] ?? 'Unable to create deposit request.',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -237,7 +238,6 @@ class WalletLedgerController extends GetxController {
         ApiConst.withDrawHistory,
         data: data,
       );
-
       if (response.statusCode == 200) {
         final responseData = response.data;
         if (responseData['status'] == 1 && responseData['data'] != null) {
@@ -318,6 +318,67 @@ class WalletLedgerController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  ///-------------------------Withdraw Request-------------------
+  Future<bool> withdrawRequest({
+    required String emailOtp,
+    required String amount,
+    required String paymentType,
+  }) async {
+    isLoading.value = true;
+
+    try {
+      dio.FormData formData = dio.FormData.fromMap({
+        'email_otp': emailOtp,
+        'amount': amount,
+        'payment_type': paymentType,
+      });
+
+      print("DATA-------------Withdraw Request");
+      print(formData.fields);
+
+      final response = await dioClient.post(
+        ApiConst.withdrawRequest,
+        data: formData,
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Withdraw Request created successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        return true;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to create Withdraw Request',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
 
   ///--------------------GET FUND WAYS----------------
   Future<void> getFundWays() async {
