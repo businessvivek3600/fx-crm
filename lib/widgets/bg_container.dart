@@ -24,7 +24,7 @@ class BackgroundContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final String imagePath = useAlternateBackground
         ? 'assets/images/SZD.jpg'
-        : 'assets/images/bg1.png';
+        : 'assets/images/bg21.png';
     final double effectiveOpacity = getPlatformOpacity() ?? opacity;
     return Container(
       decoration: BoxDecoration(
