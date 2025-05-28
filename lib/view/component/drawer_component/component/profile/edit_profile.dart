@@ -164,7 +164,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 return CustomTextFormField(
                   label: 'Country',
                   readOnly: true,
-                  textStyle: const TextStyle(color: Colors.black),
+                  icon: Icon(Icons.arrow_drop_down,color: Colors.white,),
                   hint:
                       authController.selectedCountryName.value.isEmpty
                           ? 'Please select a country'
@@ -294,9 +294,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildProfileCard(Customer? customer) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.grey.shade100,
+    print(customer?.image);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white12),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         child: Column(
@@ -305,7 +309,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             CircleAvatar(
               radius: 40,
               backgroundImage: NetworkImage(
-                customer?.image ??
                     'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000',
               ),
               onBackgroundImageError: (exception, stackTrace) {
@@ -319,22 +322,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             /// Name and Info
             Text(
               customer?.customerName ?? 'Name',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
             ),
             const SizedBox(height: 4),
             Text(
               customer?.username ?? 'Username',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
             const SizedBox(height: 4),
             Text(
               customer?.customerEmail ?? 'Email',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
             const SizedBox(height: 4),
             Text(
               customer?.customerMobile ?? 'Mobile',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
 
             const SizedBox(height: 16),
@@ -362,9 +365,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       leading: Icon(icon, color: Colors.blueAccent),
       title: Text(
         label,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14,color: Colors.white),
       ),
-      trailing: Text(value, style: const TextStyle(fontSize: 12)),
+      trailing: Text(value, style: const TextStyle(fontSize: 12,color: Colors.white70)),
     );
   }
 }

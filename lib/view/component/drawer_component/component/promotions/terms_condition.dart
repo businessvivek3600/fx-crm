@@ -14,11 +14,10 @@ class TermsAndConditionsScreen extends StatefulWidget {
 }
 
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
-  late final DashBoardController dashBoardController;
+  final DashBoardController dashBoardController = Get.put(DashBoardController());
   @override
   void initState() {
     super.initState();
-    dashBoardController = Get.put(DashBoardController(dioClient: dioClient)); // Provide dioClient
     dashBoardController.getTermsAndCondition();
 
   }
