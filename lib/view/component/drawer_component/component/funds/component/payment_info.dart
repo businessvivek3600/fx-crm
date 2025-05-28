@@ -102,7 +102,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
       _infoRow("Time Completed:", "${inf?.order?.updatedAt ?? 0}"),
       const SizedBox(height: 15),
       _infoRow("Seller:", "${inf?.data?.sellerUsername ?? 0} "),
-      const SizedBox(height: 15),
+      const SizedBox(height: 25),
       RichText(
         text: TextSpan(
           text:
@@ -168,30 +168,27 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         ),
       ),
 
-      const SizedBox(height: 10),
+      const SizedBox(height: 15),
       _infoRow("Send To Address:", "${inf?.data?.walletAddress ?? 0} "),
-      const SizedBox(height: 8),
+      const SizedBox(height: 15),
       _infoRow("Seller:", "${inf?.data?.sellerUsername ?? 0}"),
-      const SizedBox(height: 8),
+      const SizedBox(height: 15),
       RichText(
         text: TextSpan(
-          text:
-              'Seller Email: '
-              "${inf?.data?.sellerEmail ?? 0}",
-          style: TextStyle(color: highlightColor, fontWeight: FontWeight.bold),
-          children: const [
-            TextSpan(style: TextStyle(color: Colors.blueAccent)),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          children: [
             TextSpan(
-              text: 'DO NOT Send Funds to this Email Address!',
-              style: TextStyle(
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
+              text: 'Seller Email:   ', // Add spaces here
+              style: TextStyle(color: highlightColor),
+            ),
+            TextSpan(
+              text: inf?.data?.sellerEmail ?? "N/A",
+              style: const TextStyle(color: Color(0xff0262f7)),
             ),
           ],
         ),
       ),
+
       const SizedBox(height: 20),
       _infoRow(
         "Leave Feedback:",
