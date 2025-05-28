@@ -89,35 +89,25 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
     return [
       _infoRow(
         "Status:",
-        "${inf?.data?.status ?? 0} ${inf?.data?.statusText ?? ''}Complete",
+        "${inf?.data?.statusText ?? 0}",
         valueColor: Colors.greenAccent,
       ),
       const SizedBox(height: 15),
       _infoRow("Total Amount To Send:", " (total confirms needed: 0)"),
       const SizedBox(height: 15),
-      _infoRow(
-        "Received So Far:",
-        "${inf?.data?.recived ?? 0} ${inf?.data?.recived ?? ''} (unconfirmed)",
-      ),
+      _infoRow("Received So Far:", "${inf?.data?.recived ?? 0}"),
       const SizedBox(height: 15),
-      _infoRow(
-        "Send To Address:",
-        "${inf?.data?.walletAddress ?? 0} ${inf?.data?.walletAddress ?? ''}mtD2P7zwdGy6KUaHE3qxd3KaQiQeKMbxu",
-      ),
+      _infoRow("Send To Address:", "${inf?.data?.walletAddress ?? 0}"),
       const SizedBox(height: 15),
-      _infoRow(
-        "Time Completed:",
-        "${inf?.data?.statusText ?? 0} ${inf?.data?.statusText ?? ''}May 20, 2025 05:43:04pm",
-      ),
+      _infoRow("Time Completed:", "${inf?.order?.updatedAt ?? 0}"),
       const SizedBox(height: 15),
-      _infoRow(
-        "Seller:",
-        "${inf?.data?.orderId ?? 0} ${inf?.data?.orderId ?? ''} (No Ratings)",
-      ),
+      _infoRow("Seller:", "${inf?.data?.sellerUsername ?? 0} "),
       const SizedBox(height: 15),
       RichText(
         text: TextSpan(
-          text: 'Seller Email: ',
+          text:
+              'Seller Email: '
+              "${inf?.data?.sellerEmail ?? 0} ",
           style: TextStyle(color: highlightColor, fontWeight: FontWeight.bold),
           children: const [
             TextSpan(
@@ -136,7 +126,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
         ),
       ),
       const SizedBox(height: 10),
-      _infoRow("Payment ID:", "${inf?.data?.orderId ?? 0}"),
+      _infoRow("Payment ID:", "${inf?.order?.orderId ?? 0}"),
     ];
   }
 
