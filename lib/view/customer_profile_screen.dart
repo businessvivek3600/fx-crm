@@ -16,14 +16,14 @@ class CustomerProfileScreen extends StatefulWidget {
 }
 
 class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
-  late DashBoardController dashController;
+  final DashBoardController dashBoardController = Get.put(DashBoardController());
 
   @override
   void initState() {
     super.initState();
-    dashController = Get.put(DashBoardController(dioClient: dioClient));
-    dashController.getUserProfile(); // Fetch profile data
+    dashBoardController.getUserProfile();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +62,15 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
         ),
 
         body: SafeArea(
-          child: Obx(() {
-            if (dashController.isLoading.value) {
+          child:Obx(() {
+            final customer = dashBoardController.profileData.value;
+
+            if (dashBoardController.isLoading.value) {
               return _buildShimmer();
             }
 
-            final data = dashController.profileData;
-
-            if (data.isEmpty) {
-              return const Center(
-                child: Text(
-                  "No data found",
-                  style: TextStyle(color: Colors.white),
-                ),
-              );
+            if (customer == null) {
+              return const Center(child: Text('No profile data available.'));
             }
 
             return SingleChildScrollView(
@@ -96,14 +91,14 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        data["customer_name"] ?? '',
+                        customer.customerName ?? '',
                         style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white,
                         ),
                       ),
                       Text(
-                        data["username"] ?? '',
+                        customer.username ?? '',
                         style: const TextStyle(color: Colors.white70),
                       ),
                     ],
@@ -111,25 +106,26 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   const SizedBox(height: 20),
 
                   /// Personal Details Card
+
                   _buildCard("Personal Details", {
-                    "Username": data["username"] ?? '',
-                    "Refer By": data["refer_by"] ?? '',
-                    "Parent": data["parent"] ?? '',
-                    "First Name": data["first_name"] ?? '',
-                    "Last Name": data["last_name"] ?? '',
-                    "Next of Kin": data["next_of_kin"] ?? '',
-                    "Email": data["email"] ?? '',
-                    "Mobile": data["customer_mobile"] ?? '',
-                    "Address": data["customer_short_address"] ?? '',
-                    "Address1": data["customer_address_1"] ?? '',
-                    "Address2": data["customer_address_2"] ?? '',
-                    "City": data["city"] ?? '',
-                    "State": data["state"] ?? '',
-                    "Country": data["country_text"] ?? '',
-                    "Zip": data["zip"] ?? '',
-                    "Company": data["company"] ?? '',
-                    "Date of Birth": data["date_of_birth"] ?? '',
+                    "Username": customer.username ?? '',
+                    "Refer By": customer.referencerUsername ?? '',
+                    "First Name": customer.firstName ?? '',
+                    "Last Name": customer.lastName ?? '',
+                    "Gender": customer.gender ?? '',
+                    "Email": customer.customerEmail ?? '',
+                    "Mobile": customer.customerMobile ?? '',
+                    "Address": customer.customerShortAddress ?? '',
+                    "Address1": customer.customerAddress1 ?? '',
+                    "Address2": customer.customerAddress2 ?? '',
+                    "City": customer.city ?? '',
+                    "State": customer.state ?? '',
+                    "Country": customer.countryText ?? '',
+                    "Zip": customer.zip ?? '',
+                    "Company": customer.company ?? '',
+                    "Date of Birth": customer.dateOfBirth ?? '',
                   }),
+
                 ],
               ),
             );
@@ -197,10 +193,12 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   Widget _buildCard(String title, Map<String, String> fields) {
     final entries = fields.entries.toList();
 
-    return Card(
-      color: Colors.grey.shade900.withOpacity(0.8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 6,
+    return  Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

@@ -42,34 +42,33 @@ class CustomTextFormField extends StatelessWidget {
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
-          initialValue: controller == null ? initialValue : null, // 🛑 Important
+          initialValue: controller == null ? initialValue : null,
           readOnly: readOnly || isDate,
-          onTap:  onTap,
-          validator: validator, // 🛑 attach validator
+          onTap: onTap,
+          validator: validator,
           onChanged: onChanged,
           focusNode: focusNode,
           decoration: InputDecoration(
             prefixIcon: icon,
             hintText: hint,
-            hintStyle: textStyle ?? const TextStyle(color: Colors.grey),
+            hintStyle: textStyle ?? const TextStyle(color: Colors.white60),
             filled: true,
-            fillColor: fillColor ?? Colors.grey.shade100,
+            fillColor: Colors.white.withOpacity(0.08),
             suffixIcon: isDate
-                ? const Icon(Icons.calendar_today, color: Colors.grey, size: 20)
+                ? const Icon(Icons.calendar_today, color: Colors.white70, size: 20)
                 : null,
-
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Colors.white12),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.blueAccent),
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Colors.white30),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
-          style: const TextStyle(color: Colors.black),
-        ),
+          style: const TextStyle(color: Colors.white),
+        )
       ],
     );
   }
