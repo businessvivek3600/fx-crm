@@ -1,13 +1,9 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/ledger_wallet_controller.dart';
-import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' as nb;
-import 'package:shimmer/shimmer.dart';
 
 import '../../../../../widgets/bg_container.dart';
-import '../../../../../widgets/drop_down_text_field.dart';
 import 'component/common_transfer_wallet.dart';
 import 'component/wallet_card_shimmer.dart';
 import 'component/withdraw__funds_screen.dart';

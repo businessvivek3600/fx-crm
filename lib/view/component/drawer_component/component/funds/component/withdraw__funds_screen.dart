@@ -207,12 +207,12 @@ class _WithdrawFundsScreenState extends State<WithdrawFundsScreen> {
                         final option = controller.selectedWithdrawOption.value;
                         if (option == null) return SizedBox();
                         var totalAmount = double.tryParse(amountController.text) ?? 0.0;
-                        var adminCharge = (option!.adminCharge ?? 0) /100 * totalAmount;
+                        var adminCharge = (option.adminCharge ?? 0) /100 * totalAmount;
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Processing Fee ${option?.adminCharge ?? 0}%",
+                              "Processing Fee ${option.adminCharge ?? 0}%",
                               style: TextStyle(
                                 color: white,
                               ),
