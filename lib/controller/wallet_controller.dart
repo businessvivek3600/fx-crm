@@ -14,7 +14,7 @@ import '../main.dart';
 import '../models/get_fund_ways.dart';
 import '../models/withdraw_history_model.dart';
 
-class WalletLedgerController extends GetxController {
+class WalletController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var depositList = <FundRequestItem>[].obs;
@@ -320,8 +320,7 @@ class WalletLedgerController extends GetxController {
   }
 
   ///-------------------------Withdraw Request-------------------
-  Future<bool> withdrawRequest({
-    required String emailOtp,
+  Future<String?> withdrawRequest({
     required String amount,
     required String paymentType,
   }) async {
@@ -329,7 +328,6 @@ class WalletLedgerController extends GetxController {
 
     try {
       dio.FormData formData = dio.FormData.fromMap({
-        'email_otp': emailOtp,
         'amount': amount,
         'payment_type': paymentType,
       });
@@ -339,6 +337,64 @@ class WalletLedgerController extends GetxController {
 
       final response = await dioClient.post(
         ApiConst.withdrawRequest,
+        data: formData,
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        final requestId = response.data['data'];
+        Get.snackbar(
+          'Success',
+          response.data['message'] ?? 'Withdraw Request created successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        return requestId;
+      } else {
+        Get.snackbar(
+          'Error',
+          response.data['message'] ?? 'Failed to create Withdraw Request',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return null;
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  Future<bool> verifyWithdrawRequest({
+    required String emailOtp,
+    required String requestId,
+  }) async {
+    isLoading.value = true;
+
+    try {
+      dio.FormData formData = dio.FormData.fromMap({
+        'email_otp': emailOtp,
+        'request_id': requestId,
+      });
+
+      print("DATA------------verify -Withdraw Request request_id");
+      print(formData.fields);
+
+      final response = await dioClient.post(
+        ApiConst.verifyWithdrawRequest,
         data: formData,
       );
 
@@ -377,7 +433,6 @@ class WalletLedgerController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
 
   ///--------------------GET FUND WAYS----------------

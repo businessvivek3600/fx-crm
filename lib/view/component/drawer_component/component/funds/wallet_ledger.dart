@@ -1,6 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/controller/wallet_controller.dart';
 import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' as nb;
@@ -10,7 +10,8 @@ import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 import 'component/common_transfer_wallet.dart';
 import 'component/wallet_card_shimmer.dart';
-import 'component/withdraw__funds_screen.dart';
+import 'component/withdraw_request_screen.dart';
+
 
 class WalletLedger extends StatefulWidget {
   const WalletLedger({super.key});
@@ -20,7 +21,7 @@ class WalletLedger extends StatefulWidget {
 }
 
 class _WalletLedgerState extends State<WalletLedger> {
-  final WalletLedgerController controller = Get.put(WalletLedgerController());
+  final WalletController controller = Get.put(WalletController());
   final scrollController = ScrollController();
 
   // Track expanded state per item
@@ -100,7 +101,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                   }),
                   const SizedBox(width: 8),
                   _buildTransferButton("Withdraw Funds", Colors.green, () {
-                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  WithdrawFundsScreen (),));
+                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  WithdrawRequestScreen (),));
                   }),
                 ],
               ),

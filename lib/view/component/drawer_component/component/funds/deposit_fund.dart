@@ -1,6 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/controller/wallet_controller.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/payment_info.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' hide DialogType;
@@ -13,7 +13,7 @@ class DepositFundScreen extends StatefulWidget {
 }
 
 class _DepositFundScreenState extends State<DepositFundScreen> {
-  final WalletLedgerController controller = Get.put(WalletLedgerController());
+  final WalletController controller = Get.put(WalletController());
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -329,7 +329,7 @@ class _DepositFundDialogState extends State<DepositFundDialog> {
                           toast(
                             "Submitting ₹${amountController.text} via $selectedPaymentType",
                           );
-                          var id = await Get.find<WalletLedgerController>()
+                          var id = await Get.find<WalletController>()
                               .depositFundRequest(
                                 amount: amountController.text.trim(),
                                 paymentMethod: selectedPaymentType!,
