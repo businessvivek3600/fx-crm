@@ -58,11 +58,11 @@ class CustomTextFormField extends StatelessWidget {
                 ? const Icon(Icons.calendar_today, color: Colors.white70, size: 20)
                 : null,
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Colors.white12),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Colors.white30),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
