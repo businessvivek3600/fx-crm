@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/ledger_wallet_controller.dart';
+import 'package:fx_crm/controller/wallet_controller.dart';
 import 'package:fx_crm/models/payment_informaton_model.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
 import 'package:get/get.dart';
@@ -15,7 +15,7 @@ class PaymentInfoScreen extends StatefulWidget {
 }
 
 class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
-  final controller = Get.find<WalletLedgerController>();
+  final controller = Get.find<WalletController>();
   PaymentInformation? inf;
   bool loading = true;
   // Change to "Pending" to test
@@ -42,7 +42,7 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<WalletLedgerController>(
+    return GetBuilder<WalletController>(
       builder: (controller) {
         final status = inf?.data?.status ?? -1;
         return BackgroundContainer(

@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/wallet_card_shimmer.dart';
 import 'package:get/get.dart';
 
-import '../../../../../../controller/ledger_wallet_controller.dart';
+import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../widgets/custom_text_form.dart';
 import '../../../../../../widgets/drop_down_text_field.dart';
 
 void showTransferWalletDialog(String title,BuildContext context) {
-  final WalletLedgerController controller = Get.put(WalletLedgerController());
+  final WalletController controller = Get.put(WalletController());
   String? selectedValue;
   final accountKindController = TextEditingController();
   final amountController = TextEditingController();

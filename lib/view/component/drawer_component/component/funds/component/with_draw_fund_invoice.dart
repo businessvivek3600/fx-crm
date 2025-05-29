@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../../controller/ledger_wallet_controller.dart';
+import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../models/withdraw_history_model.dart';
 import '../../../../../../widgets/bg_container.dart';
 
@@ -14,7 +14,7 @@ class WithdrawInvoiceScreen extends StatelessWidget {
     final double amount = double.tryParse(data.amount ?? '0') ?? 0;
     final double processingCharge = amount * 0.02;
     final double netAmount = amount - processingCharge;
-    final WalletLedgerController controller = Get.put(WalletLedgerController());
+    final WalletController controller = Get.put(WalletController());
     return BackgroundContainer(
         child: Scaffold(
         backgroundColor: Colors.transparent,
