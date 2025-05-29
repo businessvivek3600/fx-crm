@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import '../../../../../controller/ledger_wallet_controller.dart';
+import '../../../../../controller/wallet_controller.dart';
 import '../../../../../widgets/bg_container.dart';
 import 'component/with_draw_fund_invoice.dart';
 
@@ -15,7 +15,7 @@ class WithdrawFundScreen extends StatefulWidget {
 }
 
 class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
-  final WalletLedgerController controller = Get.put(WalletLedgerController());
+  final WalletController controller = Get.put(WalletController());
 
   final scrollController = ScrollController();
 
