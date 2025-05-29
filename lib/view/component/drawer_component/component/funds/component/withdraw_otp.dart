@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../widgets/bg_container.dart';
-
 
 class WithdrawOtpScreen extends StatefulWidget {
   final String requestId;
@@ -74,8 +74,11 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
 
     if (success) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WithdrawFundScreen(),));
-      });// Or your dashboard screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => WalletLedger()),
+        );
+      }); // Or your dashboard screen
     }
   }
 
@@ -159,10 +162,7 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
                 ),
               ),
               if (_canResend)
-                TextButton(
-                  onPressed: _resendOtp,
-                  child: Text("Resend OTP"),
-                ),
+                TextButton(onPressed: _resendOtp, child: Text("Resend OTP")),
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
