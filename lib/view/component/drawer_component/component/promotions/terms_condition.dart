@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart'; // Import the flutter_html pack
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../controller/dashboard_controller.dart';
-import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {

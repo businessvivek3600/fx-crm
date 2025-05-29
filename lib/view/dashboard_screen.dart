@@ -145,7 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: const Color.fromARGB(31, 149, 20, 20)),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
