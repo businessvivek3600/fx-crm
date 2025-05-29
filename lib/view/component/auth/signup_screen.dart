@@ -131,7 +131,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     CustomTextFormField(
                       label: 'Country',
                       readOnly: true,
-                      textStyle: const TextStyle(color: Colors.black),
                       hint: authController.selectedCountryName.value.isEmpty
                           ? 'Please select a country'
                           : authController.selectedCountryName.value,
