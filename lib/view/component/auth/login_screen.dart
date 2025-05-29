@@ -7,6 +7,7 @@ import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
 import '../../../main.dart';
 import '../../../widgets/bg_container.dart';
+import '../../../widgets/custom_text_form.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -66,13 +67,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 40),
 
                     // Username field
-
-                    textField(
-                      hint: 'Username',
-                      controller: authController.usernameController,
-                      icon: Icons.person_outline,
-                      enabled: !isLoginDisabled,
+                    CustomTextFormField(
+                      label: 'Username',
+                      hint: 'Enter your Username',
+                      icon: Icon( Icons.person_outline,color: Colors.white70,),
+                      controller:  authController.usernameController,
+                      readOnly: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Username is required';
+                        return null;
+                      },
                     ),
+                    // textField(
+                    //   hint: 'Username',
+                    //   controller: authController.usernameController,
+                    //   icon: Icons.person_outline,
+                    //   enabled: !isLoginDisabled,
+                    // ),
                     const SizedBox(height: 16),
 
                     // Password field
@@ -217,8 +228,10 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: controller,
       obscureText: isPassword ? authController.isPasswordHidden.value : false,
       decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.08),
         hintText: hint,
-        prefixIcon: icon != null ? Icon(icon) : null,
+        prefixIcon: icon != null ? Icon(icon,color: Colors.white70,) : null,
         suffixIcon:
             isPassword
                 ? IconButton(
@@ -231,7 +244,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: enabled ? () => authController.isPasswordHidden.toggle() : null,
                 )
                 : null,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white30),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
+      style: const TextStyle(color: Colors.white),
     );
   }
 }
