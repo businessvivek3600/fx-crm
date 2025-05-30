@@ -6,7 +6,6 @@ import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import '../../../../../../controller/app_controller.dart';
 import '../../../../../../controller/bank_controller.dart';
 import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../widgets/drop_down_text_field.dart';
@@ -40,7 +39,11 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
       controller.getFundWays();
       bankController.getBankDetails();
     });
-    amountController.text = controller.totalBalance.toString();
+    amountController.text = getAmount(controller.totalBalance.value).toString();
+  }
+
+  double getAmount(dynamic value) {
+    return value.toString().replaceAll(',', '').toDouble();
   }
 
   void _submit() async {
@@ -134,8 +137,7 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
                     controller: amountController,
                     validator: (value) {
                       final entered = double.tryParse(value ?? '') ?? 0;
-                      final max =
-                          double.tryParse(controller.totalBalance.value) ?? 0;
+                      final max = getAmount(controller.totalBalance.value);
 
                       if (value == null || value.isEmpty) {
                         return 'Amount is required';
