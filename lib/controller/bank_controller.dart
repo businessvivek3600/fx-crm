@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import '../constant/api_constants.dart';
-import '../database/dio/dio/dio_client.dart';
 import '../main.dart';
 import '../models/bank_model.dart';
 

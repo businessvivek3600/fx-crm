@@ -12,7 +12,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:nb_utils/nb_utils.dart' hide DialogType;
 
 import '../constant/api_constants.dart';
-import '../database/dio/dio/dio_client.dart';
 import '../database/notification_service.dart';
 import '../main.dart';
 import '../models/country_model.dart';

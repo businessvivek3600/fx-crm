@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
-import '../../../main.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
 

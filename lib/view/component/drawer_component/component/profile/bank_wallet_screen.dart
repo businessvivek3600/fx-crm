@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fx_crm/main.dart';
 
 import '../../../../../controller/bank_controller.dart';
 import '../../../../../widgets/bg_container.dart';

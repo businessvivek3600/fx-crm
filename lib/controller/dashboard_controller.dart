@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constant/api_constants.dart';
-import '../database/dio/dio/dio_client.dart';
 import '../main.dart';
 import '../models/customer_model.dart';
 

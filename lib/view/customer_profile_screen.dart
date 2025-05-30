@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fx_crm/main.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/edit_profile.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
