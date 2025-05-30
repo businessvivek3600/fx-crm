@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
-import '../../../main.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/bg_container.dart';
 
@@ -132,7 +131,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     CustomTextFormField(
                       label: 'Country',
                       readOnly: true,
-                      textStyle: const TextStyle(color: Colors.black),
                       hint: authController.selectedCountryName.value.isEmpty
                           ? 'Please select a country'
                           : authController.selectedCountryName.value,

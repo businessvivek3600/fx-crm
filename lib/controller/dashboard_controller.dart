@@ -4,17 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constant/api_constants.dart';
-import '../database/dio/dio/dio_client.dart';
+import '../main.dart';
+import '../models/customer_model.dart';
 
 class DashBoardController extends GetxController {
-  final DioClient dioClient;
-
-  DashBoardController({required this.dioClient});
 
   var isLoading = false.obs;
   var dashboardData = {}.obs;
   var termsHtml = ''.obs;
-  var profileData = {}.obs;
+  Rx<Customer?> profileData = Rx<Customer?>(null);
+
 
   /// Fetch Dashboard Data
   Future<void> getDashboardData() async {
@@ -68,9 +67,10 @@ class DashBoardController extends GetxController {
     try {
       isLoading.value = true;
       final response = await dioClient.post(ApiConst.userProfile);
+      log("Profile Data: ${response.data}");
       if (response.statusCode == 200 && response.data != null) {
         log("Profile Data: ${response.data}");
-        profileData.value = response.data['data'] ?? {};
+        profileData.value = Customer.fromJson(response.data['data']);
       } else {
         Get.snackbar("Error", "Failed to fetch profile");
       }

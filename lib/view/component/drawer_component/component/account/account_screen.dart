@@ -90,8 +90,7 @@ class _AccountScreenState extends State<AccountScreen> {
       }
 
       // Filter demo accounts
-      final demoAccounts = accountController.accountList
-          .toList();
+      final demoAccounts = accountController.accountList.toList();
       print(demoAccounts.length);
       return ListView.builder(
         itemCount: demoAccounts.length,
@@ -102,8 +101,16 @@ class _AccountScreenState extends State<AccountScreen> {
             margin: const EdgeInsets.only(bottom: 20),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(25),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.2),
+                  blurRadius: 2,
+                  spreadRadius: 5,
+                  offset: const Offset(0, 4), // subtle downward shadow
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,33 +121,50 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: [
                     Text(
                       '${account.accountType} Account ${account.accountNo}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white70,
+                      ),
                     ),
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.black),
-                        onSelected: (value) {
-                          if (value == 'leverage') {
-                            accountController.updateSelectedAccount(account.accountPlan.toString());
-                            Future.delayed(Duration(milliseconds: 100), () {
-                              _showLeverageDialog(account.accountNo ?? "");
-                            });
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ChangeAccountPassword(
-                                  isInvester: value != 'master',
-                                  accountNo: account.accountNo ?? "",
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'master', child: Text('Master Password')),
-                        const PopupMenuItem(value: 'investor', child: Text('Investor Password')),
-                        PopupMenuItem(value: 'leverage', child: Text('Change Leverage')),
-                      ],
+                      icon: const Icon(Icons.more_vert, color: Colors.white70),
+                      onSelected: (value) {
+                        if (value == 'leverage') {
+                          accountController.updateSelectedAccount(
+                            account.accountPlan.toString(),
+                          );
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            _showLeverageDialog(account.accountNo ?? "");
+                          });
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => ChangeAccountPassword(
+                                    isInvester: value != 'master',
+                                    accountNo: account.accountNo ?? "",
+                                  ),
+                            ),
+                          );
+                        }
+                      },
+                      itemBuilder:
+                          (context) => [
+                            const PopupMenuItem(
+                              value: 'master',
+                              child: Text('Master Password'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'investor',
+                              child: Text('Investor Password'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'leverage',
+                              child: Text('Change Leverage'),
+                            ),
+                          ],
                     ),
                   ],
                 ),
@@ -150,17 +174,26 @@ class _AccountScreenState extends State<AccountScreen> {
                 /// Type Label
                 Row(
                   children: [
-                  Text('${account.accountPlan}', style: TextStyle(fontSize: 14, color: Colors.black54)),
+                    Text(
+                      '${account.accountPlan}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade100,
+                        color: Colors.white24,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text(
-                        account.accountType ?? '',
-                        style: TextStyle(color: Colors.green.shade800, fontSize: 12),
+                      child: const Text(
+                        'Demo',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                     ),
                   ],
@@ -174,15 +207,22 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: [
                     Text(
                       'MT5 ${account.accountType} ${account.accountNo}',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white70,
+                      ),
                     ),
-                    /// Leverage
                     Text(
                       'Leverage: 1:${account.leverage ?? 'N/A'}',
-                      style: const TextStyle(fontSize: 14, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                      ),
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 12),
 
                 /// Master Password
@@ -190,12 +230,29 @@ class _AccountScreenState extends State<AccountScreen> {
                   initialValue: account.masterPassword,
                   obscureText: _obscurePassword,
                   readOnly: true,
+                  style: const TextStyle(color: Colors.white70),
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: const Color.fromARGB(32, 153, 143, 143),
                     labelText: 'Master Password',
-                    border: const OutlineInputBorder(),
+                    labelStyle: const TextStyle(color: Colors.white70),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white70),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.white70,
                       ),
                       onPressed: () {
                         setState(() {
@@ -213,12 +270,29 @@ class _AccountScreenState extends State<AccountScreen> {
                   initialValue: account.investorPassword,
                   obscureText: _obscureInvestorPassword,
                   readOnly: true,
+                  style: const TextStyle(color: Colors.white70),
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: const Color.fromARGB(32, 153, 143, 143),
                     labelText: 'Investor Password',
-                    border: const OutlineInputBorder(),
+                    labelStyle: const TextStyle(color: Colors.white70),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white70),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscureInvestorPassword ? Icons.visibility_off : Icons.visibility,
+                        _obscureInvestorPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.white70,
                       ),
                       onPressed: () {
                         setState(() {
@@ -236,16 +310,27 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: [
                     Expanded(
                       child: Chip(
-                        label: Text('SERVER ${account.accountGroup?? ""}',
-                            style: const TextStyle(fontSize: 12)),
-                        backgroundColor: Colors.grey.shade200,
+                        label: Text(
+                          'SERVER ${account.accountGroup ?? ""}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                        ),
+                        backgroundColor: Colors.white24,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Chip(
-                        label: const Text('Currency USD', style: TextStyle(fontSize: 12)),
-                        backgroundColor: Colors.grey.shade200,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 50),
+                        child: Chip(
+                          label: const Text(
+                            'Currency USD',
+                            style: TextStyle(fontSize: 12, color: Colors.black),
+                          ),
+                          backgroundColor: Colors.white24,
+                        ),
                       ),
                     ),
                   ],
@@ -253,11 +338,15 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 const SizedBox(height: 12),
 
-                /// Set Balance
+                /// Set Balance Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        side: const BorderSide(color: Colors.white70),
+                      ),
                       onPressed: () => showSetBalanceDialog(context),
                       icon: const Icon(Icons.account_balance_wallet_outlined),
                       label: const Text('Set Balance'),
@@ -271,6 +360,7 @@ class _AccountScreenState extends State<AccountScreen> {
       );
     });
   }
+
   void _showLeverageDialog(String accountNo) {
     final leverageController = TextEditingController();
 
@@ -297,22 +387,25 @@ class _AccountScreenState extends State<AccountScreen> {
                 hint: 'Select Leverage',
                 controller: leverageController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) =>
-                (value == null || value.isEmpty) ? 'Please select account leverage' : null,
+                validator:
+                    (value) =>
+                        (value == null || value.isEmpty)
+                            ? 'Please select account leverage'
+                            : null,
                 onTap:
-                accountController.leverageOptions.isNotEmpty
-                    ? () => _showDropdownMenu(
-                  _leverageKey,
-                  accountController.leverageOptions,
-                  leverageController,
-                )
-                    : null,
+                    accountController.leverageOptions.isNotEmpty
+                        ? () => _showDropdownMenu(
+                          _leverageKey,
+                          accountController.leverageOptions,
+                          leverageController,
+                        )
+                        : null,
               );
             }),
 
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () async{
+              onPressed: () async {
                 final newLeverage = leverageController.text.trim();
                 if (newLeverage.isNotEmpty) {
                   await accountController.changeLeverage(
@@ -320,31 +413,45 @@ class _AccountScreenState extends State<AccountScreen> {
                     leverage: newLeverage,
                   );
                   Navigator.of(context).pop();
-                  Get.snackbar('Success', 'Leverage changed to $newLeverage',
-                      snackPosition: SnackPosition.BOTTOM);
+                  Get.snackbar(
+                    'Success',
+                    'Leverage changed to $newLeverage',
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
                 } else {
-                  Get.snackbar('Error', 'Leverage cannot be empty',
-                      backgroundColor: Colors.red, colorText: Colors.white);
+                  Get.snackbar(
+                    'Error',
+                    'Leverage cannot be empty',
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
-              child: const Text('Submit', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
       ),
     ).show();
   }
+
   void _showDropdownMenu(
-      GlobalKey key,
-      List<String> options,
-      TextEditingController controller,
-      ) async {
+    GlobalKey key,
+    List<String> options,
+    TextEditingController controller,
+  ) async {
     final RenderBox renderBox =
-    key.currentContext!.findRenderObject() as RenderBox;
+        key.currentContext!.findRenderObject() as RenderBox;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
     final Size size = renderBox.size;
 
@@ -357,16 +464,15 @@ class _AccountScreenState extends State<AccountScreen> {
         offset.dy,
       ),
       items:
-      options
-          .map(
-            (option) =>
-            PopupMenuItem<String>(value: option, child: Text(option)),
-      )
-          .toList(),
+          options
+              .map(
+                (option) =>
+                    PopupMenuItem<String>(value: option, child: Text(option)),
+              )
+              .toList(),
     );
     if (selected != null) {
       controller.text = selected;
     }
-
   }
 }

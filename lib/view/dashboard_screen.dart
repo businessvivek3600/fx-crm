@@ -25,21 +25,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           surfaceTintColor: Colors.transparent,
           elevation: 4,
           leading: Builder(
-            builder: (context) => Padding(
-              padding: const EdgeInsets.only(left: 12),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () => Scaffold.of(context).openDrawer(),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white24),
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white.withOpacity(0.05),
-                  ),
-                  child: const Icon(Icons.menu, color: Colors.white),
-                ),
-              ),
+            builder: (context) => InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => Scaffold.of(context).openDrawer(),
+              child: const Icon(Icons.menu, color: Colors.white),
             ),
           ),
           centerTitle: false,
@@ -156,7 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: const Color.fromARGB(31, 149, 20, 20)),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
