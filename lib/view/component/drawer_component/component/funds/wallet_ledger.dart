@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:fx_crm/controller/ledger_wallet_controller.dart';
-=======
 import 'package:fx_crm/controller/wallet_controller.dart';
 import 'package:fx_crm/widgets/custom_text_form.dart';
->>>>>>> 1f07c38152abb6dd0d188b1ac201ff82bcfe7d4a
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' as nb;
 

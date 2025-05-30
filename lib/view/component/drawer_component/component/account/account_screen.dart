@@ -101,14 +101,14 @@ class _AccountScreenState extends State<AccountScreen> {
             margin: const EdgeInsets.only(bottom: 20),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.transparent,
+              color: const Color(0xff151527),
               borderRadius: BorderRadius.circular(25),
               boxShadow: [
                 BoxShadow(
                   color: Colors.white.withOpacity(0.2),
-                  blurRadius: 2,
-                  spreadRadius: 5,
-                  offset: const Offset(0, 4), // subtle downward shadow
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                  offset: const Offset(3,0.1 ), // subtle downward shadow
                 ),
               ],
             ),
@@ -344,8 +344,9 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: [
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
+                        backgroundColor: Color(0xff2e2e2e),
                         foregroundColor: Colors.white70,
-                        side: const BorderSide(color: Colors.white70),
+                    
                       ),
                       onPressed: () => showSetBalanceDialog(context),
                       icon: const Icon(Icons.account_balance_wallet_outlined),
