@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       backgroundColor: Colors.black.withOpacity(0.6),
       body: Center(
         child: Lottie.asset(
-          'assets/images/Animation - 1747216318540.json',
+          'assets/json/Animation - 1747216318540.json',
           controller: _animationController,
           onLoaded: (composition) {
             _animationController.duration = composition.duration * 0.05; // 2x speed
