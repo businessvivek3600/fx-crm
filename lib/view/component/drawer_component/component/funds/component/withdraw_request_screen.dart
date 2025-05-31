@@ -6,7 +6,6 @@ import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import '../../../../../../controller/app_controller.dart';
 import '../../../../../../controller/bank_controller.dart';
 import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../widgets/drop_down_text_field.dart';

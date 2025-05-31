@@ -11,14 +11,11 @@ import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
-import '../../../controller/session_controller.dart';
 import '../../../routes/route_path.dart';
 import '../../../utils/drawer_back_button.dart';
 import '../../../widgets/bg_container.dart';
-import 'component/account/activate_screen.dart';
 import 'component/account/wallet_account.dart';
 import 'component/profile/kyc_verification.dart';
 

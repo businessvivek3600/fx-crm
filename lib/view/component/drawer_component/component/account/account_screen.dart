@@ -98,265 +98,256 @@ class _AccountScreenState extends State<AccountScreen> {
           final account = demoAccounts[index];
 
           return Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.all(16),
+  margin: const EdgeInsets.only(bottom: 20),
+  padding: const EdgeInsets.all(16),
+  decoration: BoxDecoration(
+    color: const Color(0xff151527),
+    borderRadius: BorderRadius.circular(25),
+    border: Border.all(
+      color: Colors.white.withOpacity(0.2), // subtle white border
+      width: 1.5, // border thickness
+    ),
+    // boxShadow removed
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      /// Header
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${account.accountType} Account ${account.accountNo}',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white70,
+            ),
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.white70),
+            onSelected: (value) {
+              if (value == 'leverage') {
+                accountController.updateSelectedAccount(
+                  account.accountPlan.toString(),
+                );
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  _showLeverageDialog(account.accountNo ?? "");
+                });
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeAccountPassword(
+                      isInvester: value != 'master',
+                      accountNo: account.accountNo ?? "",
+                    ),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'master',
+                child: Text('Master Password'),
+              ),
+              const PopupMenuItem(
+                value: 'investor',
+                child: Text('Investor Password'),
+              ),
+              const PopupMenuItem(
+                value: 'leverage',
+                child: Text('Change Leverage'),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 12),
+
+      /// Type Label
+      Row(
+        children: [
+          Text(
+            '${account.accountPlan}',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white70,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 4,
+            ),
             decoration: BoxDecoration(
-              color: const Color(0xff151527),
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.2),
-                  blurRadius: 6,
-                  spreadRadius: 2,
-                  offset: const Offset(3,0.1 ), // subtle downward shadow
-                ),
-              ],
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(4),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${account.accountType} Account ${account.accountNo}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.white70),
-                      onSelected: (value) {
-                        if (value == 'leverage') {
-                          accountController.updateSelectedAccount(
-                            account.accountPlan.toString(),
-                          );
-                          Future.delayed(const Duration(milliseconds: 100), () {
-                            _showLeverageDialog(account.accountNo ?? "");
-                          });
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => ChangeAccountPassword(
-                                    isInvester: value != 'master',
-                                    accountNo: account.accountNo ?? "",
-                                  ),
-                            ),
-                          );
-                        }
-                      },
-                      itemBuilder:
-                          (context) => [
-                            const PopupMenuItem(
-                              value: 'master',
-                              child: Text('Master Password'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'investor',
-                              child: Text('Investor Password'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'leverage',
-                              child: Text('Change Leverage'),
-                            ),
-                          ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                /// Type Label
-                Row(
-                  children: [
-                    Text(
-                      '${account.accountPlan}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'Demo',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                /// Account Title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'MT5 ${account.accountType} ${account.accountNo}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    Text(
-                      'Leverage: 1:${account.leverage ?? 'N/A'}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                /// Master Password
-                TextFormField(
-                  initialValue: account.masterPassword,
-                  obscureText: _obscurePassword,
-                  readOnly: true,
-                  style: const TextStyle(color: Colors.white70),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color.fromARGB(32, 153, 143, 143),
-                    labelText: 'Master Password',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.white70,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                /// Investor Password
-                TextFormField(
-                  initialValue: account.investorPassword,
-                  obscureText: _obscureInvestorPassword,
-                  readOnly: true,
-                  style: const TextStyle(color: Colors.white70),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color.fromARGB(32, 153, 143, 143),
-                    labelText: 'Investor Password',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureInvestorPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.white70,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureInvestorPassword = !_obscureInvestorPassword;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                /// Server & Currency
-                Row(
-                  children: [
-                    Expanded(
-                      child: Chip(
-                        label: Text(
-                          'SERVER ${account.accountGroup ?? ""}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
-                        ),
-                        backgroundColor: Colors.white24,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 50),
-                        child: Chip(
-                          label: const Text(
-                            'Currency USD',
-                            style: TextStyle(fontSize: 12, color: Colors.black),
-                          ),
-                          backgroundColor: Colors.white24,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                /// Set Balance Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Color(0xff2e2e2e),
-                        foregroundColor: Colors.white70,
-                    
-                      ),
-                      onPressed: () => showSetBalanceDialog(context),
-                      icon: const Icon(Icons.account_balance_wallet_outlined),
-                      label: const Text('Set Balance'),
-                    ),
-                  ],
-                ),
-              ],
+            child: const Text(
+              'Demo',
+              style: TextStyle(color: Colors.white70, fontSize: 12),
             ),
-          );
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 8),
+
+      /// Account Title
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'MT5 ${account.accountType} ${account.accountNo}',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white70,
+            ),
+          ),
+          Text(
+            'Leverage: 1:${account.leverage ?? 'N/A'}',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 12),
+
+      /// Master Password
+      TextFormField(
+        initialValue: account.masterPassword,
+        obscureText: _obscurePassword,
+        readOnly: true,
+        style: const TextStyle(color: Colors.white70),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color.fromARGB(32, 153, 143, 143),
+          labelText: 'Master Password',
+          labelStyle: const TextStyle(color: Colors.white70),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white70),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscurePassword ? Icons.visibility_off : Icons.visibility,
+              color: Colors.white70,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscurePassword = !_obscurePassword;
+              });
+            },
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 16),
+
+      /// Investor Password
+      TextFormField(
+        initialValue: account.investorPassword,
+        obscureText: _obscureInvestorPassword,
+        readOnly: true,
+        style: const TextStyle(color: Colors.white70),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color.fromARGB(32, 153, 143, 143),
+          labelText: 'Investor Password',
+          labelStyle: const TextStyle(color: Colors.white70),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white70),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureInvestorPassword ? Icons.visibility_off : Icons.visibility,
+              color: Colors.white70,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureInvestorPassword = !_obscureInvestorPassword;
+              });
+            },
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 12),
+
+      /// Server & Currency
+      Row(
+        children: [
+          Expanded(
+            child: Chip(
+              label: Text(
+                'SERVER ${account.accountGroup ?? ""}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.black,
+                ),
+              ),
+              backgroundColor: Colors.white24,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 50),
+              child: Chip(
+                label: const Text(
+                  'Currency USD',
+                  style: TextStyle(fontSize: 12, color: Colors.black),
+                ),
+                backgroundColor: Colors.white24,
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 12),
+
+      /// Set Balance Button
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: const Color(0xff2e2e2e),
+              foregroundColor: Colors.white70,
+            ),
+            onPressed: () => showSetBalanceDialog(context),
+            icon: const Icon(Icons.account_balance_wallet_outlined),
+            label: const Text('Set Balance'),
+          ),
+        ],
+      ),
+    ],
+  ),
+);
+
         },
       );
     });

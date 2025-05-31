@@ -13,11 +13,11 @@ class WithdrawOtpScreen extends StatefulWidget {
   final String paymentType;
 
   const WithdrawOtpScreen({
-    Key? key,
+    super.key,
     required this.requestId,
     required this.amount,
     required this.paymentType,
-  }) : super(key: key);
+  });
 
   @override
   State<WithdrawOtpScreen> createState() => _WithdrawOtpScreenState();
