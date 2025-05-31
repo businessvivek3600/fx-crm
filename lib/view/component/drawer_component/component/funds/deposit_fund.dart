@@ -8,6 +8,8 @@ import 'package:nb_utils/nb_utils.dart' hide DialogType;
 import '../../../../../widgets/bg_container.dart';
 
 class DepositFundScreen extends StatefulWidget {
+  const DepositFundScreen({super.key});
+
   @override
   State<DepositFundScreen> createState() => _DepositFundScreenState();
 }

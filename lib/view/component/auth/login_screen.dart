@@ -5,7 +5,6 @@ import 'package:fx_crm/view/component/auth/signup_screen.dart';
 import 'package:get/get.dart';
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
-import '../../../main.dart';
 import '../../../widgets/bg_container.dart';
 import '../../../widgets/custom_text_form.dart';
 

@@ -15,20 +15,20 @@ class PaymentInformation {
     status = json['status'];
     isLogin = json['is_login'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-    order = json['order'] != null ? new Order.fromJson(json['order']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    order = json['order'] != null ? Order.fromJson(json['order']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['is_login'] = this.isLogin;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['is_login'] = isLogin;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    if (this.order != null) {
-      data['order'] = this.order!.toJson();
+    if (order != null) {
+      data['order'] = order!.toJson();
     }
     return data;
   }
@@ -78,19 +78,19 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['order_id'] = this.orderId;
-    data['txn_id'] = this.txnId;
-    data['coin_amt'] = this.coinAmt;
-    data['recived'] = this.recived;
-    data['types'] = this.types;
-    data['coin'] = this.coin;
-    data['wallet_address'] = this.walletAddress;
-    data['status'] = this.status;
-    data['status_text'] = this.statusText;
-    data['qr_url'] = this.qrUrl;
-    data['seller_email'] = this.sellerEmail;
-    data['seller_username'] = this.sellerUsername;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['order_id'] = orderId;
+    data['txn_id'] = txnId;
+    data['coin_amt'] = coinAmt;
+    data['recived'] = recived;
+    data['types'] = types;
+    data['coin'] = coin;
+    data['wallet_address'] = walletAddress;
+    data['status'] = status;
+    data['status_text'] = statusText;
+    data['qr_url'] = qrUrl;
+    data['seller_email'] = sellerEmail;
+    data['seller_username'] = sellerUsername;
     return data;
   }
 }
@@ -107,7 +107,7 @@ class Order {
   String? qrUrl;
   String? txnId;
   String? status;
-  Null? note;
+  Null note;
   String? updatedAt;
 
   Order(
@@ -142,20 +142,20 @@ class Order {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['order_id'] = this.orderId;
-    data['created_at'] = this.createdAt;
-    data['customer_id'] = this.customerId;
-    data['username'] = this.username;
-    data['amount'] = this.amount;
-    data['payment_type'] = this.paymentType;
-    data['payment_url'] = this.paymentUrl;
-    data['qr_url'] = this.qrUrl;
-    data['txn_id'] = this.txnId;
-    data['status'] = this.status;
-    data['note'] = this.note;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['order_id'] = orderId;
+    data['created_at'] = createdAt;
+    data['customer_id'] = customerId;
+    data['username'] = username;
+    data['amount'] = amount;
+    data['payment_type'] = paymentType;
+    data['payment_url'] = paymentUrl;
+    data['qr_url'] = qrUrl;
+    data['txn_id'] = txnId;
+    data['status'] = status;
+    data['note'] = note;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

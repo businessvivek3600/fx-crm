@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart'; // Import the flutter_html pack
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../controller/dashboard_controller.dart';
-import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {
@@ -25,8 +24,10 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   Widget build(BuildContext context) {
     return BackgroundContainer(
       child: Scaffold(
+        
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           title: const Text(
             'Terms & Conditions',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
@@ -38,10 +39,12 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             padding: const EdgeInsets.all(16),
             child: Card(
               elevation: 1,
+            
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
+                
               ),
-              color: Colors.grey.shade100,
+              color: Color(0xff151527),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -49,14 +52,14 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.description_outlined, color: Colors.blueGrey.shade700),
+                        Icon(Icons.description_outlined, color: Colors.white),
                         const SizedBox(width: 8),
                         Text(
                           'Terms & Conditions',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blueGrey.shade800,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -93,7 +96,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                       data: dashBoardController.termsHtml.value ?? "",
                       style: {
                         "p": Style(
-                          color: Colors.blueGrey.shade700,
+                          color: Colors.white,
                           fontSize: FontSize(15),
                         ),
                       },
