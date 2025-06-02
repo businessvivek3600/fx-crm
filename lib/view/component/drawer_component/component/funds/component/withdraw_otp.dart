@@ -114,6 +114,7 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,

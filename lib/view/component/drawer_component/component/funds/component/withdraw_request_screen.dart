@@ -97,31 +97,44 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
           elevation: 0,
-
           centerTitle: true,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Withdraw Request",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                  fontSize: 23,
-                  color: Colors.white,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(),
-                child: Text(
-                  "\$${controller.totalBalance.toString()}",
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ),
-            ],
+          title: LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Withdraw Request",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        fontSize: 20, // slightly reduced to avoid overflow
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FittedBox(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: Obx(
+                        () => Text(
+                          "\$${controller.totalBalance.toString()}",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
+
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -367,8 +380,8 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: TextStyle(color: white)),
-            SelectableText(address, style: TextStyle(color: white)),
+            Expanded(flex:1,child: Text(label, style: TextStyle(color: white))),
+            Expanded(flex:2,child:  SelectableText(address, style: TextStyle(color: white))),
           ],
         ),
       ),
@@ -394,7 +407,7 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
       ),
     );
   }
-
+                                            
   void _showDropdownMenu(
     BuildContext context,
     GlobalKey key,
