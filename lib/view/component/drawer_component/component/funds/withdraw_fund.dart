@@ -197,7 +197,7 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
                               ),
                             ),
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder:
