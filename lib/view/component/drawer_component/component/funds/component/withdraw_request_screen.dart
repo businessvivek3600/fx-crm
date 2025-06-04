@@ -71,7 +71,7 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
       paymentType: paymentType,
     );
     if (requestId != null) {
-      Get.to(
+      Get.off(
         () => WithdrawOtpScreen(
           requestId: requestId,
           amount: amountController.text,
@@ -380,8 +380,14 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(flex:1,child: Text(label, style: TextStyle(color: white))),
-            Expanded(flex:2,child:  SelectableText(address, style: TextStyle(color: white))),
+            Expanded(
+              flex: 1,
+              child: Text(label, style: TextStyle(color: white)),
+            ),
+            Expanded(
+              flex: 2,
+              child: SelectableText(address, style: TextStyle(color: white)),
+            ),
           ],
         ),
       ),
@@ -407,7 +413,7 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
       ),
     );
   }
-                                            
+
   void _showDropdownMenu(
     BuildContext context,
     GlobalKey key,
