@@ -85,7 +85,7 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
                   buttonText: 'Update KYC',
                   icon: Icons.credit_card_rounded,
                   onPressed: () {
-                    context.push(Paths.kyc);
+                    context.push(Paths.kycScreen);
                   },
                 ),
                 const SizedBox(height: 16),

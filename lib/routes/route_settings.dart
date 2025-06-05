@@ -30,16 +30,19 @@ final router = GoRouter(
   redirect: _redirect,
   routes: [
     GoRoute(
-      path:Paths.splash,
+      path: Paths.splash,
       name: Routes.splash,
       builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
       path: Paths.login,
       name: Routes.login,
-      builder: (context, state) {
-        return const LoginScreen();
-      },
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: Paths.signup,
+      name: Routes.signup,
+      builder: (context, state) => SignupScreen(),
     ),
     GoRoute(
       path: Paths.dashboard,
@@ -52,113 +55,92 @@ final router = GoRouter(
       builder: (context, state) => NotificationScreen(),
     ),
 
-
-
-    GoRoute(
-      path: Paths.signup,
-      name: Routes.signup,
-      builder: (context, state) => SignupScreen(),
-    ),
-
+    /// Account Screens
     GoRoute(
       path: Paths.accounts,
       name: Routes.accounts,
       builder: (context, state) => AccountScreen(),
     ),
-
     GoRoute(
-      path: Paths.wallet_account,
-      name: Routes.wallet_account,
+      path: Paths.walletAccount,
+      name: Routes.walletAccount,
       builder: (context, state) => WalletAccountScreen(),
-    ),
-
-    GoRoute(
-      path: Paths.editprofile,
-      name: Routes.editprofile,
-      builder: (context, state) => EditProfileScreen(),
-    ),
-    GoRoute(
-      path: Paths.kyc,
-      name: Routes.kycScreen,
-      builder: (context, state) => KycUploadScreen(),
-    ),
-    GoRoute(
-      path: Paths.bank_wallet,
-      name: Routes.bank_wallet,
-      builder: (context, state) => WalletScreen(),
-    ),
-    GoRoute(
-      path: Paths.economic_calendar,
-      name: Routes.economic_calendar,
-      builder: (context, state) => EconomicCalendarScreen(),
     ),
     GoRoute(
       path: Paths.activateAccount,
       name: Routes.activateAccount,
       builder: (context, state) => ActivateAccountScreen(),
     ),
-
-    // GoRoute(
-    //   path: Paths.bank_wallet,
-    //   name: Routes.bank_wallet,
-    //   builder: (context, state) => WalletScreen(),
-    // ),
     GoRoute(
-      path: Paths.trasaction_history,
-      name: Routes.trasaction_history,
+      path: Paths.transactionHistory,
+      name: Routes.transactionHistory,
       builder: (context, state) => TransactionHistoryScreen(),
     ),
+
+    /// Profile Screens
     GoRoute(
-      path: Paths.changepassword,
-      name: Routes.changepassword,
-      builder: (context, state) => ChangePasswordScreen(),
+      path: Paths.editProfile,
+      name: Routes.editProfile,
+      builder: (context, state) => EditProfileScreen(),
     ),
     GoRoute(
-      path: Paths.monthly_rewards,
-      name: Routes.monthly_rewards,
+      path: Paths.kycScreen,
+      name: Routes.kyc,
+      builder: (context, state) => KycUploadScreen(),
+    ),
+    GoRoute(
+      path: Paths.bankWallet,
+      name: Routes.bankWallet,
+      builder: (context, state) => WalletScreen(),
+    ),
+    GoRoute(
+      path: Paths.changePassword,
+      name: Routes.changePassword,
+      builder: (context, state) => ChangePasswordScreen(),
+    ),
+
+    /// Promotions
+    GoRoute(
+      path: Paths.monthlyRewards,
+      name: Routes.monthlyRewards,
       builder: (context, state) => MonthlyRewardsScreen(),
     ),
     GoRoute(
-      path: Paths.termandcondition,
-      name: Routes.termandcondition,
+      path: Paths.termsAndConditions,
+      name: Routes.termsAndConditions,
       builder: (context, state) => TermsAndConditionsScreen(),
     ),
 
+    /// Other
+    GoRoute(
+      path: Paths.economicCalendar,
+      name: Routes.economicCalendar,
+      builder: (context, state) => EconomicCalendarScreen(),
+    ),
+
+    /// You can uncomment and use these if needed:
     // GoRoute(
-    //   path: Paths.CreateAccountScreen,
-    //   name: Routes.CreateAccountScreen,
-    //   builder: (context, state) => CreateAccountScreen(),
+    //   path: Paths.logout,
+    //   name: Routes.logout,
+    //   builder: (context, state) => LogoutScreen(),
     // ),
-    //     GoRoute(
-    //       path: Paths.logout,
-    //       name: Routes.logout,
-    //       builder: (context, state) => (),
-    //     ),
   ],
 );
 
-// class AppPages {
-// static final routes = [
-//   GetPage(name: Routes.login, page: () => LoginScreen()),
-//   GetPage(name: Routes.dashboard, page: () => DashboardScreen()),
-//   // Add more pages here
-// ];
-
-/// through go router
-
 FutureOr<String?> _redirect(context, GoRouterState state) {
-  print('Redirecting... ${state.matchedLocation}');
   final isLoggedIn = SessionController.to.isLoggedIn.value;
-  final isGoingToLogin = state.matchedLocation == Paths.login;
+  final goingToLogin = state.matchedLocation == Paths.login;
+  final goingToSplash = state.matchedLocation == Paths.splash;
 
-  if (!isLoggedIn && !isGoingToLogin) {
+  // If not logged in, redirect to login (except splash)
+  if (!isLoggedIn && !goingToLogin && !goingToSplash) {
     return Paths.login;
   }
-  if (isLoggedIn && isGoingToLogin) {
+
+  // If already logged in and going to login, redirect to dashboard
+  if (isLoggedIn && goingToLogin) {
     return Paths.dashboard;
   }
 
-  return null; // no redirect
+  return null;
 }
-
-// }
