@@ -9,7 +9,6 @@ import 'component/common_transfer_wallet.dart';
 import 'component/wallet_card_shimmer.dart';
 import 'component/withdraw_request_screen.dart';
 
-
 class WalletLedger extends StatefulWidget {
   const WalletLedger({super.key});
 
@@ -89,16 +88,21 @@ class _WalletLedgerState extends State<WalletLedger> {
                     "Wallet to MT5",
                     Colors.amber.shade700,
                     () {
-                      showTransferWalletDialog("Wallet to MT5",context);
+                      showTransferWalletDialog("Wallet to MT5", context);
                     },
                   ),
                   const SizedBox(width: 8),
                   _buildTransferButton("MT5 to Wallet", Colors.blue, () {
-                    showTransferWalletDialog("MT5 to Wallet",context);
+                    showTransferWalletDialog("MT5 to Wallet", context);
                   }),
                   const SizedBox(width: 8),
                   _buildTransferButton("Withdraw Funds", Colors.green, () {
-                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  WithdrawRequestScreen (),));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WithdrawRequestScreen(),
+                      ),
+                    );
                   }),
                 ],
               ),
@@ -258,8 +262,6 @@ class _WalletLedgerState extends State<WalletLedger> {
       ),
     );
   }
-
-
 
   Widget _buildTransferButton(
     String label,

@@ -6,8 +6,6 @@ import '../main.dart';
 import '../models/bank_model.dart';
 
 class BankController extends GetxController {
-
-
   final isLoading = false.obs;
   final otpLoading = false.obs;
   Rx<Bank?> bankDetails = Rx<Bank?>(null);
@@ -32,7 +30,7 @@ class BankController extends GetxController {
         ApiConst.getBankDetails,
         token: true,
       );
-      print('bank data');
+      print('bank data---------------------');
       print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = response.data['data'];
@@ -48,6 +46,7 @@ class BankController extends GetxController {
         bizzcoinAddressController.text = bank.bizzcoinAddress ?? '';
         usdtAddressController.text = bank.usdtAddress ?? '';
       } else {
+        print(response.data['message']);
         Get.snackbar(
           'Error',
           response.data['message'] ?? 'Failed to fetch bank details',
@@ -72,7 +71,7 @@ class BankController extends GetxController {
   /// Update Bank Data
   Future<void> updateBankDetails() async {
     isLoading.value = true;
-
+    print('bank data---------------------');
     try {
       dio.FormData formData = dio.FormData.fromMap({
         'bank': bankNameController.text,
@@ -85,10 +84,14 @@ class BankController extends GetxController {
         'usdt_address': usdtAddressController.text,
         'email_otp': otpController.text,
       });
+      print('bank data---------------------post body');
+      print(formData.fields);
       final response = await dioClient.post(
         ApiConst.updateBankDetails,
         data: formData,
       );
+      print('bank data---------------------');
+      print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(
           'Success',
@@ -137,6 +140,8 @@ class BankController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+        print('bank otp---------------------');
+        print(response.data);
       } else {
         Get.snackbar(
           'Error',
@@ -173,7 +178,10 @@ class BankController extends GetxController {
         btcAddressController.text.isNotEmpty ||
         bizzcoinAddressController.text.isNotEmpty ||
         usdtAddressController.text.isNotEmpty;
-
+    print("---------------------------bank daata");
+    print(isBankDetailsEntered);
+    print(isWalletEntered);
+    print(otpController.text);
     // Validate OTP
     if (otpController.text.isEmpty) {
       Get.snackbar(
