@@ -154,9 +154,9 @@ class _WalletScreenState extends State<WalletScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (bankController.validateBankOrWalletFields()) {
+                      // if (bankController.validateBankOrWalletFields()) {
                         bankController.updateBankDetails();
-                      }
+                      // }
                     },
                     child: const Text('Update'),
                   ),

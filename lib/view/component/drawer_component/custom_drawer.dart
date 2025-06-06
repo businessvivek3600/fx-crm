@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_settings.dart';
@@ -9,8 +10,8 @@ import 'package:fx_crm/view/component/drawer_component/component/funds/deposite_
 import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:get/get.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
 import '../../../routes/route_path.dart';
@@ -47,7 +48,9 @@ class CustomDrawer extends StatelessWidget {
                   SizedBox(
                     height: 130,
                     child: DrawerHeader(
-                      decoration: const BoxDecoration(color: Colors.transparent),
+                      decoration: const BoxDecoration(
+                        color: Colors.transparent,
+                      ),
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.zero,
                       child: Align(
@@ -60,7 +63,7 @@ class CustomDrawer extends StatelessWidget {
                           height: double.infinity,
                           errorBuilder:
                               (context, error, stackTrace) =>
-                          const Icon(Icons.error, color: Colors.white),
+                                  const Icon(Icons.error, color: Colors.white),
                         ),
                       ),
                     ),
@@ -75,13 +78,13 @@ class CustomDrawer extends StatelessWidget {
                         'title': 'Accounts',
                         'icon': Icons.school_outlined,
                         'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AccountScreen(),
-                            ),
-                          );
-                          // router.push(Routes.CreateAccountScreen);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => AccountScreen(),
+                          //   ),
+                          // );
+                           context.push(Routes.accounts);
                         },
                       },
 
@@ -97,13 +100,13 @@ class CustomDrawer extends StatelessWidget {
                         'title': 'Wallet Account',
                         'icon': Icons.account_balance_wallet_outlined,
                         'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WalletAccountScreen(),
-                            ),
-                          );
-                          // router.push(Routes.WalletAccountScreen);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => WalletAccountScreen(),
+                          //   ),
+                          // );
+                           context.push(Routes.walletAccount);
                         },
                       },
                       {
@@ -116,7 +119,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => TransactionHistoryScreen(),
                           //   ),
                           // );
-                          context.push(Paths.trasaction_history);
+                          context.push(Paths.transactionHistory);
                         },
                       },
                     ],
@@ -135,7 +138,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => EditProfileScreen(),
                           //   ),
                           // );
-                          context.push(Paths.editprofile);
+                          context.push(Paths.editProfile);
                         },
                       },
                       {
@@ -146,20 +149,20 @@ class CustomDrawer extends StatelessWidget {
                           //   context,
                           //   MaterialPageRoute(builder: (context) => WalletScreen()),
                           // );
-                          context.push(Paths.bank_wallet); // Works now
+                          context.push(Paths.bankWallet); // Works now
                         },
                       },
                       {
                         'title': 'KYC',
                         'icon': Icons.badge_outlined,
                         'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => KycUploadScreen(),
-                            ),
-                          );
-                          //  router.push(Routes.kyc_verification);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => KycUploadScreen(),
+                          //   ),
+                          // );
+                            context.push(Routes.kyc);
                         },
                       },
                       {
@@ -172,7 +175,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => ChangePasswordScreen(),
                           //   ),
                           // );
-                          context.push(Paths.changepassword);
+                          context.push(Paths.changePassword);
                         },
                       },
                     ],
@@ -193,7 +196,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => MonthlyRewardsScreen(),
                           //   ),
                           // );
-                          router.push(Routes.monthly_rewards);
+                          router.push(Routes.monthlyRewards);
                         },
                       },
                       {
@@ -206,7 +209,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => TermsAndConditionsScreen(),
                           //   ),
                           // );
-                          context.push(Paths.termandcondition);
+                          context.push(Paths.termsAndConditions);
                         },
                       },
                     ],
@@ -232,7 +235,9 @@ class CustomDrawer extends StatelessWidget {
                         'onTap': () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => WalletLedger()),
+                            MaterialPageRoute(
+                              builder: (context) => WalletLedger(),
+                            ),
                           );
                           // context.push(Paths.wallet_ledger);
                         },
@@ -270,7 +275,8 @@ class CustomDrawer extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DepositWithdrawHistoryScreen(),
+                              builder:
+                                  (context) => DepositWithdrawHistoryScreen(),
                             ),
                           );
                           // context.push(Paths.deposit_withdrawhistory);
@@ -303,7 +309,7 @@ class CustomDrawer extends StatelessWidget {
                       //     builder: (context) => EconomicCalendarScreen(),
                       //   ),
                       // );
-                      context.push(Paths.economic_calendar);
+                      context.push(Paths.economicCalendar);
                     },
                   ),
                   // download
@@ -336,7 +342,9 @@ class CustomDrawer extends StatelessWidget {
                           color: Colors.orange,
                         ),
                         headerAnimationLoop: true,
-                        titleTextStyle: Theme.of(context).textTheme.headlineLarge!
+                        titleTextStyle: Theme.of(context)
+                            .textTheme
+                            .headlineLarge!
                             .copyWith(fontWeight: FontWeight.bold),
                         desc: 'Are you sure you want to logout?',
                         btnCancelOnPress: () {},
@@ -361,19 +369,16 @@ class CustomDrawer extends StatelessWidget {
                 color: Colors.black.withOpacity(0.8),
                 child: Row(
                   children: [
-                    SizedBox(width: 15,),
-                    AnimatedCircleButton(
-                      onTap: () => Navigator.pop(context),
-                    ),
+                    SizedBox(width: 15),
+                    AnimatedCircleButton(onTap: () => Navigator.pop(context)),
 
-                    SizedBox(width: 15,),
+                    SizedBox(width: 15),
                   ],
                 ),
               ),
             ),
           ],
         ),
-
       ],
     );
   }
@@ -404,28 +409,28 @@ class CustomDrawer extends StatelessWidget {
       child: ExpansionTile(
         leading: Icon(icon, color: Colors.white),
         title: Text(title, style: TextStyle(color: Colors.white)),
+        iconColor: Colors.blue,
+        collapsedIconColor: Colors.white,
         children:
-        submenus.map((submenu) {
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListTile(
-              dense: true,
-              leading: Icon(submenu['icon'], size: 20, color: Colors.white),
-              title: Text(
-                submenu['title'],
-                style: TextStyle(fontSize: 14, color: Colors.white),
-              ),
-              onTap: submenu['onTap'],
-            ),
-          );
-        }).toList(),
+            submenus.map((submenu) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  dense: true,
+                  leading: Icon(submenu['icon'], size: 20, color: Colors.white),
+                  title: Text(
+                    submenu['title'],
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                  onTap: submenu['onTap'],
+                ),
+              );
+            }).toList(),
       ),
     );
   }
 }
-
-

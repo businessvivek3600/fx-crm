@@ -34,7 +34,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
           backgroundColor: ThemeUtils.primaryColor,
           centerTitle: true,
           title: const Text(
-            "Customer Profile",
+            "Customer Profile", 
             style: TextStyle(
               color: Colors.white,
               fontSize: 23,
