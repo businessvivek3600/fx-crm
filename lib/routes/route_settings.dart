@@ -13,6 +13,7 @@ import 'package:fx_crm/view/component/drawer_component/component/profile/edit_pr
 import 'package:fx_crm/view/component/drawer_component/component/profile/kyc_verification.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/monthly_reward.dart';
 import 'package:fx_crm/view/component/drawer_component/component/promotions/terms_condition.dart';
+import 'package:fx_crm/view/component/drawer_component/component/support/support_screen.dart';
 import 'package:fx_crm/view/component/notification/notification_screen.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -116,6 +117,11 @@ final router = GoRouter(
       path: Paths.economicCalendar,
       name: Routes.economicCalendar,
       builder: (context, state) => EconomicCalendarScreen(),
+    ),
+    GoRoute(
+      path: Paths.support,
+      name: Routes.support,
+      builder: (context, state) => SupportPage(),
     ),
 
     /// You can uncomment and use these if needed:
