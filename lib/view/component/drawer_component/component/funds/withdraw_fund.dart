@@ -29,8 +29,6 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
         scrollController.addListener(_listener);
       }
     });
-
-
   }
 
   void _listener() {
@@ -66,7 +64,12 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
             }
 
             if (controller.withDrawHistory.isEmpty) {
-              return const Center(child: Text("No withdrawal history found.",style: TextStyle(color: Colors.white),));
+              return const Center(
+                child: Text(
+                  "No withdrawal history found.",
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
             }
 
             return ListView.builder(
@@ -157,13 +160,13 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color:  controller.statusColor(item.status),
+                                color: controller.statusColor(item.status),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
                                 controller.statusText(item.status),
                                 style: TextStyle(
-                                  color: Colors.white70                   ,
+                                  color: Colors.white70,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
                                 ),
@@ -194,10 +197,11 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
                               ),
                             ),
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => WithdrawInvoiceScreen(data: item),
+                                  builder:
+                                      (_) => WithdrawInvoiceScreen(data: item),
                                 ),
                               );
                             },
