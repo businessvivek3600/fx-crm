@@ -7,6 +7,7 @@ class ApiConst {
   static const String register = "signup";
   static const String verifyEmail = "send_verfication_email";
   static const String logOut = "logout";
+  static const String deleteUser = "delete-user";
 
   ///Dashboard
   static const String home = 'dashboard';
@@ -63,5 +64,5 @@ class ApiConst {
   static const String payment_information = "payment_detail";
   static const String deposit_fund = "fund_request";
   static const String verifyWithdrawRequest = 'withdraw_request';
-  static const String withdrawRequest ="pre_withdraw_request";
+  static const String withdrawRequest = "pre_withdraw_request";
 }

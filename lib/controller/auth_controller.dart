@@ -22,7 +22,6 @@ import 'app_controller.dart';
 class AuthController extends GetxController {
   final GetStorage storage = GetStorage();
 
-
   ///Controllers
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -541,6 +540,57 @@ class AuthController extends GetxController {
       } else {
         Get.snackbar(
           'Logout Failed',
+          response.data['message'] ?? 'Something went wrong',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// ------------- - DELETE - -------------
+  Future<void> delete() async {
+    try {
+      isLoading.value = true;
+
+      /// Call Logout API with token in headers
+      final response = await dioClient.post(
+        ApiConst.deleteUser,
+        token: true,
+        data: {'username': AppController.to.customer.value?.username ?? ''},
+      );
+
+      if (response.statusCode == 200 && response.data['status'] == 1) {
+        /// Clear user session and data
+        SessionController.to.clearSession();
+        AppController.to.setLoginStatus(false);
+        AppController.to.saveToken('');
+        AppController.to.saveCustomerData(Customer());
+
+        /// Navigate to Login Screen
+        router.pushReplacement(Paths.login);
+
+        // Get.snackbar(
+        //   'Logged Out',
+        //   'You have been logged out successfully',
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
+      } else {
+        Get.snackbar(
+          'Delete Failed',
           response.data['message'] ?? 'Something went wrong',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.redAccent,
