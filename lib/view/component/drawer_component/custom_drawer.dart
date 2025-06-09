@@ -84,7 +84,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => AccountScreen(),
                           //   ),
                           // );
-                           context.push(Routes.accounts);
+                          context.push(Routes.accounts);
                         },
                       },
 
@@ -106,7 +106,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => WalletAccountScreen(),
                           //   ),
                           // );
-                           context.push(Routes.walletAccount);
+                          context.push(Routes.walletAccount);
                         },
                       },
                       {
@@ -162,7 +162,7 @@ class CustomDrawer extends StatelessWidget {
                           //     builder: (context) => KycUploadScreen(),
                           //   ),
                           // );
-                            context.push(Routes.kyc);
+                          context.push(Routes.kyc);
                         },
                       },
                       {
@@ -355,6 +355,18 @@ class CustomDrawer extends StatelessWidget {
                           });
                         },
                       ).show();
+                    },
+                  ),
+
+                  _buildListTile(
+                    icon: Icons.delete_outline_outlined,
+                    title: 'Delete',
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => DownloadScreen()),
+                      // );
+                      context.push(Paths.downloads);
                     },
                   ),
                 ],
