@@ -1,11 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/customer_profile_screen.dart';
+import 'package:lottie/lottie.dart';
 import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
 import 'component/notification/notification_screen.dart';
-
+// colors: [Color(0xFF2E2E2E), Color(0xff021b43)],
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -13,46 +14,125 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 10),
+      vsync: this,
+    )..repeat(reverse: false);
+
+    _animation = Tween<Offset>(
+      begin: const Offset(-1.5, 0),
+      end: const Offset(3.5, 0),
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: const CustomDrawer(),
-        appBar: AppBar(
-          backgroundColor: ThemeUtils.primaryColor,
-          surfaceTintColor: Colors.transparent,
-          elevation: 4,
-          leading: Builder(
-            builder: (context) => InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: () => Scaffold.of(context).openDrawer(),
-              child: const Icon(Icons.menu, color: Colors.white),
-            ),
+        appBar:  PreferredSize(
+          preferredSize: const Size.fromHeight(70),
+          child: Stack(
+            children: [
+              // Background Gradient
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF2E2E2E), Color(0xff021b43)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Lottie animation sliding left to right
+              Positioned(
+                top: 30,
+                child: SlideTransition(
+                  position: _animation,
+                  child: SizedBox(
+                    width: 100,
+                    height: 70,
+                    child: Lottie.asset(
+                      'assets/json/trade-bot.json',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+
+              // AppBar content
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                surfaceTintColor: Colors.transparent,
+                leading: Builder(
+                  builder: (context) => Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: const Icon(Icons.menu, color: Colors.white),
+                    ),
+                  ),
+                ),
+                title: const Text(
+                  "Dashboard",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+                centerTitle: false,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_none, color: Colors.white),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const NotificationScreen()),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.person_outline, color: Colors.white),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CustomerProfileScreen()),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+            ],
           ),
-          centerTitle: false,
-          title: const Text(
-            "Dashboard",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1,
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications_none, color: Colors.white),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen())),
-            ),
-            IconButton(
-              icon: const Icon(Icons.person_outline, color: Colors.white),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomerProfileScreen())),
-            ),
-            const SizedBox(width: 8),
-          ],
         ),
+
 
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
