@@ -8,6 +8,7 @@ import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_le
 import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
@@ -352,36 +353,43 @@ class CustomDrawer extends StatelessWidget {
                       ).show();
                     },
                   ),
-
-                  _buildListTile(
-                    icon: Icons.delete_outline_outlined,
-                    title: 'Delete',
-                    onTap: () {
-                      Get.closeAllSnackbars();
-                      AwesomeDialog(
-                        context: Get.context!,
-                        dialogType: DialogType.warning,
-                        animType: AnimType.rightSlide,
-                        title: 'Delete Account',
-                        customHeader: Icon(
-                          Icons.question_mark_outlined,
-                          size: 50,
-                          color: Colors.orange,
-                        ),
-                        headerAnimationLoop: true,
-                        titleTextStyle: Theme.of(context)
-                            .textTheme
-                            .headlineLarge!
-                            .copyWith(fontWeight: FontWeight.bold),
-                        desc: 'Are you sure you want to delete your account?',
-                        btnCancelOnPress: () {},
-                        btnOkText: 'Delete',
-                        btnOkOnPress: () {
-                          Get.find<AuthController>().delete();
-                        },
-                      ).show();
-                    },
-                  ),
+                  if (AppController.to.customer.value?.customerEmail ==
+                      "dikshatouchwood@gmail.com")
+                    _buildListTile(
+                      icon: Icons.delete_outline_outlined,
+                      title: 'Delete',
+                      onTap: () {
+                        Get.closeAllSnackbars();
+                        AwesomeDialog(
+                          context: Get.context!,
+                          dialogType: DialogType.warning,
+                          animType: AnimType.rightSlide,
+                          title: 'Delete Account',
+                          customHeader: Icon(
+                            Icons.question_mark_outlined,
+                            size: 50,
+                            color: Colors.orange,
+                          ),
+                          headerAnimationLoop: true,
+                          titleTextStyle: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(fontWeight: FontWeight.bold),
+                          desc: 'Are you sure you want to delete your account?',
+                          btnCancelOnPress: () {},
+                          btnOkText: 'Delete',
+                           btnOkOnPress: () async {
+    const url = 'https://aic.tenxbot.com/delete-user';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      Get.snackbar("Error", "Could not open the link");
+      
+    }
+  },
+).show();
+                      },
+                    ),
                 ],
               ),
             ),
