@@ -378,16 +378,18 @@ class CustomDrawer extends StatelessWidget {
                           desc: 'Are you sure you want to delete your account?',
                           btnCancelOnPress: () {},
                           btnOkText: 'Delete',
-                           btnOkOnPress: () async {
-    const url = 'https://aic.tenxbot.com/delete-user';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    } else {
-      Get.snackbar("Error", "Could not open the link");
-      
-    }
-  },
-).show();
+                          btnOkOnPress: () async {
+                            const url = 'https://aic.tenxbot.com/delete-user';
+                            if (await canLaunchUrl(Uri.parse(url))) {
+                              await launchUrl(
+                                Uri.parse(url),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } else {
+                              Get.snackbar("Error", "Could not open the link");
+                            }
+                          },
+                        ).show();
                       },
                     ),
                 ],
