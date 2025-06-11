@@ -35,7 +35,8 @@ class DropDownTextFormField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: style ??
+          style:
+              style ??
               TextStyle(
                 color: colors ?? Colors.white70,
                 fontSize: 14,
@@ -66,10 +67,13 @@ class DropDownTextFormField extends StatelessWidget {
                 borderSide: const BorderSide(color: Colors.white12),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12), 
                 borderSide: const BorderSide(color: Colors.white30),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
             ),
           ),
         ),
