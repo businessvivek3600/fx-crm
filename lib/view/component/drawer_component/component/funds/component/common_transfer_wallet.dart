@@ -38,9 +38,12 @@ void showTransferWalletDialog(String title, BuildContext context) {
               const SizedBox(height: 20),
               DropDownTextFormField(
                 key: accountKindKey,
+                textStyle: TextStyle(color: Colors.black26),
+                enabledBorder: Colors.black12,
+                focusedBorder: Colors.black87,
                 label: 'Wallet',
                 hint: 'Choose Wallet',
-                colors: Colors.black ,
+
                 controller: accountKindController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator:
@@ -66,7 +69,11 @@ void showTransferWalletDialog(String title, BuildContext context) {
               CustomTextFormField(
                 label: "Amount",
                 hint: "Enter the amount",
-                fillColor: Colors.white,
+                fillColor: Colors.black45,
+                labelColor: Colors.black,
+                textStyle: TextStyle(color: Colors.black26),
+                enabledBorder: Colors.black12,
+                focusedBorder: Colors.black87,
                 controller: amountController,
                 // keyboardType: TextInputType.number,
                 validator: (value) {
