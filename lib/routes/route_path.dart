@@ -1,4 +1,3 @@
-
 import 'package:fx_crm/routes/route_name.dart';
 
 class Paths {
@@ -31,7 +30,8 @@ class Paths {
   static const String walletLedger = '${Routes.walletLedger}';
   static const String depositFund = '${Routes.depositFund}';
   static const String withdrawFund = '${Routes.withdrawFund}';
-  static const String depositWithdrawHistory = '${Routes.depositWithdrawHistory}';
+  static const String depositWithdrawHistory =
+      '${Routes.depositWithdrawHistory}';
 
   // Others
   static const String support = '${Routes.support}';

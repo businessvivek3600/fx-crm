@@ -2,23 +2,19 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/routes/route_name.dart';
 import 'package:fx_crm/routes/route_settings.dart';
-import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
-import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart'
-    show WalletAccountScreen;
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposit_fund.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposite_withdraw_history.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';
 import '../../../routes/route_path.dart';
 import '../../../utils/drawer_back_button.dart';
 import '../../../widgets/bg_container.dart';
-import 'component/account/wallet_account.dart';
-import 'component/profile/kyc_verification.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -357,18 +353,45 @@ class CustomDrawer extends StatelessWidget {
                       ).show();
                     },
                   ),
-
-                  _buildListTile(
-                    icon: Icons.delete_outline_outlined,
-                    title: 'Delete',
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => DownloadScreen()),
-                      // );
-                      context.push(Paths.downloads);
-                    },
-                  ),
+                  if (AppController.to.customer.value?.customerEmail ==
+                      "dikshatouchwood@gmail.com")
+                    _buildListTile(
+                      icon: Icons.delete_outline_outlined,
+                      title: 'Delete',
+                      onTap: () {
+                        Get.closeAllSnackbars();
+                        AwesomeDialog(
+                          context: Get.context!,
+                          dialogType: DialogType.warning,
+                          animType: AnimType.rightSlide,
+                          title: 'Delete Account',
+                          customHeader: Icon(
+                            Icons.question_mark_outlined,
+                            size: 50,
+                            color: Colors.orange,
+                          ),
+                          headerAnimationLoop: true,
+                          titleTextStyle: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(fontWeight: FontWeight.bold),
+                          desc: 'Are you sure you want to delete your account?',
+                          btnCancelOnPress: () {},
+                          btnOkText: 'Delete',
+                          btnOkOnPress: () async {
+                            const url = 'https://aic.tenxbot.com/delete-user';
+                            if (await canLaunchUrl(Uri.parse(url))) {
+                              await launchUrl(
+                                Uri.parse(url),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } else {
+                              Get.snackbar("Error", "Could not open the link");
+                            }
+                          },
+                        ).show();
+                      },
+                    ),
                 ],
               ),
             ),
