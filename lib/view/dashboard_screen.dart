@@ -44,16 +44,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.notifications_none, color: Colors.white),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen())),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NotificationScreen(),
+                ),
+              ),
             ),
             IconButton(
               icon: const Icon(Icons.person_outline, color: Colors.white),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomerProfileScreen())),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CustomerProfileScreen(),
+                ),
+              ),
             ),
             const SizedBox(width: 8),
           ],
         ),
-
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -151,29 +160,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Title and Icon
           Row(
             children: [
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 14, color: Colors.white60),
+                  style: const TextStyle(fontSize: 14, color: Colors.white70),
                 ),
               ),
               Icon(icon, color: Colors.white54),
             ],
           ),
           const SizedBox(height: 12),
-
-          /// Value
           Text(
             value,
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+            style: const TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-
           const SizedBox(height: 6),
-
-          /// Subtitle or progress bar
           if (subTitle != null)
             Text(
               subTitle,
@@ -191,23 +198,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 borderRadius: BorderRadius.circular(6),
                 child: LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: Colors.grey,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white70),
+                  backgroundColor: Colors.grey.shade800,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Colors.white70,
+                  ),
                 ),
               ),
             ),
-
           const SizedBox(height: 10),
-          SizedBox(
+          Container(
             height: 30,
             width: double.infinity,
-            child: CustomPaint(painter: _FakeGraphPainter()), // Optional: replace with actual chart
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E1E2C),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const MiniLineChart(),
           ),
         ],
       ),
     );
   }
-
 
   Widget _buildDailyReturnCard() {
     return Container(
@@ -217,127 +229,185 @@ class _DashboardScreenState extends State<DashboardScreen> {
         border: Border.all(color: Colors.white12),
       ),
       padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Daily Return Chart",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                "Daily Return Chart",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
                 ),
-                Icon(Icons.more_vert, color: Colors.white70),
-              ],
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              "in last 30 days revenue",
-              style: TextStyle(
-                color: Colors.white38,
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
               ),
+              Icon(Icons.more_vert, color: Colors.white70),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            "in last 30 days revenue",
+            style: TextStyle(
+              color: Colors.white38,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
             ),
-            const SizedBox(height: 20),
-
-            /// Metrics
-            _buildReturnItem("Revenue", "\$4805", "\$1458 Since last month", isUp: true),
-            const Divider(color: Colors.white10, height: 24),
-            _buildReturnItem("Total Customers", "8.4K", "12.3% Since last month", isUp: true),
-            const Divider(color: Colors.white10, height: 24),
-            _buildReturnItem("Store Visitors", "59K", "2.4% Since last month", isUp: false),
-
-            const SizedBox(height: 24),
-
-            /// Chart
-            SizedBox(
-              height: 180,
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: 120,
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 28,
-                        getTitlesWidget: (value, _) => Text(
-                          value.toInt().toString(),
-                          style: const TextStyle(color: Colors.white38, fontSize: 10),
+          ),
+          const SizedBox(height: 20),
+          _buildReturnItem(
+            "Revenue",
+            "\$4805",
+            "\$1458 Since last month",
+            isUp: true,
+          ),
+          const Divider(color: Colors.white10, height: 24),
+          _buildReturnItem(
+            "Total Customers",
+            "8.4K",
+            "12.3% Since last month",
+            isUp: true,
+          ),
+          const Divider(color: Colors.white10, height: 24),
+          _buildReturnItem(
+            "Store Visitors",
+            "59K",
+            "2.4% Since last month",
+            isUp: false,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 180,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: 120,
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 28,
+                      getTitlesWidget: (value, _) => Text(
+                        value.toInt().toString(),
+                        style: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 10,
                         ),
                       ),
                     ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 28,
-                        getTitlesWidget: (value, _) {
-                          const months = ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
-                          return value.toInt() < months.length
-                              ? Text(months[value.toInt()], style: const TextStyle(color: Colors.white54, fontSize: 11))
-                              : const SizedBox.shrink();
-                        },
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 28,
+                      getTitlesWidget: (value, _) {
+                        const months = [
+                          'Feb',
+                          'Mar',
+                          'Apr',
+                          'May',
+                          'Jun',
+                          'Jul',
+                          'Aug',
+                          'Sep',
+                          'Oct',
+                        ];
+                        return value.toInt() < months.length
+                            ? Text(
+                                months[value.toInt()],
+                                style: const TextStyle(
+                                  color: Colors.white54,
+                                  fontSize: 11,
+                                ),
+                              )
+                            : const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                borderData: FlBorderData(show: false),
+                gridData: FlGridData(
+                  show: true,
+                  getDrawingHorizontalLine: (_) =>
+                      const FlLine(color: Colors.white10, strokeWidth: 0.5),
+                ),
+                barGroups: List.generate(
+                  9,
+                  (i) => BarChartGroupData(
+                    x: i,
+                    barRods: [
+                      BarChartRodData(
+                        toY: (i + 5) * 10.0,
+                        width: 10,
+                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.white.withOpacity(0.5),
                       ),
-                    ),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  gridData: FlGridData(
-                    show: true,
-                    getDrawingHorizontalLine: (_) => FlLine(color: Colors.white10, strokeWidth: 0.5),
-                  ),
-                  barGroups: List.generate(
-                    9,
-                        (i) => BarChartGroupData(
-                      x: i,
-                      barRods: [
-                        BarChartRodData(
-                          toY: (i + 5) * 10.0,
-                          width: 10,
-                          borderRadius: BorderRadius.circular(4),
-                          color: Colors.white.withOpacity(0.5),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
-
-  Widget _buildReturnItem(String title, String value, String desc, {required bool isUp}) {
+  Widget _buildReturnItem(
+    String title,
+    String value,
+    String desc, {
+    required bool isUp,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white60, fontSize: 13)),
+        Text(
+          title,
+          style: const TextStyle(color: Colors.white70, fontSize: 13),
+        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(value, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             Row(
               children: [
-                Icon(isUp ? Icons.arrow_upward : Icons.arrow_downward, size: 14, color: isUp ? Colors.green : Colors.red),
-                Text(desc, style: TextStyle(fontSize: 11, color: isUp ? Colors.green : Colors.red)),
+                Icon(
+                  isUp ? Icons.arrow_upward : Icons.arrow_downward,
+                  size: 14,
+                  color: isUp ? Colors.green : Colors.red,
+                ),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isUp ? Colors.green : Colors.red,
+                  ),
+                ),
               ],
-            )
+            ),
           ],
-        )
+        ),
       ],
     );
   }
 
-  Widget _buildMetricCard(String title, String value, String percentage, bool isIncrease) {
+  Widget _buildMetricCard(
+    String title,
+    String value,
+    String percentage,
+    bool isIncrease,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.08),
@@ -348,17 +418,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          /// Left: Title and Value
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white60,
-                    fontSize: 13,
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -372,18 +438,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ),
-
-          /// Right: Change Indicator
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: isIncrease ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+              color: isIncrease
+                  ? Colors.green.withOpacity(0.1)
+                  : Colors.red.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
                 Icon(
-                  isIncrease ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                  isIncrease
+                      ? Icons.arrow_upward_rounded
+                      : Icons.arrow_downward_rounded,
                   color: isIncrease ? Colors.green : Colors.red,
                   size: 16,
                 ),
@@ -398,31 +466,69 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
-
 }
 
-/// Simulated mini graph for visual appeal
-class _FakeGraphPainter extends CustomPainter {
+class MiniLineChart extends StatelessWidget {
+  const MiniLineChart({super.key});
+
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Color(0xff0262f7)
-      ..strokeWidth = 2;
-
-    final path = Path();
-    path.moveTo(0, size.height * 0.6);
-    for (int i = 1; i < size.width.toInt(); i += 10) {
-      path.lineTo(i.toDouble(), size.height * (0.5 + 0.1 * (i % 3)));
-    }
-
-    canvas.drawPath(path, paint);
+  Widget build(BuildContext context) {
+    return LineChart(
+      LineChartData(
+        minY: 7,
+        maxY: 31,
+        gridData: FlGridData(show: false),
+        titlesData: FlTitlesData(show: false),
+        borderData: FlBorderData(show: false),
+        lineBarsData: [
+          LineChartBarData(
+            spots: const [
+              FlSpot(0, 9),
+              FlSpot(1, 32),
+              FlSpot(2, 26),
+              FlSpot(3, 19),
+              FlSpot(4, 20),
+              FlSpot(5, 26),
+              FlSpot(6, 26),
+              FlSpot(7, 24),
+              FlSpot(8, 22),
+              FlSpot(9, 29),
+              FlSpot(10, 23),
+              FlSpot(11, 22),
+              FlSpot(12, 18),
+              FlSpot(13, 36),
+              FlSpot(14, 28),
+              FlSpot(15, 18),
+              FlSpot(16, 26),
+              FlSpot(17, 25),
+              FlSpot(18, 12),
+              FlSpot(19, 25),
+              FlSpot(20, 18),
+              FlSpot(21, 22),
+              FlSpot(22, 19),
+              FlSpot(23, 29),
+              FlSpot(24, 22),
+              FlSpot(25, 25),
+              FlSpot(26, 9),
+            ],
+            isCurved: true,
+            curveSmoothness: 0.3,
+            color: const Color(0xff0262f7).withOpacity(0.7), // stronger opacity for line
+            barWidth: 2,
+            isStrokeCapRound: true,
+            belowBarData: BarAreaData(
+              show: true,
+              color: const Color(0xff0262f7).withOpacity(0.3),
+            ),
+            dotData: FlDotData(show: false),
+          ),
+        ],
+      ),
+    );
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
