@@ -178,7 +178,11 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
                     key: accountKindKey,
                     label: 'Payment Type',
                     hint: 'Choose Payment Type',
-                    colors: Colors.white70,
+                    colors: Colors.black87,
+                  fieldStyle: TextStyle(color: Colors.black),
+                  textStyle: TextStyle(color: Colors.black),
+                  dropdownDisableColor: Colors.black12,
+                    dropdownEnableColor: Colors.black87,
                     controller: accountKindController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator:

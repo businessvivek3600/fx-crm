@@ -6,10 +6,17 @@ class DropDownTextFormField extends StatelessWidget {
   final bool readOnly;
   final bool isDate;
   final TextStyle? style;
+  final TextStyle? textStyle;
   final Color? colors;
   final TextEditingController? controller;
   final VoidCallback? onTap;
   final AutovalidateMode? autovalidateMode;
+  final Color? fillColor; // 🛑 fill color
+  final Color? focusedBorder; // 🛑 border color
+  final Color? enabledBorder; // 🛑 border color
+  final Color? dropdownDisableColor;
+  final Color? dropdownEnableColor;// 🛑 drop down color
+  final TextStyle? fieldStyle;
   final String? Function(String?)? validator;
 
   const DropDownTextFormField({
@@ -24,6 +31,11 @@ class DropDownTextFormField extends StatelessWidget {
     this.style,
     this.autovalidateMode,
     this.validator,
+    this.focusedBorder,
+    this.enabledBorder,
+    this.textStyle,
+    this.fillColor,
+     this.dropdownDisableColor, this.dropdownEnableColor, this.fieldStyle,
   });
 
   @override
@@ -35,7 +47,8 @@ class DropDownTextFormField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: style ??
+          style:
+              style ??
               TextStyle(
                 color: colors ?? Colors.white70,
                 fontSize: 14,
@@ -51,28 +64,36 @@ class DropDownTextFormField extends StatelessWidget {
             validator: validator,
             readOnly: true,
             onTap: isDisabled ? null : onTap,
-            style: const TextStyle(color: Colors.white),
+            style: (controller?.text.isEmpty ?? true)
+                ? TextStyle(color: Colors.white)
+                : fieldStyle ?? TextStyle(color: Colors.black),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: const TextStyle(color: Colors.white60),
+              hintStyle: textStyle ?? TextStyle(color: Colors.white60),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.08),
+              fillColor: fillColor ?? Colors.white.withOpacity(0.08),
               suffixIcon: Icon(
                 Icons.arrow_drop_down,
-                color: isDisabled ? Colors.white30 : Colors.white60,
+                color: isDisabled
+                    ? dropdownDisableColor ?? Colors.white30
+                    : dropdownEnableColor ?? Colors.white60,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.white12),
+                borderSide: BorderSide(color: enabledBorder ?? Colors.white12),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.white30),
+                borderSide: BorderSide(color: focusedBorder ?? Colors.white30),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
             ),
           ),
         ),
+
       ],
     );
   }
