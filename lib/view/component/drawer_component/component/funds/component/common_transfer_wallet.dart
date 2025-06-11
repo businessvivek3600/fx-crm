@@ -74,7 +74,7 @@ void showTransferWalletDialog(String title, BuildContext context) {
                 textStyle: TextStyle(color: Colors.black26),
                 enabledBorder: Colors.black12,
                 focusedBorder: Colors.black87,
-                controller: amountController,
+                controller:  amountController,
                 // keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
