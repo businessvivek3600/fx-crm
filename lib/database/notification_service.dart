@@ -79,10 +79,6 @@ class NotificationService {
 
       while (apnsToken == null && retry < 10) {
         apnsToken = await _firebaseMessaging.getAPNSToken();
-        if (apnsToken == null) {
-          await Future.delayed(Duration(seconds: 1));
-          retry++;
-        }
       }
 
       if (apnsToken != null) {
