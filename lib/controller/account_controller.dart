@@ -28,7 +28,9 @@ class AccountController extends GetxController {
   void updateSelectedAccount(String name) {
     print("selected Plan: $name");
     selectedAccountName.value = name;
-    final selected = accountPlans.firstWhereOrNull((e) => e['code'] == name || e['name'] == name);
+    final selected = accountPlans.firstWhereOrNull(
+      (e) => e['code'] == name || e['name'] == name,
+    );
     if (selected != null && selected['leverage'] is List) {
       final List<String> levers = List<String>.from(selected['leverage']);
       leverageOptions.value = levers.map((e) => '1:$e').toList();
@@ -141,7 +143,8 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
-///--------------Change Leverage-------------------
+
+  ///--------------Change Leverage-------------------
   Future<void> changeLeverage({
     required String accountNo,
     required String leverage,
@@ -151,12 +154,14 @@ class AccountController extends GetxController {
       'account_no': accountNo,
       'leverage': leverage.split(':').last,
     });
-    print(formData.fields);
+    print('FORM DATA: ${formData.fields}');
     try {
       final response = await dioClient.post(
-        ApiConst.changeLeverage, // Make sure this endpoint is defined in ApiConst
-       data: formData,
+        ApiConst
+            .changeLeverage, // Make sure this endpoint is defined in ApiConst
+        data: formData,
       );
+      print('RESPONSE BODY: ${response.data}');
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(
@@ -187,7 +192,6 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   // My Account
   Future<void> fetchAccounts() async {
@@ -226,12 +230,13 @@ class AccountController extends GetxController {
         "confirm_password": confPass,
         "password_type": passwordType,
       });
-       print('POST Body:--------------- ${formData.fields}');
+      print('POST Body:--------------- ${formData.fields}');
 
       final response = await dioClient.post(
         ApiConst.change_acc_password,
         data: formData,
       );
+      print('RESPONSE BODY: ${response.data}');
 
       if (response.statusCode == 200) {
         isLoading.value = false;
@@ -265,7 +270,6 @@ class AccountController extends GetxController {
     }
     return false;
   }
-
 
   ///--------------Currently this module is not used in the app-------------------
   final RxInt isKyc = 0.obs;
@@ -301,6 +305,4 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
 }

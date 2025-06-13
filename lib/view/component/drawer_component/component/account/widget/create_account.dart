@@ -183,7 +183,7 @@ class _CreateAccountFormScreenState extends State<CreateAccountFormScreen> {
                                       leverageController.clear();
                                       depositController.clear();
                                     });
-                                  });
+                                  }); 
                                 }
 
                           }

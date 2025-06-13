@@ -108,7 +108,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   color: Colors.white.withOpacity(0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
-                  offset: const Offset(3,0.1 ), // subtle downward shadow
+                  offset: const Offset(3, 0.1), 
+                  // subtle downward shadow
                 ),
               ],
             ),
@@ -124,11 +125,11 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white70,
+                        color: Colors.black,
                       ),
                     ),
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.white70),
+                      icon: const Icon(Icons.more_vert, color: Colors.black),
                       onSelected: (value) {
                         if (value == 'leverage') {
                           accountController.updateSelectedAccount(
@@ -346,7 +347,6 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Color(0xff2e2e2e),
                         foregroundColor: Colors.white70,
-                    
                       ),
                       onPressed: () => showSetBalanceDialog(context),
                       icon: const Icon(Icons.account_balance_wallet_outlined),
