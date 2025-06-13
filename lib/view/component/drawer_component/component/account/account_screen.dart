@@ -108,8 +108,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   color: Colors.white.withOpacity(0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
-                  offset: const Offset(3, 0.1), 
-                  // subtle downward shadow
+                  offset: const Offset(3, 0.1), // subtle downward shadow
                 ),
               ],
             ),
@@ -125,11 +124,11 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white70,
                       ),
                     ),
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.black),
+                      icon: const Icon(Icons.more_vert, color: Colors.white70),
                       onSelected: (value) {
                         if (value == 'leverage') {
                           accountController.updateSelectedAccount(
@@ -384,10 +383,12 @@ class _AccountScreenState extends State<AccountScreen> {
               return DropDownTextFormField(
                 key: _leverageKey,
                 label: 'Leverage',
-                colors: Colors.white70,
+                colors: Colors.black,
+
                 hint: 'Select Leverage',
                 controller: leverageController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                
                 validator:
                     (value) =>
                         (value == null || value.isEmpty)
