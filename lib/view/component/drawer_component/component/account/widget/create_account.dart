@@ -235,6 +235,8 @@ class _CreateAccountFormScreenState extends State<CreateAccountFormScreen> {
                         key: _depositKey,
                         label: 'Initial Deposit',
                         colors: Colors.white70,
+                        style: TextStyle(color: Colors.white70),
+                        fieldStyle: TextStyle(color: Colors.white70),
                         hint: 'Select Deposit',
                         controller: depositController,
                         autovalidateMode: AutovalidateMode.onUserInteraction,

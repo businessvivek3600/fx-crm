@@ -2,6 +2,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
+import 'package:fx_crm/utils/theme.dart';
 import 'package:get/get.dart';
 
 import '../../../../../controller/app_controller.dart';
@@ -263,29 +264,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
 
               const SizedBox(height: 24),
-
-              /// Update Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // print("object");
-                    await editProfileController.updateProfile();
-                    // TODO: Save profile changes
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+            ],
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: GestureDetector(
+              onTap: () async {
+                // print("object");
+                await editProfileController.updateProfile();
+                // TODO: Save profile changes
+              },
+              child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  color: ThemeUtils.primaryColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text("Update Profile",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
-                  ),
-                  child: const Text(
-                    'Update Profile',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

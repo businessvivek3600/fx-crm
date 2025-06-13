@@ -64,9 +64,7 @@ class DropDownTextFormField extends StatelessWidget {
             validator: validator,
             readOnly: true,
             onTap: isDisabled ? null : onTap,
-            style: (controller?.text.isEmpty ?? true)
-                ? TextStyle(color: Colors.white)
-                : fieldStyle ?? TextStyle(color: Colors.black),
+            style: fieldStyle ?? TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: textStyle ?? TextStyle(color: Colors.white60),
