@@ -132,7 +132,7 @@ class _CreateAccountFormScreenState extends State<CreateAccountFormScreen> {
                   Obx(() {
                     final options =
                         accountController.accountPlans
-                            .map((e) => capitalizeWords(e['name'].toString()))
+                            .map((e) => capitalizeWords(e.name.toString()))
                             .toList();
 
                     return DropDownTextFormField(

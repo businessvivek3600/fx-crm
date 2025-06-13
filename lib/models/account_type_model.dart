@@ -27,3 +27,28 @@ class ApiResponse {
     );
   }
 }
+
+
+
+class AccountPlanModel {
+  final String code;
+  final String name;
+  final List<String> leverage;
+  final List<String> initialFund;
+
+  AccountPlanModel({
+    required this.code,
+    required this.name,
+    required this.leverage,
+    required this.initialFund,
+  });
+
+  factory AccountPlanModel.fromJson(Map<String, dynamic> json) {
+    return AccountPlanModel(
+      code: json['code'].toString(),
+      name: json['name'].toString(),
+      leverage: List<String>.from(json['leverage']),
+      initialFund: List<String>.from(json['initial_fund']),
+    );
+  }
+}

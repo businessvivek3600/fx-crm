@@ -101,16 +101,8 @@ class _AccountScreenState extends State<AccountScreen> {
             margin: const EdgeInsets.only(bottom: 20),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xff151527),
+              color: Colors.white12,
               borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.2),
-                  blurRadius: 6,
-                  spreadRadius: 2,
-                  offset: const Offset(3,0.1 ), // subtle downward shadow
-                ),
-              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,15 +314,12 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 50),
-                        child: Chip(
-                          label: const Text(
-                            'Currency USD',
-                            style: TextStyle(fontSize: 12, color: Colors.black),
-                          ),
-                          backgroundColor: Colors.white24,
+                      child: Chip(
+                        label: const Text(
+                          'Currency USD',
+                          style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
+                        backgroundColor: Colors.white24,
                       ),
                     ),
                   ],
@@ -340,7 +329,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 /// Set Balance Button
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
@@ -349,7 +338,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     
                       ),
                       onPressed: () => showSetBalanceDialog(context),
-                      icon: const Icon(Icons.account_balance_wallet_outlined),
+                      icon: const Icon(Icons.account_balance_wallet_outlined,color: Colors.white70,),
                       label: const Text('Set Balance'),
                     ),
                   ],
@@ -384,7 +373,11 @@ class _AccountScreenState extends State<AccountScreen> {
               return DropDownTextFormField(
                 key: _leverageKey,
                 label: 'Leverage',
-                colors: Colors.white70,
+                textStyle: const TextStyle(color: Colors.black26),
+                colors: Colors.black,
+                focusedBorder: Colors.black,
+                enabledBorder: Colors.black26,
+                fieldStyle: TextStyle(color: Colors.black),
                 hint: 'Select Leverage',
                 controller: leverageController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
