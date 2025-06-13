@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/models/account_model.dart';
+import 'package:fx_crm/models/account_type_model.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/account_screen.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +17,7 @@ class AccountController extends GetxController {
 
   final RxBool isLoading = false.obs;
 
-  final accountPlans = <Map<String, dynamic>>[].obs;
+  final accountPlans = <AccountPlanModel>[].obs;
   final leverageOptions = <String>[].obs;
   final selectedAccountName = ''.obs;
 
@@ -25,22 +26,20 @@ class AccountController extends GetxController {
   final initialDeposit = <String>[].obs;
   var accountList = <AccountModel>[].obs;
 
-  void updateSelectedAccount(String name) {
-    print("selected Plan: $name");
-    selectedAccountName.value = name;
+  void updateSelectedAccount(String code) {
+    print("selected Plan: $code");
+    selectedAccountName.value = code;
     final selected = accountPlans.firstWhereOrNull(
-      (e) => e['code'] == name || e['name'] == name,
+      (e) => e.name.toLowerCase() == code.toLowerCase(),
     );
-    if (selected != null && selected['leverage'] is List) {
-      final List<String> levers = List<String>.from(selected['leverage']);
-      leverageOptions.value = levers.map((e) => '1:$e').toList();
-      print("leverages values -------------${leverageOptions.value}");
-      final List<String> initialAmount = List<String>.from(
-        selected['initial_fund'],
-      );
-      initialDeposit.value = initialAmount.map((e) => e.toString()).toList();
+
+    if (selected != null) {
+      leverageOptions.value = selected.leverage.map((e) => '1:$e').toList();
+      print("leverage values -------------${leverageOptions.value}");
+      initialDeposit.value = selected.initialFund;
     } else {
       leverageOptions.clear();
+      initialDeposit.clear();
     }
   }
 
@@ -48,9 +47,12 @@ class AccountController extends GetxController {
     isLoading.value = true;
     try {
       final response = await dioClient.post(ApiConst.accountPlans);
+      print("leverages values -------------");
+      print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = List<Map<String, dynamic>>.from(response.data['data']);
-        accountPlans.value = data;
+        accountPlans.value =
+            data.map((e) => AccountPlanModel.fromJson(e)).toList();
 
         final types = List<String>.from(response.data['account_type'] ?? []);
         accountTypes.value = types;
@@ -88,12 +90,17 @@ class AccountController extends GetxController {
     try {
       // Extract the selected account plan code
       final selectedPlan = accountPlans.firstWhere(
-        (e) =>
-            e['name'].toString().toLowerCase() == accountPlanName.toLowerCase(),
-        orElse: () => {},
+        (e) => e.name.toLowerCase() == accountPlanName.toLowerCase(),
+        orElse:
+            () => AccountPlanModel(
+              code: '',
+              name: '',
+              leverage: [],
+              initialFund: [],
+            ),
       );
 
-      final planCode = selectedPlan['code'];
+      final planCode = selectedPlan.code;
 
       if (planCode == null) {
         throw Exception('Invalid Account Plan selected.');
@@ -154,14 +161,13 @@ class AccountController extends GetxController {
       'account_no': accountNo,
       'leverage': leverage.split(':').last,
     });
-    print('FORM DATA: ${formData.fields}');
+    print(formData.fields);
     try {
       final response = await dioClient.post(
         ApiConst
             .changeLeverage, // Make sure this endpoint is defined in ApiConst
         data: formData,
       );
-      print('RESPONSE BODY: ${response.data}');
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Get.snackbar(
@@ -236,7 +242,6 @@ class AccountController extends GetxController {
         ApiConst.change_acc_password,
         data: formData,
       );
-      print('RESPONSE BODY: ${response.data}');
 
       if (response.statusCode == 200) {
         isLoading.value = false;

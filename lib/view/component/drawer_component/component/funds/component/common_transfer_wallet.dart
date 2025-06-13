@@ -38,10 +38,16 @@ void showTransferWalletDialog(String title, BuildContext context) {
               const SizedBox(height: 20),
               DropDownTextFormField(
                 key: accountKindKey,
+                fieldStyle: TextStyle(
+                  color: Colors.black87,
+                ),
                 textStyle: TextStyle(color: Colors.black26),
                 enabledBorder: Colors.black12,
                 focusedBorder: Colors.black87,
                 label: 'Wallet',
+                style: TextStyle(
+                  color: Colors.black87,
+                ),
                 hint: 'Choose Wallet',
 
                 controller: accountKindController,
