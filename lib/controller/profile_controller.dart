@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:fx_crm/constant/api_constants.dart';
@@ -12,6 +14,13 @@ class ProfileController extends GetxController {
   AuthController authController = Get.put(AuthController());
   var isLoading = false.obs;
   var ProfileData = {}.obs;
+    // 📸 Reactive variable for profile image
+  final Rx<File?> imageFile = Rx<File?>(null);
+
+  // 📸 Method to update picked image
+  void setImageFile(File file) {
+    imageFile.value = file;
+  }
 
   // Profile text controllers
   final firstname = TextEditingController();

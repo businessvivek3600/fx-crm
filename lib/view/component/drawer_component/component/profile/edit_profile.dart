@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../../controller/app_controller.dart';
 import '../../../../../models/customer_model.dart';
@@ -17,28 +20,70 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  ProfileController editProfileController = Get.put(ProfileController());
-  AuthController authController = Get.put(AuthController());
+  final ProfileController editProfileController = Get.put(ProfileController());
+  final AuthController authController = Get.put(AuthController());
+  final Rx<File?> pickedImage = Rx<File?>(null);
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  final XFile? picked = await _picker.pickImage(source: ImageSource.camera);
+                  if (picked != null) {
+                    final file = File(picked.path);
+                    pickedImage.value = file;
+                    editProfileController.setImageFile(file);
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  final XFile? picked = await _picker.pickImage(source: ImageSource.gallery);
+                  if (picked != null) {
+                    final file = File(picked.path);
+                    pickedImage.value = file;
+                    editProfileController.setImageFile(file);
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-
     final customer = AppController.to.customer.value;
 
     editProfileController.firstname.text = customer?.firstName ?? '';
     editProfileController.lastname.text = customer?.lastName ?? '';
-    // editProfileController.nextofKin.text = customer?.nextofKin ?? '';
-    // editProfileController.email.text = customer?.customerEmail ?? '';
     editProfileController.dateOfBirth.text = customer?.dateOfBirth ?? '';
     editProfileController.company.text = customer?.company ?? '';
     editProfileController.state.text = customer?.state ?? '';
     editProfileController.city.text = customer?.city ?? '';
-    editProfileController.shortAddress.text =
-        customer?.customerShortAddress ?? '';
+    editProfileController.shortAddress.text = customer?.customerShortAddress ?? '';
     editProfileController.address1.text = customer?.customerAddress1 ?? '';
     editProfileController.address2.text = customer?.customerAddress2 ?? '';
     editProfileController.zip.text = customer?.zip ?? '';
+
     if (customer?.countryText != null && customer?.countryCode != null) {
       authController.setSelectedCountry(
         customer!.countryText!,
@@ -67,12 +112,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Profile Card
               _buildProfileCard(customer),
-
               const SizedBox(height: 24),
-
-              /// Personal Details Title
               const Text(
                 'Personal Details',
                 style: TextStyle(
@@ -82,20 +123,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              /// Input Fields (Pre-filled from customer data)
               CustomTextFormField(
                 controller: editProfileController.firstname,
                 label: 'First Name *',
                 hint: 'First Name',
-                initialValue: customer?.firstName ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.lastname,
                 label: 'Last Name *',
                 hint: 'Last Name',
-                initialValue: customer?.lastName ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
@@ -104,40 +141,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hint: 'Next of Kin',
               ),
               const SizedBox(height: 12),
-              // CustomTextFormField(
-              //   controller: editProfileController.email,
-              //   label: 'Email *',
-              //   hint: 'Email Address',
-              //   initialValue: customer?.customerEmail ?? '',
-              // ),
-              // const SizedBox(height: 12),
-
-              // Container(
-              //   padding: const EdgeInsets.symmetric(horizontal: 12),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8),
-              //     border: Border.all(color: Colors.grey.shade300),
-              //   ),
-              //   child: Icon(Icons.calendar_month, color: Colors.grey.shade400),
-              // ),
               CustomTextFormField(
-                onTap: () {
-                  editProfileController.pickDate(context);
-                },
+                onTap: () => editProfileController.pickDate(context),
                 controller: editProfileController.dateOfBirth,
                 label: 'Date Of Birth *',
                 hint: 'dd/mm/yyyy',
                 isDate: true,
-                initialValue: customer?.dateOfBirth ?? '',
               ),
-
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.company,
                 label: 'Company (Optional)',
                 hint: 'Company',
-                initialValue: customer?.company ?? '',
               ),
               const SizedBox(height: 12),
               Obx(() {
@@ -147,12 +162,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                 final customerCountryId = customer?.country;
                 final initialCountry = authController.countryList
-                    .firstWhereOrNull(
-                      (e) => e.id.toString() == customerCountryId,
-                    );
+                    .firstWhereOrNull((e) => e.id.toString() == customerCountryId);
 
-                if (authController.selectedCountryName.value.isEmpty &&
-                    initialCountry != null) {
+                if (authController.selectedCountryName.value.isEmpty && initialCountry != null) {
                   authController.setSelectedCountry(
                     initialCountry.name,
                     initialCountry.phonecode,
@@ -163,23 +175,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 return CustomTextFormField(
                   label: 'Country',
                   readOnly: true,
-                  icon: Icon(Icons.arrow_drop_down,color: Colors.white,),
-                  hint:
-                      authController.selectedCountryName.value.isEmpty
-                          ? 'Please select a country'
-                          : authController.selectedCountryName.value,
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                  hint: authController.selectedCountryName.value.isEmpty
+                      ? 'Please select a country'
+                      : authController.selectedCountryName.value,
                   onTap: () {
                     showCountryPicker(
                       context: context,
                       showPhoneCode: true,
                       onSelect: (Country country) {
-                        // Match selected country with your internal list to get ID
-                        final matchedCountry = authController.countryList
-                            .firstWhereOrNull(
-                              (e) =>
-                                  e.name.toLowerCase() ==
-                                  country.name.toLowerCase(),
-                            );
+                        final matchedCountry = authController.countryList.firstWhereOrNull(
+                          (e) => e.name.toLowerCase() == country.name.toLowerCase(),
+                        );
 
                         if (matchedCountry != null) {
                           authController.setSelectedCountry(
@@ -188,7 +195,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             matchedCountry.id.toString(),
                           );
                         } else {
-                          // fallback if not found
                           authController.setSelectedCountry(
                             country.name,
                             country.phoneCode,
@@ -198,61 +204,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       },
                     );
                   },
-                  validator:
-                      (_) =>
-                          authController.selectedCountryId.value.isEmpty
-                              ? 'Please select a country'
-                              : null,
+                  validator: (_) => authController.selectedCountryId.value.isEmpty
+                      ? 'Please select a country'
+                      : null,
                 );
               }),
-
-              // CustomTextFormField(
-              //   controller: editProfileController.country,
-              //   label: 'Country *',
-              //   hint: 'Country',
-              //   initialValue: customer?.countryText ?? '',
-              // ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.state,
                 label: 'State',
                 hint: 'State',
-                initialValue: customer?.state ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.city,
                 label: 'City',
                 hint: 'City',
-                initialValue: customer?.city ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.shortAddress,
                 label: 'House/Flat No. *',
                 hint: 'House/Flat No.',
-                initialValue: customer?.customerShortAddress ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.address1,
                 label: 'Address 1 *',
                 hint: 'Address 1',
-                initialValue: customer?.customerAddress1 ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.address2,
                 label: 'Address 2 (Optional)',
                 hint: 'Address 2',
-                initialValue: customer?.customerAddress2 ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: editProfileController.zip,
                 label: 'Zip',
                 hint: 'Zip',
-                initialValue: customer?.zip ?? '',
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
@@ -261,17 +252,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 readOnly: true,
                 initialValue: customer?.isAuth == 1 ? "Enabled" : "Disabled",
               ),
-
               const SizedBox(height: 24),
-
-              /// Update Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // print("object");
                     await editProfileController.updateProfile();
-                    // TODO: Save profile changes
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -293,80 +279,86 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildProfileCard(Customer? customer) {
-    print(customer?.image);
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white12),
-      ),
-      child: Padding(
+    return Obx(() {
+      final networkImage = customer?.image;
+      final image = pickedImage.value;
+
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white12),
+        ),
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         child: Column(
           children: [
-            /// Avatar
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: NetworkImage(
-                    'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000',
-              ),
-              onBackgroundImageError: (exception, stackTrace) {
-                print('Error loading image: $exception');
-              },
-              backgroundColor: Colors.transparent,
+            Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white24,
+                  backgroundImage: image != null
+                      ? FileImage(image)
+                      : (networkImage != null && networkImage.isNotEmpty
+                          ? NetworkImage(networkImage)
+                          : const AssetImage('assets/images/default_user.png')) as ImageProvider,
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: pickImage,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.edit, size: 18, color: Colors.black),
+                    ),
+                  ),
+                ),
+              ],
             ),
-
             const SizedBox(height: 12),
-
-            /// Name and Info
             Text(
               customer?.customerName ?? 'Name',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 4),
-            Text(
-              customer?.username ?? 'Username',
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
-            ),
+            Text(customer?.username ?? 'Username',
+                style: const TextStyle(fontSize: 14, color: Colors.white70)),
             const SizedBox(height: 4),
-            Text(
-              customer?.customerEmail ?? 'Email',
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
-            ),
+            Text(customer?.customerEmail ?? 'Email',
+                style: const TextStyle(fontSize: 14, color: Colors.white70)),
             const SizedBox(height: 4),
-            Text(
-              customer?.customerMobile ?? 'Mobile',
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
-            ),
-
+            Text(customer?.customerMobile ?? 'Mobile',
+                style: const TextStyle(fontSize: 14, color: Colors.white70)),
             const SizedBox(height: 16),
             const Divider(),
-
-            /// Social Links (dummy for now)
-            _buildSocialLinkRow(
-              Icons.language,
-              'Website',
-              'https://doforex.com',
-            ),
+            _buildSocialLinkRow(Icons.language, 'Website', 'https://doforex.com'),
             _buildSocialLinkRow(Icons.code, 'Github', 'Do forex'),
             _buildSocialLinkRow(Icons.alternate_email, 'Twitter', '@Do-forex'),
             _buildSocialLinkRow(Icons.camera_alt, 'Instagram', 'Do-forex'),
             _buildSocialLinkRow(Icons.facebook, 'Facebook', 'Do-forex'),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildSocialLinkRow(IconData icon, String label, String value) {
     return ListTile(
       dense: true,
       leading: Icon(icon, color: Colors.blueAccent),
-      title: Text(
-        label,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14,color: Colors.white),
-      ),
-      trailing: Text(value, style: const TextStyle(fontSize: 12,color: Colors.white70)),
+      title: Text(label,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
+      trailing: Text(value, style: const TextStyle(fontSize: 12, color: Colors.white70)),
     );
   }
 }
