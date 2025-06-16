@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/customer_profile_screen.dart';
 import 'package:lottie/lottie.dart';
-import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
 import 'component/notification/notification_screen.dart';

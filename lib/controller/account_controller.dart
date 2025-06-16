@@ -29,9 +29,7 @@ class AccountController extends GetxController {
   void updateSelectedAccount(String code) {
     print("selected Plan: $code");
     selectedAccountName.value = code;
-    final selected = accountPlans.firstWhereOrNull(
-      (e) => e.name.toLowerCase() == code.toLowerCase(),
-    );
+    final selected = accountPlans.firstWhereOrNull((e) => e.name.toLowerCase() == code.toLowerCase());
 
     if (selected != null) {
       leverageOptions.value = selected.leverage.map((e) => '1:$e').toList();
@@ -51,11 +49,11 @@ class AccountController extends GetxController {
       print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = List<Map<String, dynamic>>.from(response.data['data']);
-        accountPlans.value =
-            data.map((e) => AccountPlanModel.fromJson(e)).toList();
+        accountPlans.value = data.map((e) => AccountPlanModel.fromJson(e)).toList();
 
         final types = List<String>.from(response.data['account_type'] ?? []);
         accountTypes.value = types;
+
       } else {
         Get.snackbar(
           'Error',
@@ -90,21 +88,16 @@ class AccountController extends GetxController {
     try {
       // Extract the selected account plan code
       final selectedPlan = accountPlans.firstWhere(
-        (e) => e.name.toLowerCase() == accountPlanName.toLowerCase(),
-        orElse:
-            () => AccountPlanModel(
-              code: '',
-              name: '',
-              leverage: [],
-              initialFund: [],
-            ),
+            (e) => e.name.toLowerCase() == accountPlanName.toLowerCase(),
+        orElse: () => AccountPlanModel(
+          code: '',
+          name: '',
+          leverage: [],
+          initialFund: [],
+        ),
       );
 
       final planCode = selectedPlan.code;
-
-      if (planCode == null) {
-        throw Exception('Invalid Account Plan selected.');
-      }
 
       dio.FormData payload = dio.FormData.fromMap({
         'account_plan': planCode,
@@ -150,8 +143,7 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
-
-  ///--------------Change Leverage-------------------
+///--------------Change Leverage-------------------
   Future<void> changeLeverage({
     required String accountNo,
     required String leverage,
@@ -164,9 +156,8 @@ class AccountController extends GetxController {
     print(formData.fields);
     try {
       final response = await dioClient.post(
-        ApiConst
-            .changeLeverage, // Make sure this endpoint is defined in ApiConst
-        data: formData,
+        ApiConst.changeLeverage, // Make sure this endpoint is defined in ApiConst
+       data: formData,
       );
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
@@ -198,6 +189,7 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
+
 
   // My Account
   Future<void> fetchAccounts() async {
@@ -236,7 +228,7 @@ class AccountController extends GetxController {
         "confirm_password": confPass,
         "password_type": passwordType,
       });
-      print('POST Body:--------------- ${formData.fields}');
+       print('POST Body:--------------- ${formData.fields}');
 
       final response = await dioClient.post(
         ApiConst.change_acc_password,
@@ -276,6 +268,7 @@ class AccountController extends GetxController {
     return false;
   }
 
+
   ///--------------Currently this module is not used in the app-------------------
   final RxInt isKyc = 0.obs;
   final RxInt completeProfile = 0.obs;
@@ -310,4 +303,6 @@ class AccountController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
 }
