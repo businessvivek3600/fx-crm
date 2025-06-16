@@ -389,7 +389,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 onTap:
                     accountController.leverageOptions.isNotEmpty
                         ? () => _showDropdownMenu(
-                          _leverageKey,
+                          _leverageKey, 
                           accountController.leverageOptions,
                           leverageController,
                         )
