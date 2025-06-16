@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../widgets/bg_container.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
@@ -42,9 +41,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       // Add Export logic
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Color(0xff2e2e2e),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
@@ -102,27 +101,34 @@ class TransactionCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xff151527),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1.5,
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildRow(Icons.calendar_today, "Transaction Date", transactionDate),
-          const SizedBox(height: 15),
+          const SizedBox(height: 12),
           _buildRow(Icons.swap_vert, "Transaction Type", transactionType),
-          const SizedBox(height: 15),
+          const SizedBox(height: 12),
           _buildRow(Icons.payment, "Payment Method", paymentMethod),
-          const SizedBox(height: 15),
+          const SizedBox(height: 12),
           _buildRow(Icons.account_balance_wallet, "Source", source),
-          const SizedBox(height: 15),
+          const SizedBox(height: 12),
           _buildRow(Icons.account_circle, "Account", account),
-          const SizedBox(height: 15),
+          const SizedBox(height: 12),
           _buildRow(Icons.attach_money, "Amount", "\$$amount"),
-          const SizedBox(height: 15),
+          const SizedBox(height: 12),
           _buildRow(
             Icons.info_outline,
             "Status",
@@ -139,6 +145,7 @@ class TransactionCard extends StatelessWidget {
   Widget _buildRow(IconData icon, String title, String value,
       {Color statusColor = Colors.white}) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 20, color: const Color(0xff0262f7)),
         const SizedBox(width: 8),
@@ -146,7 +153,7 @@ class TransactionCard extends StatelessWidget {
           flex: 2,
           child: Text(
             title,
-            textAlign: TextAlign.justify,
+            textAlign: TextAlign.left,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -160,6 +167,7 @@ class TransactionCard extends StatelessWidget {
             textAlign: TextAlign.right,
             style: TextStyle(
               color: statusColor,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

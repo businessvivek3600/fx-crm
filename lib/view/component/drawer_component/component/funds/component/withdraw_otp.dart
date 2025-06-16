@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
-import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import '../../../../../../controller/wallet_controller.dart';
@@ -13,11 +12,11 @@ class WithdrawOtpScreen extends StatefulWidget {
   final String paymentType;
 
   const WithdrawOtpScreen({
-    Key? key,
+    super.key,
     required this.requestId,
     required this.amount,
     required this.paymentType,
-  }) : super(key: key);
+  });
 
   @override
   State<WithdrawOtpScreen> createState() => _WithdrawOtpScreenState();

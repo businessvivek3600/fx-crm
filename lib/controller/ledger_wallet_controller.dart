@@ -186,7 +186,6 @@ class WalletLedgerController extends GetxController {
       orderId = response.data['order_id'];
       if (response.statusCode == 200 &&
           response.data['status'] == 1 &&
-          orderId != null &&
           orderId != '') {
         fetchWalletDeposits(loading: false);
         Get.snackbar(
