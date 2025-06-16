@@ -354,7 +354,7 @@ class CustomDrawer extends StatelessWidget {
                     },
                   ),
                   if (AppController.to.customer.value?.customerEmail ==
-                      "dikshatouchwood@gmail.com")
+                      "touchwoodparveen@gmail.com")
                     _buildListTile(
                       icon: Icons.delete_outline_outlined,
                       title: 'Delete',

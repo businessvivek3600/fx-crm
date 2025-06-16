@@ -1,5 +1,3 @@
-
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/wallet_card_shimmer.dart';
@@ -9,7 +7,7 @@ import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../widgets/custom_text_form.dart';
 import '../../../../../../widgets/drop_down_text_field.dart';
 
-void showTransferWalletDialog(String title,BuildContext context) {
+void showTransferWalletDialog(String title, BuildContext context) {
   final WalletController controller = Get.put(WalletController());
   String? selectedValue;
   final accountKindController = TextEditingController();
@@ -51,26 +49,27 @@ void showTransferWalletDialog(String title,BuildContext context) {
                   color: Colors.black87,
                 ),
                 hint: 'Choose Wallet',
-                colors: Colors.black87,
+
                 controller: accountKindController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator:
                     (value) =>
-                (value == null || value.isEmpty)
-                    ? 'Please select a wallet'
-                    : null,
+                        (value == null || value.isEmpty)
+                            ? 'Please select a wallet'
+                            : null,
                 onTap:
-                controller.transferWalletList.isNotEmpty
-                    ? () {
-                  _showDropdownMenu(context,
-                    accountKindKey,
-                    controller.transferWalletList
-                        .map((e) => e.name ?? '')
-                        .toList(),
-                    accountKindController,
-                  );
-                }
-                    : null,
+                    controller.transferWalletList.isNotEmpty
+                        ? () {
+                          _showDropdownMenu(
+                            context,
+                            accountKindKey,
+                            controller.transferWalletList
+                                .map((e) => e.name ?? '')
+                                .toList(),
+                            accountKindController,
+                          );
+                        }
+                        : null,
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
@@ -95,7 +94,7 @@ void showTransferWalletDialog(String title,BuildContext context) {
                         double.tryParse(
                           controller.totalBalance.value.toString(),
                         ) ??
-                            0.0;
+                        0.0;
                     if (enteredAmount > balance) {
                       return "Amount exceeds wallet balance";
                     }
@@ -117,12 +116,9 @@ void showTransferWalletDialog(String title,BuildContext context) {
                       if (formKey.currentState!.validate()) {
                         Navigator.pop(context);
                         // Proceed with your logic here
-                        print(
-                          "Selected Wallet: ${accountKindController.text}",
-                        );
+                        print("Selected Wallet: ${accountKindController.text}");
                         print("Amount: ${amountController.text}");
                         print("Transfer Type: $title");
-
 
                         controller.addWalletFund(
                           accountNo: accountKindController.text,
@@ -131,7 +127,6 @@ void showTransferWalletDialog(String title,BuildContext context) {
                         );
                         // Proceed with your logic
                         print("Selected Wallet Value: $selectedValue");
-
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -157,13 +152,13 @@ void showTransferWalletDialog(String title,BuildContext context) {
 }
 
 void _showDropdownMenu(
-    BuildContext context,
-    GlobalKey key,
-    List<String> options,
-    TextEditingController controller,
-    ) async {
+  BuildContext context,
+  GlobalKey key,
+  List<String> options,
+  TextEditingController controller,
+) async {
   final RenderBox renderBox =
-  key.currentContext!.findRenderObject() as RenderBox;
+      key.currentContext!.findRenderObject() as RenderBox;
   final Offset offset = renderBox.localToGlobal(Offset.zero);
   final Size size = renderBox.size;
 
@@ -176,12 +171,12 @@ void _showDropdownMenu(
       offset.dy,
     ),
     items:
-    options
-        .map(
-          (option) =>
-          PopupMenuItem<String>(value: option, child: Text(option)),
-    )
-        .toList(),
+        options
+            .map(
+              (option) =>
+                  PopupMenuItem<String>(value: option, child: Text(option)),
+            )
+            .toList(),
   );
   if (selected != null) {
     controller.text = selected;
