@@ -1,4 +1,3 @@
-import 'package:nb_utils/nb_utils.dart';
 
 
 class PaymentInformation {
