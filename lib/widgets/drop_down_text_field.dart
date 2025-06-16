@@ -59,7 +59,7 @@ class DropDownTextFormField extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         AbsorbPointer(
-          absorbing: isDisabled,
+          absorbing:  isDisabled,
           child: TextFormField(
             controller: controller,
             autovalidateMode: autovalidateMode,
