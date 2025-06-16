@@ -78,7 +78,7 @@ class _DepositWithdrawHistoryScreenState
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      showTransferWalletDialog("Wallet to MT5", context);
+                      controller.transferWalletList.isEmpty ? null :   showTransferWalletDialog("Wallet to MT5", context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber.shade700,
@@ -93,7 +93,7 @@ class _DepositWithdrawHistoryScreenState
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      showTransferWalletDialog("MT5 to Wallet", context);
+                      controller.transferWalletList.isEmpty ? null :  showTransferWalletDialog("MT5 to Wallet", context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
