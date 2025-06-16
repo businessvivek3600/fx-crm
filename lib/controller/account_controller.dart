@@ -96,11 +96,6 @@ class AccountController extends GetxController {
 
       final planCode = selectedPlan.code;
 
-
-      if (planCode == null) {
-        throw Exception('Invalid Account Plan selected.');
-      }
-
       dio.FormData payload = dio.FormData.fromMap({
         'account_plan': planCode,
         'leverage': leverageText.split(':').last,

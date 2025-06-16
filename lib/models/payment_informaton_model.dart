@@ -1,4 +1,3 @@
-import 'package:nb_utils/nb_utils.dart';
 
 
 class PaymentInformation {
@@ -78,7 +77,7 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['order_id'] = orderId;
     data['txn_id'] = txnId;
     data['coin_amt'] = coinAmt;
@@ -142,7 +141,7 @@ class Order {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['order_id'] = orderId;
     data['created_at'] = createdAt;
