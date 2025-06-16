@@ -19,14 +19,21 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   final accountController = Get.put(AccountController(dioClient: dioClient));
-  bool _obscurePassword = true;
-  bool _obscureInvestorPassword = true;
+  List<bool> _obscureMasterList = [];
+  List<bool> _obscureInvestorList = [];
   final GlobalKey _leverageKey = GlobalKey();
   final TextEditingController accountKindController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    accountController.fetchAccounts();
+    accountController.fetchAccounts().then((_) {
+      // Initialize visibility state for each account
+      final count = accountController.accountList.length;
+      setState(() {
+        _obscureMasterList = List.generate(count, (_) => true);
+        _obscureInvestorList = List.generate(count, (_) => true);
+      });
+    });
     accountController.getAccountPlans();
   }
 
@@ -43,38 +50,25 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
           elevation: 0,
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+              tooltip: 'Open New Account',
+              onPressed: () {
+                Get.to(() => const CreateAccountFormScreen());
+              },
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.to(() => const CreateAccountFormScreen());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeUtils.primaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(
-                      "+ Open New Account",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
               Expanded(child: _buildAccountDetails()),
             ],
           ),
         ),
+
       ),
     );
   }
@@ -91,7 +85,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
       // Filter demo accounts
       final demoAccounts = accountController.accountList.toList();
-      print(demoAccounts.length);
       return ListView.builder(
         itemCount: demoAccounts.length,
         itemBuilder: (context, index) {
@@ -183,8 +176,10 @@ class _AccountScreenState extends State<AccountScreen> {
                         color: Colors.white24,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Text(
-                        'Demo',
+                      child: Text(
+                        account.accountType == 'Demo'
+                            ? 'Demo'
+                            : 'Live',
                         style: TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                     ),
@@ -202,7 +197,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white70,
+                        color: Color(0xff0d6efd),
                       ),
                     ),
                     Text(
@@ -220,7 +215,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 /// Master Password
                 TextFormField(
                   initialValue: account.masterPassword,
-                  obscureText: _obscurePassword,
+                  obscureText: _obscureMasterList[index],
                   readOnly: true,
                   style: const TextStyle(color: Colors.white70),
                   decoration: InputDecoration(
@@ -241,14 +236,14 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword
+                        _obscureMasterList[index]
                             ? Icons.visibility_off
                             : Icons.visibility,
                         color: Colors.white70,
                       ),
                       onPressed: () {
                         setState(() {
-                          _obscurePassword = !_obscurePassword;
+                          _obscureMasterList[index] = !_obscureMasterList[index];
                         });
                       },
                     ),
@@ -260,7 +255,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 /// Investor Password
                 TextFormField(
                   initialValue: account.investorPassword,
-                  obscureText: _obscureInvestorPassword,
+                  obscureText: _obscureInvestorList[index],
                   readOnly: true,
                   style: const TextStyle(color: Colors.white70),
                   decoration: InputDecoration(
@@ -281,15 +276,16 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscureInvestorPassword
+                        _obscureInvestorList[index]
                             ? Icons.visibility_off
                             : Icons.visibility,
                         color: Colors.white70,
                       ),
                       onPressed: () {
                         setState(() {
-                          _obscureInvestorPassword = !_obscureInvestorPassword;
+                          _obscureInvestorList[index] = !_obscureInvestorList[index];
                         });
+
                       },
                     ),
                   ),
@@ -335,7 +331,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Color(0xff2e2e2e),
                         foregroundColor: Colors.white70,
-                    
+
                       ),
                       onPressed: () => showSetBalanceDialog(context),
                       icon: const Icon(Icons.account_balance_wallet_outlined,color: Colors.white70,),
@@ -389,7 +385,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 onTap:
                     accountController.leverageOptions.isNotEmpty
                         ? () => _showDropdownMenu(
-                          _leverageKey, 
+                          _leverageKey,
                           accountController.leverageOptions,
                           leverageController,
                         )
