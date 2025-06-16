@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/customer_profile_screen.dart';
 import 'package:lottie/lottie.dart';
+import '../controller/app_controller.dart';
 import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
 import 'component/notification/notification_screen.dart';
+
 // colors: [Color(0xFF2E2E2E), Color(0xff021b43)],
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,9 +18,19 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProviderStateMixin {
+class _DashboardScreenState extends State<DashboardScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
+  List<String> motivationalTexts = [
+    "MT5 Trading",
+    "Trade More Earn More",
+    "Grow Your Portfolio",
+    "Invest Smartly",
+    "Profit Everyday",
+  ];
+  int currentMessageIndex = 0;
+  late Timer textTimer;
 
   @override
   void initState() {
@@ -31,20 +45,29 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
       begin: const Offset(-1.5, 0),
       end: const Offset(3.5, 0),
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+    textTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      setState(() {
+        currentMessageIndex =
+            (currentMessageIndex + 1) % motivationalTexts.length;
+      });
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    textTimer.cancel();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
+    final customer = AppController.to.customer.value;
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: const CustomDrawer(),
-        appBar:  PreferredSize(
+        appBar: PreferredSize(
           preferredSize: const Size.fromHeight(70),
           child: Stack(
             children: [
@@ -92,39 +115,71 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
                 leading: Builder(
-                  builder: (context) => Padding(
-                    padding: const EdgeInsets.only(left: 12.0),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: () => Scaffold.of(context).openDrawer(),
-                      child: const Icon(Icons.menu, color: Colors.white),
-                    ),
-                  ),
+                  builder:
+                      (context) => Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () => Scaffold.of(context).openDrawer(),
+                          child: const Icon(Icons.menu, color: Colors.white),
+                        ),
+                      ),
                 ),
-                title: const Text(
-                  "Dashboard",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                  ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      customer!.firstName!,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder:
+                          (child, animation) =>
+                              FadeTransition(opacity: animation, child: child),
+                      child: Text(
+                        motivationalTexts[currentMessageIndex],
+                        key: ValueKey(currentMessageIndex),
+                        style: const TextStyle(
+                          color: Color(0xff0262f7),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 centerTitle: false,
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.notifications_none, color: Colors.white),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const NotificationScreen()),
+                    icon: const Icon(
+                      Icons.notifications_none,
+                      color: Colors.white,
                     ),
+                    onPressed:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const NotificationScreen(),
+                          ),
+                        ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.person_outline, color: Colors.white),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CustomerProfileScreen()),
-                    ),
+                    onPressed:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CustomerProfileScreen(),
+                          ),
+                        ),
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -132,7 +187,6 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
             ],
           ),
         ),
-
 
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -248,7 +302,11 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
           /// Value
           Text(
             value,
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+            style: const TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
 
           const SizedBox(height: 6),
@@ -272,7 +330,9 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
                 child: LinearProgressIndicator(
                   value: progress,
                   backgroundColor: Colors.grey,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white70),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Colors.white70,
+                  ),
                 ),
               ),
             ),
@@ -281,13 +341,14 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
           SizedBox(
             height: 30,
             width: double.infinity,
-            child: CustomPaint(painter: _FakeGraphPainter()), // Optional: replace with actual chart
+            child: CustomPaint(
+              painter: _FakeGraphPainter(),
+            ), // Optional: replace with actual chart
           ),
         ],
       ),
     );
   }
-
 
   Widget _buildDailyReturnCard() {
     return Container(
@@ -297,127 +358,196 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
         border: Border.all(color: Colors.white12),
       ),
       padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "Daily Return Chart",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                Icon(Icons.more_vert, color: Colors.white70),
-              ],
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              "in last 30 days revenue",
-              style: TextStyle(
-                color: Colors.white38,
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            /// Metrics
-            _buildReturnItem("Revenue", "\$4805", "\$1458 Since last month", isUp: true),
-            const Divider(color: Colors.white10, height: 24),
-            _buildReturnItem("Total Customers", "8.4K", "12.3% Since last month", isUp: true),
-            const Divider(color: Colors.white10, height: 24),
-            _buildReturnItem("Store Visitors", "59K", "2.4% Since last month", isUp: false),
-
-            const SizedBox(height: 24),
-
-            /// Chart
-            SizedBox(
-              height: 180,
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: 120,
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 28,
-                        getTitlesWidget: (value, _) => Text(
-                          value.toInt().toString(),
-                          style: const TextStyle(color: Colors.white38, fontSize: 10),
-                        ),
-                      ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 28,
-                        getTitlesWidget: (value, _) {
-                          const months = ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
-                          return value.toInt() < months.length
-                              ? Text(months[value.toInt()], style: const TextStyle(color: Colors.white54, fontSize: 11))
-                              : const SizedBox.shrink();
-                        },
-                      ),
-                    ),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  gridData: FlGridData(
-                    show: true,
-                    getDrawingHorizontalLine: (_) => FlLine(color: Colors.white10, strokeWidth: 0.5),
-                  ),
-                  barGroups: List.generate(
-                    9,
-                        (i) => BarChartGroupData(
-                      x: i,
-                      barRods: [
-                        BarChartRodData(
-                          toY: (i + 5) * 10.0,
-                          width: 10,
-                          borderRadius: BorderRadius.circular(4),
-                          color: Colors.white.withOpacity(0.5),
-                        ),
-                      ],
-                    ),
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                "Daily Return Chart",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
                 ),
               ),
+              Icon(Icons.more_vert, color: Colors.white70),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            "in last 30 days revenue",
+            style: TextStyle(
+              color: Colors.white38,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+
+          /// Metrics
+          _buildReturnItem(
+            "Revenue",
+            "\$4805",
+            "\$1458 Since last month",
+            isUp: true,
+          ),
+          const Divider(color: Colors.white10, height: 24),
+          _buildReturnItem(
+            "Total Customers",
+            "8.4K",
+            "12.3% Since last month",
+            isUp: true,
+          ),
+          const Divider(color: Colors.white10, height: 24),
+          _buildReturnItem(
+            "Store Visitors",
+            "59K",
+            "2.4% Since last month",
+            isUp: false,
+          ),
+
+          const SizedBox(height: 24),
+
+          /// Chart
+          SizedBox(
+            height: 180,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: 120,
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 28,
+                      getTitlesWidget:
+                          (value, _) => Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(
+                              color: Colors.white38,
+                              fontSize: 10,
+                            ),
+                          ),
+                    ),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 28,
+                      getTitlesWidget: (value, _) {
+                        const months = [
+                          'Feb',
+                          'Mar',
+                          'Apr',
+                          'May',
+                          'Jun',
+                          'Jul',
+                          'Aug',
+                          'Sep',
+                          'Oct',
+                        ];
+                        return value.toInt() < months.length
+                            ? Text(
+                              months[value.toInt()],
+                              style: const TextStyle(
+                                color: Colors.white54,
+                                fontSize: 11,
+                              ),
+                            )
+                            : const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                gridData: FlGridData(
+                  show: true,
+                  getDrawingHorizontalLine:
+                      (_) => FlLine(color: Colors.white10, strokeWidth: 0.5),
+                ),
+                barGroups: List.generate(
+                  9,
+                  (i) => BarChartGroupData(
+                    x: i,
+                    barRods: [
+                      BarChartRodData(
+                        toY: (i + 5) * 10.0,
+                        width: 10,
+                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.white.withOpacity(0.5),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-
-  Widget _buildReturnItem(String title, String value, String desc, {required bool isUp}) {
+  Widget _buildReturnItem(
+    String title,
+    String value,
+    String desc, {
+    required bool isUp,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white60, fontSize: 13)),
+        Text(
+          title,
+          style: const TextStyle(color: Colors.white60, fontSize: 13),
+        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(value, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             Row(
               children: [
-                Icon(isUp ? Icons.arrow_upward : Icons.arrow_downward, size: 14, color: isUp ? Colors.green : Colors.red),
-                Text(desc, style: TextStyle(fontSize: 11, color: isUp ? Colors.green : Colors.red)),
+                Icon(
+                  isUp ? Icons.arrow_upward : Icons.arrow_downward,
+                  size: 14,
+                  color: isUp ? Colors.green : Colors.red,
+                ),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isUp ? Colors.green : Colors.red,
+                  ),
+                ),
               ],
-            )
+            ),
           ],
-        )
+        ),
       ],
     );
   }
 
-  Widget _buildMetricCard(String title, String value, String percentage, bool isIncrease) {
+  Widget _buildMetricCard(
+    String title,
+    String value,
+    String percentage,
+    bool isIncrease,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.08),
@@ -435,10 +565,7 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white60,
-                    fontSize: 13,
-                  ),
+                  style: const TextStyle(color: Colors.white60, fontSize: 13),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -457,13 +584,18 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: isIncrease ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+              color:
+                  isIncrease
+                      ? Colors.green.withOpacity(0.1)
+                      : Colors.red.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
                 Icon(
-                  isIncrease ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                  isIncrease
+                      ? Icons.arrow_upward_rounded
+                      : Icons.arrow_downward_rounded,
                   color: isIncrease ? Colors.green : Colors.red,
                   size: 16,
                 ),
@@ -478,21 +610,21 @@ class _DashboardScreenState extends State<DashboardScreen>with SingleTickerProvi
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
-
 }
 
 /// Simulated mini graph for visual appeal
 class _FakeGraphPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Color(0xff0262f7)
-      ..strokeWidth = 2;
+    final paint =
+        Paint()
+          ..color = Color(0xff0262f7)
+          ..strokeWidth = 2;
 
     final path = Path();
     path.moveTo(0, size.height * 0.6);

@@ -13,10 +13,12 @@ class CustomTextFormField extends StatelessWidget {
   final Icon? icon;
   final FocusNode? focusNode;
   final Color? fillColor;
+
   final Color? focusedBorder; // 🛑 border color
   final Color? enabledBorder; // 🛑 border color
   final String? Function(String?)? validator;       // 🛑 validator callback
   final void Function(String)? onChanged;
+  final int? maxLines;
 
   const CustomTextFormField({
     super.key,
@@ -31,6 +33,7 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged,
     this.textStyle,
     this.icon,
+    this.maxLines,
     this.labelColor, this.fillColor, this.focusNode, this.enabledBorder, this.focusedBorder
   });
 
@@ -50,6 +53,7 @@ class CustomTextFormField extends StatelessWidget {
           validator: validator,
           onChanged: onChanged,
           focusNode: focusNode,
+          maxLength: maxLines ,
           decoration: InputDecoration(
             prefixIcon: icon,
             hintText: hint,

@@ -23,16 +23,19 @@ class WalletAccountScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Card with Border instead of Shadow
+              // Card with White Shadow
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xff151527),
                   borderRadius: BorderRadius.circular(20),
-                 border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1.5,
-                  ),
-                  // Removed boxShadow
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.white.withOpacity(0.2), // White shadow
+                  //     spreadRadius: 2,
+                  //     blurRadius: 6,
+                  //     offset: const Offset(3,0.1),
+                  //   ),
+                  // ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

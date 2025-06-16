@@ -93,6 +93,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
                         DropDownTextFormField(
                           key: kycController.documentKey,
                           colors: Colors.white,
+
                           label: 'Document Type',
                            style: TextStyle(
                           color: Colors.white,
@@ -237,7 +238,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
                         ),
 
                         const SizedBox(height: 24),
-                        Align(
+                        kycStatus == 1 || kycStatus == 3 ?   Align(
                           alignment: Alignment.centerRight,
                           child: (kycStatus == "1" || kycStatus == "3")
                               ? const SizedBox()  // Empty container to hide the button
@@ -250,7 +251,7 @@ class _KycUploadScreenState extends State<KycUploadScreen> {
                             ),
                             child: const Text("Submit"),
                           ),
-                        ),
+                        ) : SizedBox()
 
                       ],
                     ),

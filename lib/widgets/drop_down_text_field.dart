@@ -11,13 +11,14 @@ class DropDownTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final VoidCallback? onTap;
   final AutovalidateMode? autovalidateMode;
-  final Color? fillColor;
-  final Color? focusedBorder;
-  final Color? enabledBorder;
+  final Color? fillColor; // 🛑 fill color
+  final Color? focusedBorder; // 🛑 border color
+  final Color? enabledBorder; // 🛑 border color
   final Color? dropdownDisableColor;
-  final Color? dropdownEnableColor;
+  final Color? dropdownEnableColor;// 🛑 drop down color
   final TextStyle? fieldStyle;
   final String? Function(String?)? validator;
+
 
   const DropDownTextFormField({
     super.key,
@@ -35,25 +36,13 @@ class DropDownTextFormField extends StatelessWidget {
     this.enabledBorder,
     this.textStyle,
     this.fillColor,
-    this.dropdownDisableColor,
-    this.dropdownEnableColor,
-    this.fieldStyle,
+
+     this.dropdownDisableColor, this.dropdownEnableColor, this.fieldStyle,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDisabled = readOnly || isDate;
-
-    // Detect brightness of fillColor to auto-assign white or black text colors
-    final Color bgColor = fillColor ?? Colors.white.withOpacity(0.08);
-    final bool isDark = bgColor.computeLuminance() < 0.5;
-    final Color defaultTextColor = isDark ? Colors.white : Colors.black;
-    final Color defaultHintColor = isDark ? Colors.white60 : Colors.black45;
-    final Color defaultBorderColor = isDark ? Colors.white30 : Colors.black26;
-    final Color defaultDropdownEnableColor =
-        isDark ? Colors.white60 : Colors.black87;
-    final Color defaultDropdownDisableColor =
-        isDark ? Colors.white30 : Colors.black26;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +52,7 @@ class DropDownTextFormField extends StatelessWidget {
           style:
               style ??
               TextStyle(
-                color: colors ?? defaultTextColor,
+                color: colors ?? Colors.white70,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -77,30 +66,25 @@ class DropDownTextFormField extends StatelessWidget {
             validator: validator,
             readOnly: true,
             onTap: isDisabled ? null : onTap,
-            style: fieldStyle ?? TextStyle(color: defaultTextColor),
+            style: fieldStyle ?? TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: textStyle ?? TextStyle(color: defaultHintColor),
+              hintStyle: textStyle ?? TextStyle(color: Colors.white60),
               filled: true,
-              fillColor: bgColor,
+              fillColor: fillColor ?? Colors.white.withOpacity(0.08),
               suffixIcon: Icon(
                 Icons.arrow_drop_down,
-                color:
-                    isDisabled
-                        ? dropdownDisableColor ?? defaultDropdownDisableColor
-                        : dropdownEnableColor ?? defaultDropdownEnableColor,
+                color: isDisabled
+                    ? dropdownDisableColor ?? Colors.white30
+                    : dropdownEnableColor ?? Colors.white60,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: enabledBorder ?? defaultBorderColor,
-                ),
+                borderSide: BorderSide(color: enabledBorder ?? Colors.white12),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: focusedBorder ?? defaultBorderColor,
-                ),
+                borderSide: BorderSide(color: focusedBorder ?? Colors.white30),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -109,6 +93,7 @@ class DropDownTextFormField extends StatelessWidget {
             ),
           ),
         ),
+
       ],
     );
   }

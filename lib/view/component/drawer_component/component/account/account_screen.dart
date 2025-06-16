@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/change_account_password.dart';
@@ -55,20 +56,19 @@ class _AccountScreenState extends State<AccountScreen> {
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               tooltip: 'Open New Account',
               onPressed: () {
-                Get.to(() => const CreateAccountFormScreen());
+                Future.delayed(Duration(milliseconds: 100), () {
+                  setState(() {
+                    Get.to(() => const CreateAccountFormScreen());
+                  });
+                });
               },
             ),
           ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Expanded(child: _buildAccountDetails()),
-            ],
-          ),
+          child: Column(children: [Expanded(child: _buildAccountDetails())]),
         ),
-
       ),
     );
   }
@@ -177,9 +177,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        account.accountType == 'Demo'
-                            ? 'Demo'
-                            : 'Live',
+                        account.accountType == 'Demo' ? 'Demo' : 'Live',
                         style: TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                     ),
@@ -192,12 +190,18 @@ class _AccountScreenState extends State<AccountScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'MT5 ${account.accountType} ${account.accountNo}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff0d6efd),
+                    GestureDetector(
+                      onLongPress: () {
+                        Clipboard.setData(ClipboardData(text: account.accountNo ?? ''));
+                        Get.snackbar('Copied', 'Account Number copied to clipboard',snackPosition: SnackPosition.BOTTOM);
+                      },
+                      child: Text(
+                        'MT5 ${account.accountType} ${account.accountNo}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff0d6efd),
+                        ),
                       ),
                     ),
                     Text(
@@ -213,83 +217,118 @@ class _AccountScreenState extends State<AccountScreen> {
                 const SizedBox(height: 12),
 
                 /// Master Password
-                TextFormField(
-                  initialValue: account.masterPassword,
-                  obscureText: _obscureMasterList[index],
-                  readOnly: true,
-                  style: const TextStyle(color: Colors.white70),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color.fromARGB(32, 153, 143, 143),
-                    labelText: 'Master Password',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureMasterList[index]
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.white70,
+                GestureDetector(
+                  onLongPress: () {
+                    Clipboard.setData(ClipboardData(text: account.masterPassword ?? ''));
+                    Get.snackbar('Copied', 'Master Password copied to clipboard');
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Master Password',
+                        style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureMasterList[index] = !_obscureMasterList[index];
-                        });
-                      },
-                    ),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(32, 153, 143, 143),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child:
+                                  Text(
+                                    _obscureMasterList[index]
+                                        ? '••••••••'
+                                        : (account.masterPassword ?? ''),
+                                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                _obscureMasterList[index]
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.white70,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureMasterList[index] = !_obscureMasterList[index];
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+
 
                 const SizedBox(height: 16),
 
                 /// Investor Password
-                TextFormField(
-                  initialValue: account.investorPassword,
-                  obscureText: _obscureInvestorList[index],
-                  readOnly: true,
-                  style: const TextStyle(color: Colors.white70),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color.fromARGB(32, 153, 143, 143),
-                    labelText: 'Investor Password',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white70),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureInvestorList[index]
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.white70,
+                GestureDetector(
+                  onLongPress: () {
+                    Clipboard.setData(ClipboardData(text: account.investorPassword ?? ''));
+                    Get.snackbar('Copied', 'Investor Password copied to clipboard');
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Investor Password',
+                        style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureInvestorList[index] = !_obscureInvestorList[index];
-                        });
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(32, 153, 143, 143),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white12,),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child:
+                                  Text(
+                                    _obscureInvestorList[index]
+                                        ? '••••••••'
+                                        : (account.investorPassword ?? ''),
+                                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
 
-                      },
-                    ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                _obscureInvestorList[index]
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.white70,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureInvestorList[index] = !_obscureInvestorList[index];
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+
 
                 const SizedBox(height: 12),
 
@@ -297,25 +336,52 @@ class _AccountScreenState extends State<AccountScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: Chip(
-                        label: Text(
-                          'SERVER ${account.accountGroup ?? ""}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
+                      flex: 3,
+                      child:GestureDetector(
+                        onLongPress: () {
+                          Clipboard.setData(ClipboardData(text: account.accountGroup ?? ''));
+                          Get.snackbar('Copied', 'Server name copied to clipboard');
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'SERVER',
+                              style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(height: 4),
+                            Chip(
+                              label: Text(
+                                account.accountGroup ?? "",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              backgroundColor: Colors.white24,
+                            ),
+                          ],
                         ),
-                        backgroundColor: Colors.white24,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Chip(
-                        label: const Text(
-                          'Currency USD',
-                          style: TextStyle(fontSize: 12, color: Colors.black),
-                        ),
-                        backgroundColor: Colors.white24,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Currency',
+                            style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 4),
+                          Chip(
+                            label: const Text(
+                              'USD',
+                              style: TextStyle(fontSize: 12, color: Colors.black),
+                            ),
+                            backgroundColor: Colors.white24,
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -331,10 +397,12 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Color(0xff2e2e2e),
                         foregroundColor: Colors.white70,
-
                       ),
                       onPressed: () => showSetBalanceDialog(context),
-                      icon: const Icon(Icons.account_balance_wallet_outlined,color: Colors.white70,),
+                      icon: const Icon(
+                        Icons.account_balance_wallet_outlined,
+                        color: Colors.white70,
+                      ),
                       label: const Text('Set Balance'),
                     ),
                   ],
