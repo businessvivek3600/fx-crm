@@ -15,6 +15,7 @@ import '../../../controller/auth_controller.dart';
 import '../../../routes/route_path.dart';
 import '../../../utils/drawer_back_button.dart';
 import '../../../widgets/bg_container.dart';
+import 'component/Delete/delete_account.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -92,34 +93,96 @@ class CustomDrawer extends StatelessWidget {
                       //     // router.push(Routes.CreateAccountScreen);
                       //   },
                       // },
+                      // {
+                      //   'title': 'Wallet Account',
+                      //   'icon': Icons.account_balance_wallet_outlined,
+                      //   'onTap': () {
+                      //     // Navigator.push(
+                      //     //   context,
+                      //     //   MaterialPageRoute(
+                      //     //     builder: (context) => WalletAccountScreen(),
+                      //     //   ),
+                      //     // );
+                      //     context.push(Routes.walletAccount);
+                      //   },
+                      // },
+                      // {
+                      //   'title': 'Transaction History',
+                      //   'icon': Icons.account_balance_wallet_outlined,
+                      //   'onTap': () {
+                      //     // Navigator.push(
+                      //     //   context,
+                      //     //   MaterialPageRoute(
+                      //     //     builder: (context) => TransactionHistoryScreen(),
+                      //     //   ),
+                      //     // );
+                      //     context.push(Paths.transactionHistory);
+                      //   },
+                      // },
+                    ],
+                  ),
+                  /// Funds
+                  _buildExpansionTile(
+                    title: 'Funds',
+                    icon: Icons.account_balance_wallet_outlined,
+                    submenus: [
                       {
-                        'title': 'Wallet Account',
+                        'title': 'Wallet Ledger',
                         'icon': Icons.account_balance_wallet_outlined,
                         'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => WalletAccountScreen(),
-                          //   ),
-                          // );
-                          context.push(Routes.walletAccount);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WalletLedger(),
+                            ),
+                          );
+                          // context.push(Paths.wallet_ledger);
                         },
                       },
                       {
-                        'title': 'Transaction History',
+                        'title': 'Deposit Fund',
+                        'icon': Icons.attach_money_outlined,
+                        'onTap': () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DepositFundScreen(),
+                            ),
+                          );
+                          // context.push(Paths.deposit_fund);
+                        },
+                      },
+                      {
+                        'title': 'Withdraw Fund',
                         'icon': Icons.account_balance_wallet_outlined,
                         'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => TransactionHistoryScreen(),
-                          //   ),
-                          // );
-                          context.push(Paths.transactionHistory);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WithdrawFundScreen(),
+                            ),
+                          );
+                          // context.push(Paths.withdraw_fund);
+                        },
+                      },
+                      {
+                        'title': 'Deposit/Withdraw History',
+                        'icon': Icons.history,
+                        'onTap': () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => DepositWithdrawHistoryScreen(),
+                            ),
+                          );
+                          // context.push(Paths.deposit_withdrawhistory);
                         },
                       },
                     ],
                   ),
+
+                  ///Profile
                   _buildExpansionTile(
                     title: 'Profile',
                     icon: Icons.manage_accounts_outlined,
@@ -182,19 +245,19 @@ class CustomDrawer extends StatelessWidget {
                     title: 'Promotions',
                     icon: Icons.local_offer_outlined,
                     submenus: [
-                      {
-                        'title': 'Monthly Rewards',
-                        'icon': Icons.emoji_events,
-                        'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => MonthlyRewardsScreen(),
-                          //   ),
-                          // );
-                          router.push(Routes.monthlyRewards);
-                        },
-                      },
+                      // {
+                      //   'title': 'Monthly Rewards',
+                      //   'icon': Icons.emoji_events,
+                      //   'onTap': () {
+                      //     // Navigator.push(
+                      //     //   context,
+                      //     //   MaterialPageRoute(
+                      //     //     builder: (context) => MonthlyRewardsScreen(),
+                      //     //   ),
+                      //     // );
+                      //     router.push(Routes.monthlyRewards);
+                      //   },
+                      // },
                       {
                         'title': 'Terms and Condition',
                         'icon': Icons.article,
@@ -211,75 +274,16 @@ class CustomDrawer extends StatelessWidget {
                     ],
                   ),
 
-                  // IB Menu
-                  _buildExpansionTile(
-                    title: 'IB Menu',
-                    icon: Icons.menu_open_outlined,
-                    submenus: [
-                      {'title': 'Become IB', 'icon': Icons.group_add_outlined},
-                    ],
-                  ),
+                  // // IB Menu
+                  // _buildExpansionTile(
+                  //   title: 'IB Menu',
+                  //   icon: Icons.menu_open_outlined,
+                  //   submenus: [
+                  //     {'title': 'Become IB', 'icon': Icons.group_add_outlined},
+                  //   ],
+                  // ),
 
-                  // Funds
-                  _buildExpansionTile(
-                    title: 'Funds',
-                    icon: Icons.account_balance_wallet_outlined,
-                    submenus: [
-                      {
-                        'title': 'Wallet Ledger',
-                        'icon': Icons.account_balance_wallet_outlined,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WalletLedger(),
-                            ),
-                          );
-                          // context.push(Paths.wallet_ledger);
-                        },
-                      },
-                      {
-                        'title': 'Deposit Fund',
-                        'icon': Icons.attach_money_outlined,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DepositFundScreen(),
-                            ),
-                          );
-                          // context.push(Paths.deposit_fund);
-                        },
-                      },
-                      {
-                        'title': 'Withdraw Fund',
-                        'icon': Icons.account_balance_wallet_outlined,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WithdrawFundScreen(),
-                            ),
-                          );
-                          // context.push(Paths.withdraw_fund);
-                        },
-                      },
-                      {
-                        'title': 'Deposit/Withdraw History',
-                        'icon': Icons.history,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => DepositWithdrawHistoryScreen(),
-                            ),
-                          );
-                          // context.push(Paths.deposit_withdrawhistory);
-                        },
-                      },
-                    ],
-                  ),
+
 
                   // Support
                   _buildListTile(
@@ -353,45 +357,15 @@ class CustomDrawer extends StatelessWidget {
                       ).show();
                     },
                   ),
-                  if (AppController.to.customer.value?.customerEmail ==
-                      "dikshatouchwood@gmail.com")
+                  // if (AppController.to.customer.value?.customerEmail ==
+                  //     "touchwoodrohit@gmail.com")
                     _buildListTile(
                       icon: Icons.delete_outline_outlined,
-                      title: 'Delete',
                       onTap: () {
-                        Get.closeAllSnackbars();
-                        AwesomeDialog(
-                          context: Get.context!,
-                          dialogType: DialogType.warning,
-                          animType: AnimType.rightSlide,
-                          title: 'Delete Account',
-                          customHeader: Icon(
-                            Icons.question_mark_outlined,
-                            size: 50,
-                            color: Colors.orange,
-                          ),
-                          headerAnimationLoop: true,
-                          titleTextStyle: Theme.of(context)
-                              .textTheme
-                              .headlineLarge!
-                              .copyWith(fontWeight: FontWeight.bold),
-                          desc: 'Are you sure you want to delete your account?',
-                          btnCancelOnPress: () {},
-                          btnOkText: 'Delete',
-                          btnOkOnPress: () async {
-                            const url = 'https://aic.tenxbot.com/delete-user';
-                            if (await canLaunchUrl(Uri.parse(url))) {
-                              await launchUrl(
-                                Uri.parse(url),
-                                mode: LaunchMode.externalApplication,
-                              );
-                            } else {
-                              Get.snackbar("Error", "Could not open the link");
-                            }
-                          },
-                        ).show();
-                      },
+                       Get.to(() => const DeleteAccountScreen());
+                      }, title: 'Delete Account',
                     ),
+                  SizedBox(height: 20,),
                 ],
               ),
             ),

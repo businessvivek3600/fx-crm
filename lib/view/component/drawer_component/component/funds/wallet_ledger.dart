@@ -97,12 +97,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                   }),
                   const SizedBox(width: 8),
                   _buildTransferButton("Withdraw Funds", Colors.green, () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WithdrawRequestScreen(),
-                      ),
-                    );
+                    Get.to(() => const WithdrawRequestScreen());
                   }),
                 ],
               ),

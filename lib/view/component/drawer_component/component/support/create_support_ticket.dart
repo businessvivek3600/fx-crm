@@ -63,9 +63,9 @@ class _CreateSupportTicketState extends State<CreateSupportTicket> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.4,
-      maxChildSize: 0.7,
-      minChildSize: 0.2,
+      initialChildSize: 0.55,
+      maxChildSize: 0.9,
+      minChildSize: 0.4,
 
       builder: (context, scrollController) {
         return Container(
@@ -79,13 +79,26 @@ class _CreateSupportTicketState extends State<CreateSupportTicket> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Create Ticket",style: TextStyle(
-                  fontWeight: FontWeight.bold,fontSize: 18,letterSpacing: 2
-                ),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Create Ticket",style: TextStyle(
+                      fontWeight: FontWeight.bold,fontSize: 18,letterSpacing: 2
+                    ),),
+                    IconButton(onPressed: () {
+                      Get.back();
+                    }, icon: Icon(Icons.close,color: Colors.black54,)),
+                  ],
+                ),
+                SizedBox(height: 20,),
                 CustomTextFormField(
                   label: 'Subject',
-                  hint: 'Enter subject',
+                  hint: 'Enter your subject',
+                  labelColor: Colors.black,
+                  enabledBorder: Colors.black54,
                   controller: subjectController,
+                  textStyle: TextStyle(color: Colors.black54),
+                  focusedBorder: Colors.black,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -96,9 +109,17 @@ class _CreateSupportTicketState extends State<CreateSupportTicket> {
                         key: _departmentKey,
                         label: 'Department',
                         hint:  'Support',
+                        style: TextStyle(color: Colors.black),
                         controller: departmentController,
                         readOnly: false,
                         onTap: _selectDepartment,
+                        enabledBorder: Colors.black54,
+                        fieldStyle: TextStyle(color: Colors.black),
+                        colors: Colors.black54,
+                        dropdownDisableColor: Colors.black26,
+                        dropdownEnableColor: Colors.black87,
+                        textStyle: TextStyle(color: Colors.black54),
+                        focusedBorder: Colors.black,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -106,11 +127,19 @@ class _CreateSupportTicketState extends State<CreateSupportTicket> {
                     Expanded(
                       child:  DropDownTextFormField(
                         key: _priorityKey,
+                        style: TextStyle(color: Colors.black),
                         label: 'Priority',
                         hint:  'Select priority',
                         controller:  priorityController,
                         readOnly: false,
                         onTap: _selectPriorityType,
+                        enabledBorder: Colors.black54,
+                        textStyle: TextStyle(color: Colors.black54),
+                        focusedBorder: Colors.black,
+                          fieldStyle: TextStyle(color: Colors.black),
+                          colors: Colors.black54,
+                        dropdownEnableColor: Colors.black87,
+                          dropdownDisableColor: Colors.black26,
                       ),
                     ),
                   ],
@@ -122,6 +151,8 @@ class _CreateSupportTicketState extends State<CreateSupportTicket> {
                   textStyle: TextStyle(color: Colors.black54),
                   hint: 'Describe your issue',
                   controller: bodyController,
+                  enabledBorder: Colors.black54,
+                  focusedBorder: Colors.black,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(

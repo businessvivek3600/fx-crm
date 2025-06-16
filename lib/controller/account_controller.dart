@@ -33,7 +33,6 @@ class AccountController extends GetxController {
 
     if (selected != null) {
       leverageOptions.value = selected.leverage.map((e) => '1:$e').toList();
-      print("leverage values -------------${leverageOptions.value}");
       initialDeposit.value = selected.initialFund;
     } else {
       leverageOptions.clear();
@@ -45,8 +44,6 @@ class AccountController extends GetxController {
     isLoading.value = true;
     try {
       final response = await dioClient.post(ApiConst.accountPlans);
-      print("leverages values -------------");
-      print(response.data);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         final data = List<Map<String, dynamic>>.from(response.data['data']);
         accountPlans.value = data.map((e) => AccountPlanModel.fromJson(e)).toList();

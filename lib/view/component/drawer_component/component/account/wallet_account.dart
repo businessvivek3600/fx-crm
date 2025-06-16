@@ -28,14 +28,14 @@ class WalletAccountScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xff151527),
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.2), // White shadow
-                      spreadRadius: 2,
-                      blurRadius: 6,
-                      offset: const Offset(3,0.1),
-                    ),
-                  ],
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.white.withOpacity(0.2), // White shadow
+                  //     spreadRadius: 2,
+                  //     blurRadius: 6,
+                  //     offset: const Offset(3,0.1),
+                  //   ),
+                  // ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
