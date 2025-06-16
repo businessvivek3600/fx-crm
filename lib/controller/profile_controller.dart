@@ -14,7 +14,7 @@ class ProfileController extends GetxController {
   AuthController authController = Get.put(AuthController());
   var isLoading = false.obs;
   var ProfileData = {}.obs;
-    // 📸 Reactive variable for profile image
+  // 📸 Reactive variable for profile image
   final Rx<File?> imageFile = Rx<File?>(null);
 
   // 📸 Method to update picked image
@@ -54,8 +54,7 @@ class ProfileController extends GetxController {
   }
 
   /// Update user profile via API using FormData
-  Future<void> updateProfile() async {
-    isLoading.value = true;
+  Future<void> updateProfile({Function(dynamic)? onSuccess}) async {
     try {
       final formData = dio.FormData.fromMap({
         "first_name": firstname.text,
@@ -75,6 +74,19 @@ class ProfileController extends GetxController {
         "customer_address_2": address2.text,
         "zip": zip.text,
       });
+      if (imageFile.value != null) {
+        formData.files.add(
+          MapEntry(
+            'profile_image',
+            dio.MultipartFile.fromFileSync(
+              imageFile.value!.path,
+              filename: imageFile.value!.path.split('/').last,
+            ),
+          ),
+        );
+      }
+      print(formData.toString());
+      isLoading.value = true;
 
       final response = await dioClient.post(
         ApiConst.updateProfile,
@@ -85,6 +97,7 @@ class ProfileController extends GetxController {
       print(formData.fields);
       if (response.statusCode == 200 && response.data['status'] == 1) {
         Customer customerData = Customer.fromJson(response.data['data']);
+        onSuccess?.call(customerData);
         AppController.to.saveCustomerData(customerData);
         SessionController.to.saveSession(
           SessionController.to.token.value,
@@ -98,6 +111,7 @@ class ProfileController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+        clearForm();
       } else {
         Get.snackbar(
           'Error',
