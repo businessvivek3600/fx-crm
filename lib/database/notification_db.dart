@@ -1,18 +1,22 @@
 import 'dart:async';
-
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class NotificationDatabase {
-  static final NotificationDatabase _instance = NotificationDatabase._internal();
+  static final NotificationDatabase _instance =
+      NotificationDatabase._internal();
   factory NotificationDatabase() => _instance;
   NotificationDatabase._internal();
 
   Database? _database;
   final StreamController<List<Map<String, dynamic>>> _notificationController =
-  StreamController.broadcast();
+      StreamController.broadcast();
+  final StreamController<int> _countController =
+      StreamController<int>.broadcast();
 
-  Stream<List<Map<String, dynamic>>> get notificationStream => _notificationController.stream;
+  Stream<List<Map<String, dynamic>>> get notificationStream =>
+      _notificationController.stream;
+  Stream<int> get countStream => _countController.stream;
 
   Future<Database> get database async {
     return _database ??= await _initDB();
@@ -42,7 +46,7 @@ class NotificationDatabase {
   Future<void> insertNotification(Map<String, dynamic> data) async {
     final db = await database;
     await db.insert('notifications', data);
-    _pushUpdate(); // Update the stream
+    _pushUpdate();
   }
 
   Future<void> deleteNotification(int id) async {
@@ -55,12 +59,14 @@ class NotificationDatabase {
     final db = await database;
     final data = await db.query('notifications', orderBy: 'id DESC');
     _notificationController.add(data);
+    _countController.add(data.length); // 👈 Push count update
   }
 
   Future<List<Map<String, dynamic>>> getAllNotifications() async {
     final db = await database;
     final data = await db.query('notifications', orderBy: 'id DESC');
     _notificationController.add(data); // Initial push
+    _countController.add(data.length); // Initial count push
     return data;
   }
 

@@ -1,14 +1,17 @@
 import 'dart:async';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:fx_crm/database/notification_db.dart';
 import 'package:fx_crm/view/customer_profile_screen.dart';
 import 'package:lottie/lottie.dart';
 import '../controller/app_controller.dart';
+import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
 import 'component/notification/notification_screen.dart';
 
+// colors: [Color(0xFF2E2E2E), Color(0xff021b43)],
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -20,19 +23,15 @@ class _DashboardScreenState extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
-  late Timer textTimer;
-
-  int currentMessageIndex = 0;
-
-  final AppController appController = AppController.to;
-
-  final List<String> motivationalTexts = [
+  List<String> motivationalTexts = [
     "MT5 Trading",
     "Trade More Earn More",
     "Grow Your Portfolio",
     "Invest Smartly",
     "Profit Everyday",
   ];
+  int currentMessageIndex = 0;
+  late Timer textTimer;
 
   @override
   void initState() {
@@ -41,13 +40,12 @@ class _DashboardScreenState extends State<DashboardScreen>
     _controller = AnimationController(
       duration: const Duration(seconds: 10),
       vsync: this,
-    )..repeat();
+    )..repeat(reverse: false);
 
     _animation = Tween<Offset>(
       begin: const Offset(-1.5, 0),
       end: const Offset(3.5, 0),
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
-
     textTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       setState(() {
         currentMessageIndex =
@@ -65,8 +63,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   @override
   Widget build(BuildContext context) {
-    final customer = appController.customer.value;
-
+    final customer = AppController.to.customer.value;
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -75,18 +72,19 @@ class _DashboardScreenState extends State<DashboardScreen>
           preferredSize: const Size.fromHeight(70),
           child: Stack(
             children: [
+              // Background Gradient
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF2E2E2E), Color(0xff021b43)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black26,
                       blurRadius: 10,
@@ -95,6 +93,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ],
                 ),
               ),
+
+              // Lottie animation sliding left to right
               Positioned(
                 top: 30,
                 child: SlideTransition(
@@ -110,26 +110,27 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
               ),
 
-
+              // AppBar content
               AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
                 leading: Builder(
-                  builder: (context) => Padding(
-                    padding: const EdgeInsets.only(left: 12.0),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: () => Scaffold.of(context).openDrawer(),
-                      child: const Icon(Icons.menu, color: Colors.white),
-                    ),
-                  ),
+                  builder:
+                      (context) => Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () => Scaffold.of(context).openDrawer(),
+                          child: const Icon(Icons.menu, color: Colors.white),
+                        ),
+                      ),
                 ),
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      customer?.firstName ?? '',
+                      customer!.firstName!,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -140,10 +141,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 500),
                       transitionBuilder:
-                          (child, animation) => FadeTransition(
-                        opacity: animation,
-                        child: child,
-                      ),
+                          (child, animation) =>
+                              FadeTransition(opacity: animation, child: child),
                       child: Text(
                         motivationalTexts[currentMessageIndex],
                         key: ValueKey(currentMessageIndex),
@@ -159,61 +158,71 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
                 centerTitle: false,
                 actions: [
+                  // 🔔 Notification with badge count
                   Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: Obx(() {
-                      int count = appController.notificationCount.value;
-                      return Stack(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.notifications_none,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              appController.resetNotification();
-                              Get.to(() => const NotificationScreen());
-                            },
-                          ),
-                          if (count > 0)
-                            Positioned(
-                              right: 10,
-                              top: 10,
-                              child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 18,
-                                  minHeight: 18,
-                                ),
-                                child: Text(
-                                  '$count',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
+                    padding: const EdgeInsets.only(right: 6.0),
+                    child: StreamBuilder<int>(
+                      stream: NotificationDatabase().countStream,
+                      builder: (context, snapshot) {
+                        final count = snapshot.data ?? 0;
+
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.notifications_none,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const NotificationScreen(),
                                   ),
-                                  textAlign: TextAlign.center,
+                                );
+                              },
+                            ),
+                            if (count > 0)
+                              Positioned(
+                                right: 6,
+                                top: 6,
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 20,
+                                    minHeight: 20,
+                                  ),
+                                  child: Text(
+                                    '$count',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
-                      );
-                    }),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                  
+
+                  // 👤 Profile icon
                   IconButton(
                     icon: const Icon(Icons.person_outline, color: Colors.white),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CustomerProfileScreen(),
+                    onPressed:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CustomerProfileScreen(),
+                          ),
                         ),
-                      );
-                    },
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -221,6 +230,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
         ),
+
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -318,6 +328,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// Title and Icon
           Row(
             children: [
               Expanded(
@@ -330,6 +341,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
           const SizedBox(height: 12),
+
+          /// Value
           Text(
             value,
             style: const TextStyle(
@@ -338,7 +351,10 @@ class _DashboardScreenState extends State<DashboardScreen>
               color: Colors.white,
             ),
           ),
+
           const SizedBox(height: 6),
+
+          /// Subtitle or progress bar
           if (subTitle != null)
             Text(
               subTitle,
@@ -363,18 +379,19 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
               ),
             ),
+
           const SizedBox(height: 10),
           SizedBox(
             height: 30,
             width: double.infinity,
-            child: CustomPaint(painter: _FakeGraphPainter()),
+            child: CustomPaint(
+              painter: _FakeGraphPainter(),
+            ), // Optional: replace with actual chart
           ),
         ],
       ),
     );
-    
   }
-
 
   Widget _buildDailyReturnCard() {
     return Container(
