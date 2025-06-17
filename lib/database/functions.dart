@@ -3,8 +3,47 @@ library;
 
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+Future<bool> requestCameraPermissions() async {
+  final status = await Permission.camera.request();
+
+  return status == PermissionStatus.granted;
+}
+
+Future<bool> requestGallaryPermissions() async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  AndroidDeviceInfo? androidInfo;
+  if (Platform.isAndroid) {
+    androidInfo = await deviceInfo.androidInfo;
+  }
+  List<Permission> permissions = [];
+  if (androidInfo != null) {
+    print(
+      "Android Version: ${androidInfo.name} ${androidInfo.version.release}",
+    );
+    print("Android SDK Version: ${androidInfo.version.sdkInt}");
+    print("Android  Model: ${androidInfo.model}");
+    print("Android Device: ${androidInfo.device}");
+    if (androidInfo.version.sdkInt >= 33) {
+      permissions.add(Permission.photos);
+      // permissions.add(Permission.videos);
+    } else {
+      permissions.add(Permission.storage);
+    }
+  } else {
+    permissions.add(Permission.storage);
+  }
+  if (Platform.isIOS) {
+    permissions.add(Permission.photos);
+  }
+  final statuses = await [...permissions].request();
+  print("Permissions Statuses: $statuses");
+
+  return statuses.values.every((status) => status.isGranted);
+}
 
 class FileStorage {
   static Future<String?> getExternalDocumentPath() async {

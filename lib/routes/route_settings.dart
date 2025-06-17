@@ -8,6 +8,7 @@ import 'package:fx_crm/view/component/drawer_component/component/account/account
 import 'package:fx_crm/view/component/drawer_component/component/account/transaction_history.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/wallet_account.dart';
 import 'package:fx_crm/view/component/drawer_component/component/download/download_screen.dart';
+import 'package:fx_crm/view/component/drawer_component/component/download/download_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/bank_wallet_screen.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/change_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/edit_profile.dart';
@@ -123,11 +124,6 @@ final router = GoRouter(
       path: Paths.support,
       name: Routes.support,
       builder: (context, state) => SupportPage(),
-    ),
-    GoRoute(
-      path: Paths.downloads,
-      name: Routes.downloads,
-      builder: (context, state) => DashboardScreen(),
     ),
 
     /// You can uncomment and use these if needed:
