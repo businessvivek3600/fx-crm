@@ -63,7 +63,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
         body: SafeArea(
           child:Obx(() {
             final customer = dashBoardController.profileData.value;
-
+            final networkImage = customer?.image;
             if (dashBoardController.isLoading.value) {
               return _buildShimmer();
             }
@@ -79,14 +79,14 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   /// Profile Info
                   Column(
                     children: [
-                      const CircleAvatar(
+                     CircleAvatar(
                         radius: 40,
-                        backgroundColor: Colors.blueGrey,
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Colors.white,
-                        ),
+                        backgroundImage:   (networkImage != null && networkImage.isNotEmpty
+                            ? NetworkImage(networkImage)
+                            : const AssetImage(
+                          'assets/images/default_user.png',
+                        ))
+                        as ImageProvider,
                       ),
                       const SizedBox(height: 10),
                       Text(
