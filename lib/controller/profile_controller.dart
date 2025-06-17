@@ -74,6 +74,7 @@ class ProfileController extends GetxController {
         "customer_address_2": address2.text,
         "zip": zip.text,
       });
+
       if (imageFile.value != null) {
         formData.files.add(
           MapEntry(
@@ -85,7 +86,6 @@ class ProfileController extends GetxController {
           ),
         );
       }
-      print(formData.toString());
       isLoading.value = true;
 
       final response = await dioClient.post(

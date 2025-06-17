@@ -41,10 +41,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>We need camera access to take photos for KYC verification.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need photo library access to select documents or selfies.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>FirebaseAppDelegateProxyEnabled</key>
@@ -71,5 +67,15 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- Permissions -->
+    	<key>NSCameraUsageDescription</key>
+        <string>We need camera access to allow profile photo click</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>We need photo library access to pick a profile photo</string>
+
+    	<key>CADisableMinimumFrameDurationOnPhone</key>
+    	<true/>
+    	<key>UIApplicationSupportsIndirectInputEvents</key>
+    	<true/>
 </dict>
 </plist>

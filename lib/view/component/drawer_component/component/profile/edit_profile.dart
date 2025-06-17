@@ -7,6 +7,7 @@ import 'package:fx_crm/controller/profile_controller.dart';
 import 'package:fx_crm/database/functions.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../../controller/app_controller.dart';
 import '../../../../../models/customer_model.dart';
@@ -23,75 +24,6 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final ProfileController editProfileController = Get.put(ProfileController());
   final AuthController authController = Get.put(AuthController());
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> pickImage() async {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text('Camera'),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  bool? hasPermission = await requestCameraPermissions();
-                  if (!hasPermission) {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Camera permission denied'),
-                        ),
-                      );
-                    }
-                    return;
-                  }
-                  // If permission is granted, proceed to pick image
-                  final XFile? picked = await _picker.pickImage(
-                    source: ImageSource.camera,
-                  );
-                  if (picked != null) {
-                    final file = File(picked.path);
-                    editProfileController.setImageFile(file);
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Gallery'),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  bool hasPermission = await requestGallaryPermissions();
-                  if (!hasPermission) {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Gallery permission denied'),
-                        ),
-                      );
-                    }
-                    return;
-                  }
-                  final XFile? picked = await _picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
-                  if (picked != null) {
-                    final file = File(picked.path);
-                    editProfileController.setImageFile(file);
-                  }
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -348,12 +280,127 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+
+  Future<void> _pickImage(ImageSource source) async {
+    // Ask permissions
+    await _requestPermission(source);
+
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source, imageQuality: 85);
+
+    if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+      editProfileController.setImageFile(imageFile);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No image selected.'),
+          ),
+        );
+      }
+    }
+  }
+  Future<bool> _requestPermission(ImageSource source) async {
+    Permission permission;
+
+    if (source == ImageSource.camera) {
+      permission = Permission.camera;
+    } else {
+      permission = Platform.isIOS ? Permission.photos : Permission.storage;
+    }
+
+    var status = await permission.status;
+    print("Initial Permission Status: $status");
+
+    if (status.isGranted) {
+      return true;
+    }
+
+    if (status.isDenied || status.isLimited || status.isRestricted) {
+      final newStatus = await permission.request();
+      print("New Permission Status: $newStatus");
+
+      if (newStatus.isGranted) {
+        return true;
+      } else if (newStatus.isPermanentlyDenied) {
+        return await _showPermissionDeniedDialog();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Permission denied. Please allow access.')),
+        );
+      }
+    } else if (status.isPermanentlyDenied) {
+      print("Permission Permanently Denied");
+      return await _showPermissionDeniedDialog();
+    }
+
+    return false;
+  }
+
+  Future<bool> _showPermissionDeniedDialog() async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Permission Required'),
+        content: const Text('Please allow access from settings to continue.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              openAppSettings();
+              Navigator.of(context).pop(false);
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    ) ??
+        false;
+  }
+
+
+
+  void _showImageSourceActionSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt),
+              title: Text('Take Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo),
+              title: Text('Choose from Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
   Widget _buildProfileCard(Customer? customer) {
     return Obx(() {
       final networkImage = customer?.image;
       final image = editProfileController.imageFile.value;
-
+     print("initial image: $image");
+     print("networkImage: $networkImage");
       return Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.08),
           borderRadius: BorderRadius.circular(20),
@@ -382,7 +429,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   bottom: 0,
                   right: 0,
                   child: GestureDetector(
-                    onTap: pickImage,
+                    onTap: _showImageSourceActionSheet,
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: const BoxDecoration(
@@ -424,16 +471,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
             const SizedBox(height: 16),
-            const Divider(),
-            _buildSocialLinkRow(
-              Icons.language,
-              'Website',
-              'https://doforex.com',
-            ),
-            _buildSocialLinkRow(Icons.code, 'Github', 'Do forex'),
-            _buildSocialLinkRow(Icons.alternate_email, 'Twitter', '@Do-forex'),
-            _buildSocialLinkRow(Icons.camera_alt, 'Instagram', 'Do-forex'),
-            _buildSocialLinkRow(Icons.facebook, 'Facebook', 'Do-forex'),
+            // const Divider(),
+            // _buildSocialLinkRow(
+            //   Icons.language,
+            //   'Website',
+            //   'https://doforex.com',
+            // ),
+            // _buildSocialLinkRow(Icons.code, 'Github', 'Do forex'),
+            // _buildSocialLinkRow(Icons.alternate_email, 'Twitter', '@Do-forex'),
+            // _buildSocialLinkRow(Icons.camera_alt, 'Instagram', 'Do-forex'),
+            // _buildSocialLinkRow(Icons.facebook, 'Facebook', 'Do-forex'),
           ],
         ),
       );
