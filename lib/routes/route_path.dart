@@ -39,3 +39,4 @@ class Paths {
   static const String downloads = '${Routes.downloads}';
   static const String logout = '${Routes.logout}';
 }
+

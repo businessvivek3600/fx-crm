@@ -121,6 +121,7 @@ class CustomDrawer extends StatelessWidget {
                       // },
                     ],
                   ),
+
                   /// Funds
                   _buildExpansionTile(
                     title: 'Funds',
@@ -283,8 +284,6 @@ class CustomDrawer extends StatelessWidget {
                   //   ],
                   // ),
 
-
-
                   // Support
                   _buildListTile(
                     icon: Icons.support_agent_outlined,
@@ -359,13 +358,14 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   // if (AppController.to.customer.value?.customerEmail ==
                   //     "touchwoodrohit@gmail.com")
-                    _buildListTile(
-                      icon: Icons.delete_outline_outlined,
-                      onTap: () {
-                       Get.to(() => const DeleteAccountScreen());
-                      }, title: 'Delete Account',
-                    ),
-                  SizedBox(height: 20,),
+                  _buildListTile(
+                    icon: Icons.delete_outline_outlined,
+                    onTap: () {
+                      Get.to(() => const DeleteAccountScreen());
+                    },
+                    title: 'Delete Account',
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
