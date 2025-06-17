@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/utils/theme.dart';
 
-import '../../../../../controller/app_controller.dart';
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 import 'widget/set_balance_dialog.dart';

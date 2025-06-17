@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../models/customer_model.dart';
-import '../view/component/auth/login_screen.dart';
-
 
 class SessionController extends GetxController {
   static SessionController get to => Get.find();
@@ -37,17 +35,23 @@ class SessionController extends GetxController {
     }
   }
 
-  void clearSession({bool redirectToLogin = true,}) {
+  void clearSession({bool redirectToLogin = true}) {
     token.value = '';
     isLoggedIn.value = false;
     customer.value = null;
+
     storage.remove('token');
     storage.remove('customer');
 
     if (redirectToLogin) {
-      Get.snackbar('Session Expired', 'Please login again',backgroundColor: Colors.redAccent, colorText: Colors.white,
-          duration: Duration(seconds: 2));
-      Get.offAll(() => LoginScreen());
+      Get.snackbar(
+        'Session Expired',
+        'Please login again',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        duration: Duration(seconds: 2),
+      );
+
     }
   }
 }

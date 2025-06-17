@@ -1,4 +1,3 @@
-
 class Customer {
   final int? id;
   final String? customerId;
@@ -483,3 +482,4 @@ class Customer {
     };
   }
 }
+

@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-
-import '../../../../../controller/dashboard_controller.dart';
-import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
@@ -15,23 +10,19 @@ class TransactionHistoryScreen extends StatefulWidget {
 }
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
-  // late final DashBoardController dashBoardController;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   dashBoardController = Get.put(DashBoardController(dioClient: dioClient)); // Provide dioClient
-  //   dashBoardController.getDashboardData();
-  //
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return  BackgroundContainer(
-      child:  Scaffold(
+    return BackgroundContainer(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
-          title: const Text('Transaction History',style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 1.2),
+          title: const Text(
+            'Transaction History',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
           ),
           elevation: 0,
           centerTitle: true,
@@ -47,12 +38,12 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Add Deposit Fund logic
+                      // Add Export logic
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Color(0xff2e2e2e),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
@@ -65,7 +56,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
               const SizedBox(height: 20),
 
-              /// DataGrid
+              /// Transaction Card Example
               TransactionCard(
                 transactionDate: '27/04/2025 19:44',
                 transactionType: 'Deposit',
@@ -75,14 +66,14 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 amount: 1000.00,
                 status: 'Incomplete',
               ),
-
-      ],
-      ),
-      ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
+
 class TransactionCard extends StatelessWidget {
   final String transactionDate;
   final String transactionType;
@@ -105,55 +96,67 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xff151527),
         borderRadius: BorderRadius.circular(12),
-      ),
-      color: Colors.grey.shade100,
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildRow(Icons.calendar_today, "Transaction Date", transactionDate),
-            const SizedBox(height: 15),
-            _buildRow(Icons.swap_vert, "Transaction Type", transactionType),
-            const SizedBox(height: 15),
-            _buildRow(Icons.payment, "Payment Method", paymentMethod),
-            const SizedBox(height: 15),
-            _buildRow(Icons.account_balance_wallet, "Source", source),
-            const SizedBox(height: 15),
-            _buildRow(Icons.account_circle, "Account", account),
-            const SizedBox(height: 15),
-            _buildRow(Icons.attach_money, "Amount", "\$$amount"),
-            const SizedBox(height: 15),
-            _buildRow(
-              Icons.info_outline,
-              "Status",
-              status,
-              statusColor: status.toLowerCase() == 'incomplete' ? Colors.orange : Colors.green,
-            ),
-          ],
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildRow(Icons.calendar_today, "Transaction Date", transactionDate),
+          const SizedBox(height: 12),
+          _buildRow(Icons.swap_vert, "Transaction Type", transactionType),
+          const SizedBox(height: 12),
+          _buildRow(Icons.payment, "Payment Method", paymentMethod),
+          const SizedBox(height: 12),
+          _buildRow(Icons.account_balance_wallet, "Source", source),
+          const SizedBox(height: 12),
+          _buildRow(Icons.account_circle, "Account", account),
+          const SizedBox(height: 12),
+          _buildRow(Icons.attach_money, "Amount", "\$$amount"),
+          const SizedBox(height: 12),
+          _buildRow(
+            Icons.info_outline,
+            "Status",
+            status,
+            statusColor: status.toLowerCase() == 'incomplete'
+                ? Colors.orange
+                : Colors.green,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildRow(IconData icon, String title, String value, {Color statusColor = Colors.black87}) {
+  Widget _buildRow(IconData icon, String title, String value,
+      {Color statusColor = Colors.white}) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: Colors.deepPurpleAccent),
+        Icon(icon, size: 20, color: const Color(0xff0262f7)),
         const SizedBox(width: 8),
         Expanded(
           flex: 2,
           child: Text(
             title,
-            textAlign: TextAlign.justify,
+            textAlign: TextAlign.left,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-
-              color: Colors.black87,
+              color: Colors.white,
             ),
           ),
         ),
@@ -164,6 +167,7 @@ class TransactionCard extends StatelessWidget {
             textAlign: TextAlign.right,
             style: TextStyle(
               color: statusColor,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

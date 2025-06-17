@@ -13,6 +13,7 @@ class ThemeUtils {
       foregroundColor: Colors.white,
       elevation: 0,
     ),
+    iconTheme: IconThemeData(color: Colors.white),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
@@ -40,10 +41,13 @@ class ThemeUtils {
       ),
     ),
     colorScheme: ColorScheme.fromSeed(
-      seedColor: primaryColor,
+      seedColor: primaryColor, 
       primary: primaryColor,
       secondary: Colors.grey,
       brightness: Brightness.light,
+    ).copyWith(
+      onPrimary: Colors.white, // for text on primary color surfaces
+      onSecondary: Colors.white,
     ),
     useMaterial3: true,
   );

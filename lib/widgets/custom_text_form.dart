@@ -9,9 +9,16 @@ class CustomTextFormField extends StatelessWidget {
   final String? initialValue;
   final VoidCallback? onTap;
   final TextStyle? textStyle;
+  final Color? labelColor;
   final Icon? icon;
+  final FocusNode? focusNode;
+  final Color? fillColor;
+
+  final Color? focusedBorder; // 🛑 border color
+  final Color? enabledBorder; // 🛑 border color
   final String? Function(String?)? validator;       // 🛑 validator callback
   final void Function(String)? onChanged;
+  final int? maxLines;
 
   const CustomTextFormField({
     super.key,
@@ -25,7 +32,9 @@ class CustomTextFormField extends StatelessWidget {
     this.validator,    // 🛑 initialize
     this.onChanged,
     this.textStyle,
-    this.icon
+    this.icon,
+    this.maxLines,
+    this.labelColor, this.fillColor, this.focusNode, this.enabledBorder, this.focusedBorder
   });
 
   @override
@@ -33,37 +42,39 @@ class CustomTextFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+        Text(label, style: TextStyle(color: labelColor ?? Colors.white70, fontSize: 14)),
         const SizedBox(height: 6),
         TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
-          initialValue: controller == null ? initialValue : null, // 🛑 Important
+          initialValue: controller == null ? initialValue : null,
           readOnly: readOnly || isDate,
-          onTap:  onTap,
-          validator: validator, // 🛑 attach validator
+          onTap: onTap,
+          validator: validator,
           onChanged: onChanged,
+          focusNode: focusNode,
+          maxLength: maxLines ,
           decoration: InputDecoration(
             prefixIcon: icon,
             hintText: hint,
-            hintStyle: textStyle ?? const TextStyle(color: Colors.grey),
+            hintStyle: textStyle ?? const TextStyle(color: Colors.white60),
             filled: true,
-            fillColor: Colors.grey.shade100,
+            fillColor: Colors.white.withOpacity(0.08),
             suffixIcon: isDate
-                ? const Icon(Icons.calendar_today, color: Colors.grey, size: 20)
+                ? const Icon(Icons.calendar_today, color: Colors.white70, size: 20)
                 : null,
-
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(12),
+              borderSide:  BorderSide(color:enabledBorder ?? Colors.white12),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.blueAccent),
+              borderRadius: BorderRadius.circular(12),
+              borderSide:  BorderSide(color:focusedBorder ?? Colors.white30),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
-          style: const TextStyle(color: Colors.black),
-        ),
+          style:  TextStyle(color: labelColor ?? Colors.white),
+        )
       ],
     );
   }

@@ -19,7 +19,7 @@ void showSetBalanceDialog(BuildContext context) {
                 alignment: Alignment.topRight,
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: Icon(Icons.close, size: 24),
+                  child: Icon(Icons.close, size: 24,color: Colors.black54,),
                 ),
               ),
               const SizedBox(height: 10),

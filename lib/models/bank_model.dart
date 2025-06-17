@@ -1,23 +1,23 @@
 class Bank {
-  final String title;
-  final String bankDetailId;
-  final String bank;
-  final String address;
-  final String accountHolderName;
-  final String accountNumber;
-  final String ifscCode;
+  final String? title;
+  final int? bankDetailId;
+  final String? bank;
+  final String? address;
+  final String? accountHolderName;
+  final String? accountNumber;
+  final String? ifscCode;
   final String? btcAddress;
   final String? bizzcoinAddress;
   final String? usdtAddress;
 
   Bank({
-    required this.title,
-    required this.bankDetailId,
-    required this.bank,
-    required this.address,
-    required this.accountHolderName,
-    required this.accountNumber,
-    required this.ifscCode,
+     this.title,
+     this.bankDetailId,
+     this.bank,
+     this.address,
+     this.accountHolderName,
+     this.accountNumber,
+     this.ifscCode,
     this.btcAddress,
     this.bizzcoinAddress,
     this.usdtAddress,
@@ -26,7 +26,7 @@ class Bank {
   factory Bank.fromJson(Map<String, dynamic> json) {
     return Bank(
       title: json['title'],
-      bankDetailId: json['bankdetail_id'],
+      bankDetailId: int.tryParse(json['bankdetail_id']?.toString() ?? ''),
       bank: json['bank'],
       address: json['address'],
       accountHolderName: json['account_holder_name'],

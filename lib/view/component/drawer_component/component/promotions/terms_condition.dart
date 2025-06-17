@@ -1,93 +1,112 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_html/flutter_html.dart'; // Import the flutter_html package
+import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
+import '../../../../../controller/dashboard_controller.dart';
 import '../../../../../widgets/bg_container.dart';
 
-class TermsAndConditionsScreen extends StatelessWidget {
+class TermsAndConditionsScreen extends StatefulWidget {
   const TermsAndConditionsScreen({super.key});
 
   @override
+  State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
+}
+
+class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
+  final DashBoardController dashBoardController = Get.put(DashBoardController());
+  @override
+  void initState() {
+    super.initState();
+    dashBoardController.getTermsAndCondition();
+
+  }
+  @override
   Widget build(BuildContext context) {
-    return   BackgroundContainer(
-      child:  Scaffold(
+    return BackgroundContainer(
+      child: Scaffold(
+        
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Terms & Conditions',style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 1.2),
+          surfaceTintColor: Colors.transparent,
+          title: const Text(
+            'Terms & Conditions',
+            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
           ),
           elevation: 0,
           centerTitle: true,
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Card(
-            elevation: 1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            color: Colors.grey.shade100,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.description_outlined, color: Colors.blueGrey.shade700),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Term & Conditions',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey.shade800,
+            padding: const EdgeInsets.all(16),
+            child: Card(
+              elevation: 1,
+            
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                
+              ),
+              color: Color(0xff151527),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.description_outlined, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Terms & Conditions',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 30, thickness: 1),
-                  _buildParagraph(
-                    "Please read the following rules carefully before signing in.",
-                  ),
-                  _buildParagraph(
-                    "You agree to be of legal age in your country to partake in this program, and in all cases, your minimal age must be 18 years.",
-                  ),
-                  _buildParagraph(
-                    "qbn.com is not available to the general public and is open only to qualified members. Every deposit is considered a private transaction between forexmountains.com and its Members.",
-                  ),
-                  _buildParagraph(
-                    "As a private transaction, this program is exempt from the US Securities Act of 1933, and other regulations. We are not FDIC-insured. We are not a licensed bank or security firm.",
-                  ),
-                  _buildParagraph(
-                    "You agree that all information from forexmountains.com is private, confidential, and must be protected. Communications are not offers or solicitations for investments where restricted.",
-                  ),
-                  _buildParagraph(
-                    "All data given by a member will be used privately and not disclosed to third parties. forexmountains.com is not liable for any loss of data.",
-                  ),
-                  _buildParagraph(
-                    "You agree to hold all principals and members harmless of any liability. Investments are at your own risk. Past performance does not guarantee future performance.",
-                  ),
-                  _buildParagraph(
-                    "We reserve the right to change the rules, commissions, and rates of the program at any time without notice. You must review the current terms regularly.",
-                  ),
-                ],
+                      ],
+                    ),
+                    const Divider(height: 30, thickness: 1),
+              Obx(() {
+                if (dashBoardController.isLoading.value) {
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Container(
+                      height: 20,
+                      width: 200,
+                      color: Colors.white,
+                      margin: const EdgeInsets.only(bottom: 12),
+                    ),
+                    Container(
+                      height: 14,
+                      width: double.infinity,
+                      color: Colors.white,
+                      margin: const EdgeInsets.only(bottom: 8),
+                    ),
+                    Container(
+                      height: 14,
+                      width: double.infinity,
+                      color: Colors.white,
+                      margin: const EdgeInsets.only(bottom: 8),
+                    )]));
+                }
+                return Html(
+                      data: dashBoardController.termsHtml.value ?? "",
+                      style: {
+                        "p": Style(
+                          color: Colors.white,
+                          fontSize: FontSize(15),
+                        ),
+                      },
+                    );}),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
+          )
 
-  Widget _buildParagraph(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Colors.blueGrey.shade700,
-          fontSize: 15,
-          height: 1.5,
-        ),
-        textAlign: TextAlign.justify,
       ),
     );
   }
