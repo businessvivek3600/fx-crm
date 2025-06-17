@@ -2,7 +2,6 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:fx_crm/utils/theme.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/change_account_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/create_account.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/set_balance_dialog.dart';

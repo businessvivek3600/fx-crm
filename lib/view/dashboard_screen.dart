@@ -1,16 +1,14 @@
 import 'dart:async';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:fx_crm/view/customer_profile_screen.dart';
 import 'package:lottie/lottie.dart';
 import '../controller/app_controller.dart';
-import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
 import 'component/notification/notification_screen.dart';
 
-// colors: [Color(0xFF2E2E2E), Color(0xff021b43)],
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -22,15 +20,19 @@ class _DashboardScreenState extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
-  List<String> motivationalTexts = [
+  late Timer textTimer;
+
+  int currentMessageIndex = 0;
+
+  final AppController appController = AppController.to;
+
+  final List<String> motivationalTexts = [
     "MT5 Trading",
     "Trade More Earn More",
     "Grow Your Portfolio",
     "Invest Smartly",
     "Profit Everyday",
   ];
-  int currentMessageIndex = 0;
-  late Timer textTimer;
 
   @override
   void initState() {
@@ -39,12 +41,13 @@ class _DashboardScreenState extends State<DashboardScreen>
     _controller = AnimationController(
       duration: const Duration(seconds: 10),
       vsync: this,
-    )..repeat(reverse: false);
+    )..repeat();
 
     _animation = Tween<Offset>(
       begin: const Offset(-1.5, 0),
       end: const Offset(3.5, 0),
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+
     textTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       setState(() {
         currentMessageIndex =
@@ -62,7 +65,8 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   @override
   Widget build(BuildContext context) {
-    final customer = AppController.to.customer.value;
+    final customer = appController.customer.value;
+
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -71,19 +75,18 @@ class _DashboardScreenState extends State<DashboardScreen>
           preferredSize: const Size.fromHeight(70),
           child: Stack(
             children: [
-              // Background Gradient
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF2E2E2E), Color(0xff021b43)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: Colors.black26,
                       blurRadius: 10,
@@ -92,8 +95,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ],
                 ),
               ),
-
-              // Lottie animation sliding left to right
               Positioned(
                 top: 30,
                 child: SlideTransition(
@@ -109,31 +110,29 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
               ),
 
-              // AppBar content
+
               AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
                 leading: Builder(
-                  builder:
-                      (context) => Padding(
-                        padding: const EdgeInsets.only(left: 12.0),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(12),
-                          onTap: () => Scaffold.of(context).openDrawer(),
-                          child: const Icon(Icons.menu, color: Colors.white),
-                        ),
-                      ),
+                  builder: (context) => Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: const Icon(Icons.menu, color: Colors.white),
+                    ),
+                  ),
                 ),
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      customer!.firstName!,
-                      style: TextStyle(
+                      customer?.firstName ?? '',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-
                         letterSpacing: 1,
                       ),
                     ),
@@ -141,8 +140,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 500),
                       transitionBuilder:
-                          (child, animation) =>
-                              FadeTransition(opacity: animation, child: child),
+                          (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      ),
                       child: Text(
                         motivationalTexts[currentMessageIndex],
                         key: ValueKey(currentMessageIndex),
@@ -158,28 +159,61 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
                 centerTitle: false,
                 actions: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_none,
-                      color: Colors.white,
-                    ),
-                    onPressed:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const NotificationScreen(),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4.0),
+                    child: Obx(() {
+                      int count = appController.notificationCount.value;
+                      return Stack(
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.notifications_none,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              appController.resetNotification();
+                              Get.to(() => const NotificationScreen());
+                            },
                           ),
-                        ),
+                          if (count > 0)
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 18,
+                                  minHeight: 18,
+                                ),
+                                child: Text(
+                                  '$count',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }),
                   ),
+                  
                   IconButton(
                     icon: const Icon(Icons.person_outline, color: Colors.white),
-                    onPressed:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const CustomerProfileScreen(),
-                          ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CustomerProfileScreen(),
                         ),
+                      );
+                    },
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -187,7 +221,6 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
         ),
-
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -285,7 +318,6 @@ class _DashboardScreenState extends State<DashboardScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Title and Icon
           Row(
             children: [
               Expanded(
@@ -298,8 +330,6 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
           const SizedBox(height: 12),
-
-          /// Value
           Text(
             value,
             style: const TextStyle(
@@ -308,10 +338,7 @@ class _DashboardScreenState extends State<DashboardScreen>
               color: Colors.white,
             ),
           ),
-
           const SizedBox(height: 6),
-
-          /// Subtitle or progress bar
           if (subTitle != null)
             Text(
               subTitle,
@@ -336,19 +363,18 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
               ),
             ),
-
           const SizedBox(height: 10),
           SizedBox(
             height: 30,
             width: double.infinity,
-            child: CustomPaint(
-              painter: _FakeGraphPainter(),
-            ), // Optional: replace with actual chart
+            child: CustomPaint(painter: _FakeGraphPainter()),
           ),
         ],
       ),
     );
+    
   }
+
 
   Widget _buildDailyReturnCard() {
     return Container(

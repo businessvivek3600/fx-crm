@@ -1,14 +1,12 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/routes/route_name.dart';
-import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposit_fund.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/deposite_withdraw_history.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/withdraw_fund.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../controller/app_controller.dart';
 import '../../../controller/auth_controller.dart';

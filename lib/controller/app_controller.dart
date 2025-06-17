@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,12 +22,18 @@ class AppController extends GetxController {
 
   AppInfoModel? appInfoModel;
 
+  // 🔔 Notification Count
+  RxInt notificationCount = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
     getAppInfo();
-    // fetchDownloadData();
   }
+
+  // 🔔 Notification Logic
+  void incrementNotification() => notificationCount++;
+  void resetNotification() => notificationCount.value = 0;
 
   // Session Sync
   void syncWithSession() {
@@ -40,12 +45,10 @@ class AppController extends GetxController {
     }
   }
 
-  // Save methods
   void saveToken(String newToken) => token.value = newToken;
   void setLoginStatus(bool status) => isLoggedIn.value = status;
   void saveCustomerData(Customer newCustomer) => customer.value = newCustomer;
 
-  // Fetch App Info
   Future<void> getAppInfo() async {
     isLoading.value = true;
     try {
@@ -76,12 +79,7 @@ class AppController extends GetxController {
   Future<void> fetchDownloadData() async {
     isLoading.value = true;
     try {
-      final response = await dioClient.post(
-        ApiConst.downloads,
-      ); // ✅ Use POST here
-      print("--------------------------------------------");
-      print(response.data);
-
+      final response = await dioClient.post(ApiConst.downloads);
       if (response.statusCode == 200) {
         final data = DownloadDataModel.fromJson(response.data);
         downloadDataModel.value = data;
@@ -99,7 +97,6 @@ class AppController extends GetxController {
     }
   }
 
-  // Snackbar Utility
   void _showErrorSnackbar(String message) {
     Future.delayed(Duration.zero, () {
       if (Get.context != null) {
