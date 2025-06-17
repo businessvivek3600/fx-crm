@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../widgets/custom_text_form.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
-  const DeleteAccountScreen({Key? key}) : super(key: key);
+  const DeleteAccountScreen({super.key});
 
   @override
   State<DeleteAccountScreen> createState() => _DeleteAccountScreenState();
@@ -64,7 +64,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                     });
                   },
                 );
-              }).toList(),
+              }),
               if (selectedReason == 'Others') ...[
                 SizedBox(height: 10),
                 CustomTextFormField(

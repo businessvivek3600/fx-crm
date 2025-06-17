@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fx_crm/controller/account_controller.dart';
 import 'package:fx_crm/routes/route_settings.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'constant/app_constant.dart';
+import 'controller/account_controller.dart';
 import 'controller/app_controller.dart';
 import 'controller/auth_controller.dart';
 import 'controller/session_controller.dart';
@@ -15,6 +15,7 @@ import 'database/dio/dio/dio_client.dart';
 import 'database/dio/dio/logging_interceptor.dart';
 import 'database/notification_service.dart';
 import 'firebase_options.dart';
+
 
 late DioClient dioClient;
 
@@ -37,13 +38,10 @@ void main() async {
   Get.put(AppController());
   Get.put(AccountController(dioClient: dioClient));
   AppController.to.syncWithSession();
-  final AuthController authController = Get.put(
-    AuthController(
 
-    ),
-  );
+  final AuthController authController = Get.put(AuthController());
   await authController.getCountryList();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const MyApp());
 }
 
@@ -61,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeUtils.lightTheme,
       title: 'FXCRM',
-      routerConfig: router,
+      routerConfig: router, // router includes ImagePickerScreen route
     );
   }
 }
