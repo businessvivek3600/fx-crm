@@ -69,7 +69,7 @@ class NotificationDatabase {
   Future<List<Map<String, dynamic>>> getAllNotifications() async {
     final db = await database;
     final data = await db.query('notifications', orderBy: 'id DESC');
-    _notificationController.add(data); // Initial push
+    _notificationController.add(data);
     return data;
   }
 
