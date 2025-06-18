@@ -45,6 +45,7 @@ dependencies:
   pretty_qr_code: ^3.4.0
   device_info_plus: ^11.3.0
   dynamic_icons: ^1.0.1
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +59,8 @@ flutter:
   assets:
      - assets/images/
      - assets/json/
+     - assets/videos/splash_video.mp4
+
 
   # fonts:
   #   - family: Schyler
