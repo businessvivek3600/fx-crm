@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fx_crm/widgets/glass_card.dart';
 import 'package:get/get.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/change_account_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/create_account.dart';
@@ -8,6 +9,7 @@ import 'package:fx_crm/view/component/drawer_component/component/account/widget/
 import 'package:shimmer/shimmer.dart';
 import '../../../../../controller/account_controller.dart';
 import '../../../../../main.dart';
+import '../../../../../models/account_model.dart';
 import '../../../../../widgets/bg_container.dart';
 import '../../../../../widgets/drop_down_text_field.dart';
 
@@ -79,19 +81,14 @@ class _AccountScreenState extends State<AccountScreen> {
       // 🔹 Show shimmer list while loading
       return ListView.builder(
         itemCount: 3,
-        padding: const EdgeInsets.all(16),
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey.shade800,
             highlightColor: Colors.grey.shade700,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade900,
-                borderRadius: BorderRadius.circular(25),
+            child: GlassCard(
+              child: Container(
+                height: 200,
               ),
-              height: 200,
             ),
           );
         },
@@ -99,339 +96,236 @@ class _AccountScreenState extends State<AccountScreen> {
     }
 
       if (accountController.accountList.isEmpty) {
-        return const Center(child: Text("No accounts found."));
+        return const Center(child: Text("No accounts found.",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),));
       }
 
       // Filter demo accounts
-      final demoAccounts = accountController.accountList.toList();
+      final userAccounts = accountController.accountList.toList();
       return ListView.builder(
-        itemCount: demoAccounts.length,
+        itemCount: userAccounts.length,
         itemBuilder: (context, index) {
-          final account = demoAccounts[index];
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white12,
-              borderRadius: BorderRadius.circular(25),
-            ),
+          final account = userAccounts[index];
+          return GlassCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${account.accountType} Account ${account.accountNo}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.white70),
-                      onSelected: (value) {
-                        if (value == 'leverage') {
-                          accountController.updateSelectedAccount(
-                            account.accountPlan.toString(),
-                          );
-                          Future.delayed(const Duration(milliseconds: 100), () {
-                            _showLeverageDialog(account.accountNo ?? "");
-                          });
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => ChangeAccountPassword(
-                                    isInvester: value != 'master',
-                                    accountNo: account.accountNo ?? "",
-                                  ),
-                            ),
-                          );
-                        }
-                      },
-                      itemBuilder:
-                          (context) => [
-                            const PopupMenuItem(
-                              value: 'master',
-                              child: Text('Master Password'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'investor',
-                              child: Text('Investor Password'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'leverage',
-                              child: Text('Change Leverage'),
-                            ),
-                          ],
-                    ),
-                  ],
-                ),
-
+                _buildHeader(account, context),
                 const SizedBox(height: 12),
-
-                /// Type Label
-                Row(
-                  children: [
-                    Text(
-                      '${account.accountPlan}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        account.accountType == 'Demo' ? 'Demo' : 'Live',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-
+                _buildTypeLabel(account),
                 const SizedBox(height: 8),
-
-                /// Account Title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onLongPress: () {
-                        Clipboard.setData(ClipboardData(text: account.accountNo ?? ''));
-                        Get.snackbar('Copied', 'Account Number copied to clipboard',snackPosition: SnackPosition.BOTTOM);
-                      },
-                      child: Text(
-                        'MT5 ${account.accountType} ${account.accountNo}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff0d6efd),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'Leverage: 1:${account.leverage ?? 'N/A'}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ],
-                ),
-
+                _buildAccountTitle(account, index),
                 const SizedBox(height: 12),
-
-                /// Master Password
-                GestureDetector(
-                  onLongPress: () {
-                    Clipboard.setData(ClipboardData(text: account.masterPassword ?? ''));
-                    Get.snackbar('Copied', 'Master Password copied to clipboard');
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Master Password',
-                        style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(32, 153, 143, 143),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white12),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child:
-                                  Text(
-                                    _obscureMasterList[index]
-                                        ? '••••••••'
-                                        : (account.masterPassword ?? ''),
-                                    style: const TextStyle(color: Colors.white70, fontSize: 16),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                _obscureMasterList[index]
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: Colors.white70,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureMasterList[index] = !_obscureMasterList[index];
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildPasswordField(
+                  label: 'Master Password',
+                  password: account.masterPassword,
+                  obscureList: _obscureMasterList,
+                  index: index,
+                  onToggle: () => setState(() {
+                    _obscureMasterList[index] = !_obscureMasterList[index];
+                  }),
                 ),
-
-
                 const SizedBox(height: 16),
-
-                /// Investor Password
-                GestureDetector(
-                  onLongPress: () {
-                    Clipboard.setData(ClipboardData(text: account.investorPassword ?? ''));
-                    Get.snackbar('Copied', 'Investor Password copied to clipboard');
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Investor Password',
-                        style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(32, 153, 143, 143),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white12,),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child:
-                                  Text(
-                                    _obscureInvestorList[index]
-                                        ? '••••••••'
-                                        : (account.investorPassword ?? ''),
-                                    style: const TextStyle(color: Colors.white70, fontSize: 16),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                _obscureInvestorList[index]
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: Colors.white70,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureInvestorList[index] = !_obscureInvestorList[index];
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildPasswordField(
+                  label: 'Investor Password',
+                  password: account.investorPassword,
+                  obscureList: _obscureInvestorList,
+                  index: index,
+                  onToggle: () => setState(() {
+                    _obscureInvestorList[index] = !_obscureInvestorList[index];
+                  }),
                 ),
-
-
                 const SizedBox(height: 12),
-
-                /// Server & Currency
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child:GestureDetector(
-                        onLongPress: () {
-                          Clipboard.setData(ClipboardData(text: account.accountGroup ?? ''));
-                          Get.snackbar('Copied', 'Server name copied to clipboard');
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'SERVER',
-                              style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(height: 4),
-                            Chip(
-                              label: Text(
-                                account.accountGroup ?? "",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              backgroundColor: Colors.white24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Currency',
-                            style: TextStyle(color: Colors.white70, fontSize: 14,fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(height: 4),
-                          Chip(
-                            label: const Text(
-                              'USD',
-                              style: TextStyle(fontSize: 12, color: Colors.black),
-                            ),
-                            backgroundColor: Colors.white24,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
+                _buildServerAndCurrency(account),
                 const SizedBox(height: 12),
-
-                /// Set Balance Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Color(0xff2e2e2e),
-                        foregroundColor: Colors.white70,
-                      ),
-                      onPressed: () => showSetBalanceDialog(context),
-                      icon: const Icon(
-                        Icons.account_balance_wallet_outlined,
-                        color: Colors.white70,
-                      ),
-                      label: const Text('Set Balance'),
-                    ),
-                  ],
-                ),
+                _buildSetBalanceButton(context),
               ],
             ),
           );
         },
       );
     });
+  }
+  Widget _buildHeader(AccountModel account, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '${account.accountType} Account ${account.accountNo}',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white70),
+        ),
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert, color: Colors.white70),
+          onSelected: (value) {
+            if (value == 'leverage') {
+              accountController.updateSelectedAccount(account.accountPlan.toString());
+              Future.delayed(const Duration(milliseconds: 100), () {
+                _showLeverageDialog(account.accountNo ?? "");
+              });
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ChangeAccountPassword(
+                    isInvester: value != 'master',
+                    accountNo: account.accountNo ?? "",
+                  ),
+                ),
+              );
+            }
+          },
+          itemBuilder: (_) => const [
+            PopupMenuItem(value: 'master', child: Text('Master Password')),
+            PopupMenuItem(value: 'investor', child: Text('Investor Password')),
+            PopupMenuItem(value: 'leverage', child: Text('Change Leverage')),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTypeLabel(AccountModel account) {
+    return Row(
+      children: [
+        Text('${account.accountPlan}', style: const TextStyle(fontSize: 14, color: Colors.white70)),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(4)),
+          child: Text(
+            account.accountType == 'Demo' ? 'Demo' : 'Live',
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAccountTitle(AccountModel account, int index) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        GestureDetector(
+          onLongPress: () {
+            Clipboard.setData(ClipboardData(text: account.accountNo ?? ''));
+            Get.snackbar('Copied', 'Account Number copied to clipboard', snackPosition: SnackPosition.BOTTOM);
+          },
+          child: Text(
+            'MT5 ${account.accountType} ${account.accountNo}',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xff0d6efd)),
+          ),
+        ),
+        Text(
+          'Leverage: 1:${account.leverage ?? 'N/A'}',
+          style: const TextStyle(fontSize: 14, color: Colors.white70),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField({
+    required String label,
+    required String? password,
+    required List<bool> obscureList,
+    required int index,
+    required VoidCallback onToggle,
+  }) {
+    final isObscured = index < obscureList.length ? obscureList[index] : true;
+
+    return GestureDetector(
+      onLongPress: () {
+        Clipboard.setData(ClipboardData(text: password ?? ''));
+        Get.snackbar('Copied', '$label copied to clipboard');
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(32, 153, 143, 143),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    isObscured ? '••••••••' : (password ?? ''),
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(isObscured ? Icons.visibility_off : Icons.visibility, color: Colors.white70),
+                  onPressed: onToggle,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServerAndCurrency(AccountModel account) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: GestureDetector(
+            onLongPress: () {
+              Clipboard.setData(ClipboardData(text: account.accountGroup ?? ''));
+              Get.snackbar('Copied', 'Server name copied to clipboard');
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('SERVER', style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Chip(
+                  label: Text(account.accountGroup ?? "", style: const TextStyle(fontSize: 12, color: Colors.black)),
+                  backgroundColor: Colors.white24,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('Currency', style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600)),
+              SizedBox(height: 4),
+              Chip(
+                label: Text('USD', style: TextStyle(fontSize: 12, color: Colors.black)),
+                backgroundColor: Colors.white24,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSetBalanceButton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            backgroundColor: const Color(0xff2e2e2e),
+            foregroundColor: Colors.white70,
+          ),
+          onPressed: () => showSetBalanceDialog(context),
+          icon: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white70),
+          label: const Text('Set Balance'),
+        ),
+      ],
+    );
   }
 
   void _showLeverageDialog(String accountNo) {
