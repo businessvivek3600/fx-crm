@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
+import '../controller/notification_controller.dart';
 import 'notification_db.dart';
 
 class NotificationService {
@@ -174,6 +176,13 @@ class NotificationService {
     });
 
     print("✅ Notification saved: $title");
+    // ✅ Update unread count
+    try {
+      final notificationController = Get.find<NotificationController>();
+      notificationController.incrementUnreadCount();
+    } catch (e) {
+      print("⚠️ NotificationController not found: $e");
+    }
   }
 
   Future<String> _downloadImage(String url, String fileName) async {
