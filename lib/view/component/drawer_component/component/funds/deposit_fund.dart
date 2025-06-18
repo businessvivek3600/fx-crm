@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/wallet_controller.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' hide DialogType;
 
 import '../../../../../widgets/bg_container.dart';
+import '../../../../../widgets/glass_card.dart';
 
 class DepositFundScreen extends StatefulWidget {
   const DepositFundScreen({super.key});
@@ -132,85 +135,79 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                           },
 
                           borderRadius: BorderRadius.circular(8),
-                          child: Card(
-                            elevation: 1,
-                            color: Colors.grey.shade100,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                          child: GlassCard(
+                            child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "Date: ${record.createdAt ?? '-'}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black87,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Date: ${record.createdAt ?? '-'}",
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white54,
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: controller.statusColor(
+                                                record.status,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              controller.statusText(
+                                                record.status,
+                                              ),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: controller.statusColor(
-                                            record.status,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          controller.statusText(record.status),
-                                          style: const TextStyle(
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons
+                                                .account_balance_wallet_outlined,
+                                            size: 18,
                                             color: Colors.white,
-                                            fontSize: 12,
                                           ),
-                                        ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            "Amount: ₹${record.amount ?? '0.00'}",
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.account_balance_wallet_outlined,
-                                        size: 18,
-                                        color: Colors.black87,
-                                      ),
-                                      const SizedBox(width: 4),
+                                      const SizedBox(height: 8),
                                       Text(
-                                        "Amount: ₹${record.amount ?? '0.00'}",
+                                        "Request ID: ${record.orderId ?? '-'}",
                                         style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
+                                          color: Colors.white70,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    "Request ID: ${record.orderId ?? '-'}",
-                                    style: const TextStyle(
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      );
+
+
+              );
                     },
                   );
                 }),
