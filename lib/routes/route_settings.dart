@@ -129,13 +129,6 @@ final router = GoRouter(
       name: Routes.downloads,
       builder: (context, state) => DownloadScreen(),
     ),
-
-    /// You can uncomment and use these if needed:
-    // GoRoute(
-    //   path: Paths.logout,
-    //   name: Routes.logout,
-    //   builder: (context, state) => LogoutScreen(),
-    // ),
   ],
 );
 

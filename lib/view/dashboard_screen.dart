@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fx_crm/database/notification_db.dart';
 import 'package:fx_crm/view/customer_profile_screen.dart';
 import 'package:lottie/lottie.dart';
 import '../controller/app_controller.dart';
@@ -130,10 +131,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                   children: [
                     Text(
                       customer!.firstName!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-
                         letterSpacing: 1,
                       ),
                     ),
@@ -158,19 +158,62 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
                 centerTitle: false,
                 actions: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_none,
-                      color: Colors.white,
+                  // 🔔 Notification with badge count
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6.0),
+                    child: StreamBuilder<int>(
+                      stream: NotificationDatabase().countStream,
+                      builder: (context, snapshot) {
+                        final count = snapshot.data ?? 0;
+
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.notifications_none,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const NotificationScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            if (count > 0)
+                              Positioned(
+                                right: 6,
+                                top: 6,
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 20,
+                                    minHeight: 20,
+                                  ),
+                                  child: Text(
+                                    '$count',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
                     ),
-                    onPressed:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const NotificationScreen(),
-                          ),
-                        ),
                   ),
+
+                  // 👤 Profile icon
                   IconButton(
                     icon: const Icon(Icons.person_outline, color: Colors.white),
                     onPressed:

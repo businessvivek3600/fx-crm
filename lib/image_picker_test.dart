@@ -9,6 +9,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(title: 'Camera Test', home: CameraTestPage());
@@ -16,6 +18,8 @@ class MyApp extends StatelessWidget {
 }
 
 class CameraTestPage extends StatefulWidget {
+  const CameraTestPage({super.key});
+
   @override
   State<CameraTestPage> createState() => _CameraTestPageState();
 }
