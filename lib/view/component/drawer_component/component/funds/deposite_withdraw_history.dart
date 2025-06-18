@@ -5,6 +5,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../../../../../controller/wallet_controller.dart';
 import '../../../../../widgets/bg_container.dart';
+import '../../../../../widgets/glass_card.dart';
 import 'component/common_transfer_wallet.dart';
 import 'component/wallet_card_shimmer.dart';
 
@@ -131,15 +132,8 @@ class _DepositWithdrawHistoryScreenState
                       itemCount: controller.accountStatement.length,
                       itemBuilder: (context, index) {
                         final item = controller.accountStatement[index];
-                        return Card(
-                          elevation: 1,
-                          color: Colors.grey.shade100,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
+                        return GlassCard(
+                          child:Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // First Row - Ticket ID and Type
@@ -151,7 +145,7 @@ class _DepositWithdrawHistoryScreenState
                                       "Ticket ID: #${item.ticket}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.blueGrey.shade700,
+                                        color: Colors.blue.shade400,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -226,13 +220,13 @@ class _DepositWithdrawHistoryScreenState
                                     Icon(
                                       Icons.access_time,
                                       size: 16,
-                                      color: Colors.grey.shade600,
+                                      color: Colors.white70,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       "Transaction Time: ${formatDateTime(item.createdAt.toString())}",
                                       style: TextStyle(
-                                        color: Colors.grey.shade700,
+                                        color: Colors.white70,
                                         fontSize: 13,
                                       ),
                                     ),
@@ -243,13 +237,12 @@ class _DepositWithdrawHistoryScreenState
                                 Text(
                                   "Remarks: ${item.comment ?? ""}",
                                   style: TextStyle(
-                                    color: Colors.grey.shade700,
+                                    color: Colors.white54,
                                     fontSize: 13,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
                         );
                       },
                     ),
@@ -264,10 +257,7 @@ class _DepositWithdrawHistoryScreenState
   }
 
   String formatDateTime(String inputDateTime) {
-    // Parse the input string to DateTime
     DateTime parsedDate = DateTime.parse(inputDateTime);
-
-    // Format the DateTime to desired format
     String formattedDate = DateFormat('dd/MM/yyyy h:mm a').format(parsedDate);
 
     return formattedDate;
