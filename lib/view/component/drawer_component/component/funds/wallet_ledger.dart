@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart' as nb;
 
 import '../../../../../widgets/bg_container.dart';
+import '../../../../../widgets/glass_card.dart';
 import 'component/common_transfer_wallet.dart';
 import 'component/wallet_card_shimmer.dart';
 import 'component/withdraw_request_screen.dart';
@@ -136,16 +137,8 @@ class _WalletLedgerState extends State<WalletLedger> {
                         final String note = item.note ?? '';
                         final isExpanded = expandedMap[index] ?? false;
 
-                        return Card(
-                          elevation: 1,
-                          color: Colors.grey.shade100,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          margin: const EdgeInsets.only(bottom: 12),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
+                        return GlassCard(
+                          child:Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
@@ -156,7 +149,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                       "Date: ${item.date ?? '-'}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.grey.shade800,
+                                        color: Colors.white54,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -179,7 +172,7 @@ class _WalletLedgerState extends State<WalletLedger> {
                                   overflow: TextOverflow.fade,
                                   textAlign: TextAlign.justify,
                                   style: TextStyle(
-                                    color: Colors.grey.shade700,
+                                    color: Colors.white70,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -243,7 +236,6 @@ class _WalletLedgerState extends State<WalletLedger> {
                                 ),
                               ],
                             ),
-                          ),
                         );
                       },
                     ),

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
+import '../../../../../widgets/glass_card.dart';
 import 'support_chat.dart';
 
 class SupportPage extends StatefulWidget {
@@ -55,16 +56,16 @@ class _SupportPageState extends State<SupportPage> {
           icon: Icon(Icons.add,color:Colors.white),
 
         ),
-        body: Obx(() {
-          if (supportController.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
-          }
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Obx(() {
+            if (supportController.isLoading.value) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-          return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
+            return Column(
+                children: [
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildStatusBox('1', 'Open', Colors.red),
@@ -74,90 +75,80 @@ class _SupportPageState extends State<SupportPage> {
                       _buildStatusBox('0', 'Closed', Colors.grey),
                     ],
                   ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: supportController.tickets.length,
-                    itemBuilder: (context, index) {
-                      final ticket = supportController.tickets[index];
-                      return GestureDetector(
-                        onTap: () {
-                          // Navigate to chat page
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatPage(ticketId: ticket.ticketId),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 6,
-                          ),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    ticket.subject,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 6),
-
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            _buildDetail('Ticket ID',
-                                                "#${ticket.ticketId}"),
-                                            _buildDetail(
-                                              'Department',
-                                              supportController.getDepartmentName(ticket.department),
-                                            ),
-                                            // _buildDetail('Project', ticket.userId),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 30,),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            _buildDetail('Priority', supportController.getPriorityName(ticket.priority), alignRight: true),
-                                            _buildDetail('Status', supportController.getStatusName(ticket.status), alignRight: true),
-
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  _buildDetail('Last Reply', supportController.formatDateTime(ticket.lastReply ?? '-')),
-                                ],
+                  SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: supportController.tickets.length,
+                      itemBuilder: (context, index) {
+                        final ticket = supportController.tickets[index];
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to chat page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(ticketId: ticket.ticketId),
                               ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                            );
+                          },
+                          child: GlassCard(
+                            child:Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      ticket.subject,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    SizedBox(height: 6),
+
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              _buildDetail('Ticket ID',
+                                                  "#${ticket.ticketId}"),
+                                              _buildDetail(
+                                                'Department',
+                                                supportController.getDepartmentName(ticket.department),
+                                              ),
+                                              // _buildDetail('Project', ticket.userId),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 30,),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              _buildDetail('Priority', supportController.getPriorityName(ticket.priority), alignRight: true),
+                                              _buildDetail('Status', supportController.getStatusName(ticket.status), alignRight: true),
+
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    _buildDetail('Last Reply', supportController.formatDateTime(ticket.lastReply ?? '-')),
+                                  ],
+                                ),
+                              ),
+
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            );
-          }
+                ],
+              );
+            }
+          ),
         ),
       ),
     );
@@ -211,12 +202,12 @@ class _SupportPageState extends State<SupportPage> {
         children: [
           Text(
             '$label: ',
-            style: TextStyle(fontWeight: FontWeight.w600),
+            style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white54),
           ),
           Flexible(
             child: Text(
               value ?? '-',
-              style: TextStyle(color: textColor ?? Colors.black87, fontWeight: label == 'Status' ? FontWeight.bold : null,),
+              style: TextStyle(color: textColor ?? Colors.white70, fontWeight: label == 'Status' ? FontWeight.bold : null,),
               textAlign: alignRight ? TextAlign.end : TextAlign.start,
             ),
           ),
