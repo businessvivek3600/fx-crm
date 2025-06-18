@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../../controller/notification_controller.dart';
 import '../../../database/notification_db.dart';
 import '../../../widgets/bg_container.dart';
 
@@ -17,7 +19,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-    db.getAllNotifications(); // trigger initial stream push
+    db.getAllNotifications();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NotificationDatabase().markAllAsRead();
+      Get.find<NotificationController>().resetUnreadCount();
+    });
   }
 
   String formatTimestamp(String timestamp) {

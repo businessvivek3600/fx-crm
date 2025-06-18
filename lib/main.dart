@@ -10,6 +10,7 @@ import 'constant/app_constant.dart';
 import 'controller/account_controller.dart';
 import 'controller/app_controller.dart';
 import 'controller/auth_controller.dart';
+import 'controller/notification_controller.dart';
 import 'controller/session_controller.dart';
 import 'database/dio/dio/dio_client.dart';
 import 'database/dio/dio/logging_interceptor.dart';
@@ -25,7 +26,7 @@ void main() async {
     await GetStorage.init();
   }
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+  Get.put(NotificationController());
   await NotificationService().init();
   Get.put(SessionController());
   SessionController.to.loadSession();
