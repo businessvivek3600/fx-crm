@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/change_account_password.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/create_account.dart';
 import 'package:fx_crm/view/component/drawer_component/component/account/widget/set_balance_dialog.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../../controller/account_controller.dart';
 import '../../../../../main.dart';
 import '../../../../../widgets/bg_container.dart';
@@ -73,10 +74,29 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _buildAccountDetails() {
-    return Obx(() {
-      if (accountController.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
-      }
+  return Obx(() {
+    if (accountController.isLoading.value) {
+      // 🔹 Show shimmer list while loading
+      return ListView.builder(
+        itemCount: 3,
+        padding: const EdgeInsets.all(16),
+        itemBuilder: (context, index) {
+          return Shimmer.fromColors(
+            baseColor: Colors.grey.shade800,
+            highlightColor: Colors.grey.shade700,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade900,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              height: 200,
+            ),
+          );
+        },
+      );
+    }
 
       if (accountController.accountList.isEmpty) {
         return const Center(child: Text("No accounts found."));
