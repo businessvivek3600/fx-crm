@@ -15,13 +15,20 @@ import '../../../utils/drawer_back_button.dart';
 import '../../../widgets/bg_container.dart';
 import 'component/Delete/delete_account.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
+
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  int? _openTileIndex;
 
   @override
   Widget build(BuildContext context) {
     final logo = AppController.to.settings;
-    final screenWidth = MediaQuery.of(context).size.width;
+
     return Row(
       children: [
         Expanded(
@@ -29,9 +36,8 @@ class CustomDrawer extends StatelessWidget {
             useAlternateBackground: true,
             child: Drawer(
               elevation: 5,
-
               backgroundColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(25),
                   bottomRight: Radius.circular(25),
@@ -43,286 +49,124 @@ class CustomDrawer extends StatelessWidget {
                   SizedBox(
                     height: 130,
                     child: DrawerHeader(
-                      decoration: const BoxDecoration(
-                        color: Colors.transparent,
-                      ),
+                      decoration: const BoxDecoration(color: Colors.transparent),
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.zero,
                       child: Align(
-                        alignment: Alignment.centerLeft, // Start from left
+                        alignment: Alignment.centerLeft,
                         child: Image.network(
                           logo.first.logo ??
                               'https://png.pngtree.com/png-vector/20220423/ourmid/pngtree-trade-market-candle-line-png-png-image_4553954.png',
                           fit: BoxFit.contain,
                           width: double.infinity,
                           height: double.infinity,
-                          errorBuilder:
-                              (context, error, stackTrace) =>
-                                  const Icon(Icons.error, color: Colors.white),
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.error, color: Colors.white),
                         ),
                       ),
                     ),
                   ),
 
-                  // Profile with submenus
-                  _buildExpansionTile(
+                  // ExpansionTiles
+                  _buildCustomExpansionTile(
+                    index: 0,
                     title: 'My Account',
                     icon: Icons.account_circle_outlined,
                     submenus: [
                       {
                         'title': 'Accounts',
                         'icon': Icons.school_outlined,
-                        'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => AccountScreen(),
-                          //   ),
-                          // );
-                          context.push(Routes.accounts);
-                        },
+                        'onTap': () => context.push(Routes.accounts),
                       },
-
-                      // {
-                      //   'title': 'Activate Account',
-                      //   'icon': Icons.account_box_outlined,
-                      //   'onTap': () {
-                      //     context.push(Paths.activateAccount);
-                      //     // router.push(Routes.CreateAccountScreen);
-                      //   },
-                      // },
-                      // {
-                      //   'title': 'Wallet Account',
-                      //   'icon': Icons.account_balance_wallet_outlined,
-                      //   'onTap': () {
-                      //     // Navigator.push(
-                      //     //   context,
-                      //     //   MaterialPageRoute(
-                      //     //     builder: (context) => WalletAccountScreen(),
-                      //     //   ),
-                      //     // );
-                      //     context.push(Routes.walletAccount);
-                      //   },
-                      // },
-                      // {
-                      //   'title': 'Transaction History',
-                      //   'icon': Icons.account_balance_wallet_outlined,
-                      //   'onTap': () {
-                      //     // Navigator.push(
-                      //     //   context,
-                      //     //   MaterialPageRoute(
-                      //     //     builder: (context) => TransactionHistoryScreen(),
-                      //     //   ),
-                      //     // );
-                      //     context.push(Paths.transactionHistory);
-                      //   },
-                      // },
                     ],
                   ),
-
-                  /// Funds
-                  _buildExpansionTile(
+                  _buildCustomExpansionTile(
+                    index: 1,
                     title: 'Funds',
                     icon: Icons.account_balance_wallet_outlined,
                     submenus: [
                       {
                         'title': 'Wallet Ledger',
                         'icon': Icons.account_balance_wallet_outlined,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WalletLedger(),
-                            ),
-                          );
-                          // context.push(Paths.wallet_ledger);
-                        },
+                        'onTap': () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => WalletLedger())),
                       },
                       {
                         'title': 'Deposit Fund',
                         'icon': Icons.attach_money_outlined,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DepositFundScreen(),
-                            ),
-                          );
-                          // context.push(Paths.deposit_fund);
-                        },
+                        'onTap': () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => DepositFundScreen())),
                       },
                       {
                         'title': 'Withdraw Fund',
-                        'icon': Icons.account_balance_wallet_outlined,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WithdrawFundScreen(),
-                            ),
-                          );
-                          // context.push(Paths.withdraw_fund);
-                        },
+                        'icon': Icons.money_off_outlined,
+                        'onTap': () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => WithdrawFundScreen())),
                       },
                       {
                         'title': 'Deposit/Withdraw History',
                         'icon': Icons.history,
-                        'onTap': () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => DepositWithdrawHistoryScreen(),
-                            ),
-                          );
-                          // context.push(Paths.deposit_withdrawhistory);
-                        },
+                        'onTap': () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => DepositWithdrawHistoryScreen())),
                       },
                     ],
                   ),
-
-                  ///Profile
-                  _buildExpansionTile(
+                  _buildCustomExpansionTile(
+                    index: 2,
                     title: 'Profile',
                     icon: Icons.manage_accounts_outlined,
                     submenus: [
                       {
                         'title': 'Edit Profile',
                         'icon': Icons.edit_outlined,
-                        'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => EditProfileScreen(),
-                          //   ),
-                          // );
-                          context.push(Paths.editProfile);
-                        },
+                        'onTap': () => context.push(Paths.editProfile),
                       },
                       {
                         'title': 'Bank/Wallet',
                         'icon': Icons.credit_card_outlined,
-                        'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(builder: (context) => WalletScreen()),
-                          // );
-                          context.push(Paths.bankWallet); // Works now
-                        },
+                        'onTap': () => context.push(Paths.bankWallet),
                       },
                       {
                         'title': 'KYC',
                         'icon': Icons.badge_outlined,
-                        'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => KycUploadScreen(),
-                          //   ),
-                          // );
-                          context.push(Routes.kyc);
-                        },
+                        'onTap': () => context.push(Routes.kyc),
                       },
                       {
                         'title': 'Change Password',
                         'icon': Icons.lock_outline,
-                        'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => ChangePasswordScreen(),
-                          //   ),
-                          // );
-                          context.push(Paths.changePassword);
-                        },
+                        'onTap': () => context.push(Paths.changePassword),
                       },
                     ],
                   ),
-
-                  // Promotion
-                  _buildExpansionTile(
+                  _buildCustomExpansionTile(
+                    index: 3,
                     title: 'Promotions',
                     icon: Icons.local_offer_outlined,
                     submenus: [
-                      // {
-                      //   'title': 'Monthly Rewards',
-                      //   'icon': Icons.emoji_events,
-                      //   'onTap': () {
-                      //     // Navigator.push(
-                      //     //   context,
-                      //     //   MaterialPageRoute(
-                      //     //     builder: (context) => MonthlyRewardsScreen(),
-                      //     //   ),
-                      //     // );
-                      //     router.push(Routes.monthlyRewards);
-                      //   },
-                      // },
                       {
                         'title': 'Terms and Condition',
                         'icon': Icons.article,
-                        'onTap': () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => TermsAndConditionsScreen(),
-                          //   ),
-                          // );
-                          context.push(Paths.termsAndConditions);
-                        },
+                        'onTap': () => context.push(Paths.termsAndConditions),
                       },
                     ],
                   ),
 
-                  // // IB Menu
-                  // _buildExpansionTile(
-                  //   title: 'IB Menu',
-                  //   icon: Icons.menu_open_outlined,
-                  //   submenus: [
-                  //     {'title': 'Become IB', 'icon': Icons.group_add_outlined},
-                  //   ],
-                  // ),
-
-                  // Support
+                  // Single ListTiles
                   _buildListTile(
                     icon: Icons.support_agent_outlined,
                     title: 'Support',
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => SupportPage()),
-                      // );
-                      context.push(Paths.support);
-                    },
+                    onTap: () => context.push(Paths.support),
                   ),
-
-                  // Economic Calendar
                   _buildListTile(
                     icon: Icons.calendar_month_outlined,
                     title: 'Economic Calendar',
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => EconomicCalendarScreen(),
-                      //   ),
-                      // );
-                      context.push(Paths.economicCalendar);
-                    },
+                    onTap: () => context.push(Paths.economicCalendar),
                   ),
-                  // download
                   _buildListTile(
                     icon: Icons.download_outlined,
                     title: 'Downloads',
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => DownloadScreen()),
-                      // );
-                      context.push(Paths.downloads);
-                    },
+                    onTap: () => context.push(Paths.downloads),
                   ),
-
-                  // Logout
                   _buildListTile(
                     icon: Icons.logout,
                     title: 'Logout',
@@ -333,42 +177,36 @@ class CustomDrawer extends StatelessWidget {
                         dialogType: DialogType.warning,
                         animType: AnimType.rightSlide,
                         title: 'Logout',
-                        customHeader: Icon(
+                        customHeader: const Icon(
                           Icons.question_mark_outlined,
                           size: 50,
                           color: Colors.orange,
                         ),
                         headerAnimationLoop: true,
-                        titleTextStyle: Theme.of(context)
-                            .textTheme
-                            .headlineLarge!
-                            .copyWith(fontWeight: FontWeight.bold),
                         desc: 'Are you sure you want to logout?',
                         btnCancelOnPress: () {},
                         btnOkText: 'Logout',
                         btnOkOnPress: () {
-                          Future.delayed(Duration(milliseconds: 200), () {
+                          Future.delayed(const Duration(milliseconds: 200), () {
                             Get.find<AuthController>().logout();
                           });
                         },
                       ).show();
                     },
                   ),
-                  // if (AppController.to.customer.value?.customerEmail ==
-                  //     "touchwoodrohit@gmail.com")
                   _buildListTile(
                     icon: Icons.delete_outline_outlined,
-                    onTap: () {
-                      Get.to(() => const DeleteAccountScreen());
-                    },
                     title: 'Delete Account',
+                    onTap: () => Get.to(() => const DeleteAccountScreen()),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
         ),
+
+        // Drawer Close Button
         Column(
           children: [
             Expanded(
@@ -376,10 +214,9 @@ class CustomDrawer extends StatelessWidget {
                 color: Colors.black.withOpacity(0.8),
                 child: Row(
                   children: [
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     AnimatedCircleButton(onTap: () => Navigator.pop(context)),
-
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                   ],
                 ),
               ),
@@ -390,7 +227,55 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
-  // Helper Widget for normal ListTile
+  /// Updated to auto-close previous and open tapped one
+  Widget _buildCustomExpansionTile({
+    required int index,
+    required String title,
+    required IconData icon,
+    required List<Map<String, dynamic>> submenus,
+  }) {
+    final isOpen = _openTileIndex == index;
+
+    return Column(
+      children: [
+        ListTile(
+          leading: Icon(icon, color: Colors.white),
+          title: Text(title, style: const TextStyle(color: Colors.white)),
+          trailing: Icon(
+            isOpen ? Icons.expand_less : Icons.expand_more,
+            color: Colors.white,
+          ),
+          onTap: () {
+            setState(() {
+              // Toggle current open state
+              _openTileIndex = isOpen ? null : index;
+            });
+          },
+        ),
+        if (isOpen)
+          ...submenus.map((submenu) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                dense: true,
+                leading: Icon(submenu['icon'], size: 20, color: Colors.white),
+                title: Text(
+                  submenu['title'],
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
+                ),
+                onTap: submenu['onTap'],
+              ),
+            );
+          }).toList(),
+      ],
+    );
+  }
+
+  /// Reusable ListTile for non-expandables
   Widget _buildListTile({
     required IconData icon,
     required String title,
@@ -398,46 +283,8 @@ class CustomDrawer extends StatelessWidget {
   }) {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
-      title: Text(title, style: TextStyle(color: Colors.white)),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
       onTap: onTap,
-    );
-  }
-
-  // Helper Widget for ExpansionTile
-  Widget _buildExpansionTile({
-    required String title,
-    required IconData icon,
-    required List<Map<String, dynamic>> submenus,
-  }) {
-    return Theme(
-      data: ThemeData().copyWith(
-        dividerColor: Colors.transparent,
-      ), // <<< remove divider lines
-      child: ExpansionTile(
-        leading: Icon(icon, color: Colors.white),
-        title: Text(title, style: TextStyle(color: Colors.white)),
-        iconColor: Colors.blue,
-        collapsedIconColor: Colors.white,
-        children:
-            submenus.map((submenu) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListTile(
-                  dense: true,
-                  leading: Icon(submenu['icon'], size: 20, color: Colors.white),
-                  title: Text(
-                    submenu['title'],
-                    style: TextStyle(fontSize: 14, color: Colors.white),
-                  ),
-                  onTap: submenu['onTap'],
-                ),
-              );
-            }).toList(),
-      ),
     );
   }
 }
