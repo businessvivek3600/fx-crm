@@ -4,7 +4,6 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/controller/profile_controller.dart';
-import 'package:fx_crm/database/functions.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';

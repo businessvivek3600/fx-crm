@@ -12,10 +12,8 @@ class NotificationDatabase {
   final StreamController<List<Map<String, dynamic>>> _notificationController =
       StreamController.broadcast();
 
-
   Stream<List<Map<String, dynamic>>> get notificationStream =>
       _notificationController.stream;
-
 
   Future<Database> get database async {
     return _database ??= await _initDB();
@@ -42,7 +40,9 @@ class NotificationDatabase {
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
-          await db.execute('ALTER TABLE notifications ADD COLUMN isRead INTEGER DEFAULT 0');
+          await db.execute(
+            'ALTER TABLE notifications ADD COLUMN isRead INTEGER DEFAULT 0',
+          );
         }
       },
     );
@@ -50,7 +50,7 @@ class NotificationDatabase {
 
   Future<void> insertNotification(Map<String, dynamic> data) async {
     final db = await database;
-    await db.insert('notifications', {...data,'isRead': 0,});
+    await db.insert('notifications', {...data, 'isRead': 0});
     _pushUpdate();
   }
 
@@ -78,6 +78,7 @@ class NotificationDatabase {
     await db.delete('notifications');
     _pushUpdate();
   }
+
   Future<void> markAllAsRead() async {
     final db = await database;
     await db.update(
@@ -87,5 +88,4 @@ class NotificationDatabase {
       whereArgs: [0],
     );
   }
-
 }
