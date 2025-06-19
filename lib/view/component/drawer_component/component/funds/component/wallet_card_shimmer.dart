@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:fx_crm/widgets/glass_card.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LedgerShimmerCard extends StatelessWidget {
@@ -10,11 +11,7 @@ class LedgerShimmerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 200,
-      child: Card(
-        elevation: 1,
-        color: Colors.grey.shade100,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.only(bottom: 12),
+      child: GlassCard(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Shimmer.fromColors(

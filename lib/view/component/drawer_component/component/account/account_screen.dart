@@ -136,8 +136,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 const SizedBox(height: 12),
                 _buildServerAndCurrency(account),
-                const SizedBox(height: 12),
-                _buildSetBalanceButton(context),
+                // const SizedBox(height: 12),
+                // _buildSetBalanceButton(context),
               ],
             ),
           );

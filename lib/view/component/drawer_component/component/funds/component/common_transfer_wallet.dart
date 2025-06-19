@@ -7,21 +7,14 @@ import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../widgets/custom_text_form.dart';
 import '../../../../../../widgets/drop_down_text_field.dart';
 
-void showTransferWalletDialog(String title, BuildContext context) {
+Widget showTransferWalletDialog(String title, BuildContext context) {
   final WalletController controller = Get.put(WalletController());
   String? selectedValue;
   final accountKindController = TextEditingController();
   final amountController = TextEditingController();
   final accountKindKey = GlobalKey<FormFieldState<String>>();
   final formKey = GlobalKey<FormState>();
-  AwesomeDialog(
-    context: context,
-    dialogType: DialogType.info,
-    animType: AnimType.scale,
-    width: 400,
-    body: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Obx(() {
+ return Obx(() {
         if (controller.transferWalletList.isEmpty) {
           return const Center(child: LedgerShimmerCard());
         }
@@ -29,25 +22,17 @@ void showTransferWalletDialog(String title, BuildContext context) {
         return Form(
           key: formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 title ?? 'Select Wallet',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
               ),
               const SizedBox(height: 20),
               DropDownTextFormField(
                 key: accountKindKey,
-                fieldStyle: TextStyle(
-                  color: Colors.black87,
-                ),
-                textStyle: TextStyle(color: Colors.black26),
-                enabledBorder: Colors.black12,
-                focusedBorder: Colors.black87,
                 label: 'Wallet',
-                style: TextStyle(
-                  color: Colors.black87,
-                ),
                 hint: 'Choose Wallet',
 
                 controller: accountKindController,
@@ -75,11 +60,6 @@ void showTransferWalletDialog(String title, BuildContext context) {
               CustomTextFormField(
                 label: "Amount",
                 hint: "Enter the amount",
-                fillColor: Colors.black45,
-                labelColor: Colors.black,
-                textStyle: TextStyle(color: Colors.black26),
-                enabledBorder: Colors.black12,
-                focusedBorder: Colors.black87,
                 controller:  amountController,
                 // keyboardType: TextInputType.number,
                 validator: (value) {
@@ -103,52 +83,40 @@ void showTransferWalletDialog(String title, BuildContext context) {
                 },
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        Navigator.pop(context);
-                        // Proceed with your logic here
-                        print("Selected Wallet: ${accountKindController.text}");
-                        print("Amount: ${amountController.text}");
-                        print("Transfer Type: $title");
+              SizedBox(
+                height: 45,
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      Navigator.pop(context);
+                      // Proceed with your logic here
+                      print("Selected Wallet: ${accountKindController.text}");
+                      print("Amount: ${amountController.text}");
+                      print("Transfer Type: $title");
 
-                        controller.addWalletFund(
-                          accountNo: accountKindController.text,
-                          amount: amountController.text,
-                          accountType: title == "Wallet to MT5" ? "1" : "2",
-                        );
-                        // Proceed with your logic
-                        print("Selected Wallet Value: $selectedValue");
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                    ),
+                      controller.addWalletFund(
+                        accountNo: accountKindController.text,
+                        amount: amountController.text,
+                        accountType: title == "Wallet to MT5" ? "1" : "2",
+                      );
+                      // Proceed with your logic
+                      print("Selected Wallet Value: $selectedValue");
+                    }
+                  },
+
+                  child: Center(
                     child: const Text(
-                      'Continue',
+                      'Transfer',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),
         );
-      }),
-    ),
-  ).show();
+      });
 }
 
 void _showDropdownMenu(

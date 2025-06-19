@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fx_crm/widgets/glass_card.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../controller/support_controller.dart';
@@ -54,15 +55,13 @@ class _ChatPageState extends State<ChatPage> {
                         child: Shimmer.fromColors(
                           baseColor: Colors.grey.shade300,
                           highlightColor: Colors.grey.shade100,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
+                          child: GlassCard(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.6,
+
+
+                              child: const Text(''),
                             ),
-                            child: const Text(''),
                           ),
                         ),
                       ),
@@ -94,6 +93,7 @@ class _ChatPageState extends State<ChatPage> {
                                     : Colors.grey[300],
                                 borderRadius: BorderRadius.circular(16),
                               ),
+
                               child: Text(
                                 reply.message ?? '',
                                 style: TextStyle(
@@ -128,15 +128,37 @@ class _ChatPageState extends State<ChatPage> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          hintText: 'Type a message...',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromRGBO(255, 255, 255, 0.1),
+                              Color.fromRGBO(255, 255, 255, 0.05),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          filled: true,
-                          fillColor: Colors.grey[200],
+                        ),
+                        child: TextField(
+                          controller: _controller,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Type a message...',
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.white54,width: 2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            filled: true,
+                            fillColor: Colors.transparent,
+                          ),
                         ),
                       ),
                     ),

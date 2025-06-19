@@ -19,6 +19,7 @@ class WalletLedger extends StatefulWidget {
 class _WalletLedgerState extends State<WalletLedger> {
   final WalletController controller = Get.put(WalletController());
   final scrollController = ScrollController();
+  int _selectedIndex = 0;
 
   // Track expanded state per item
   final Map<int, bool> expandedMap = {};
@@ -80,168 +81,47 @@ class _WalletLedgerState extends State<WalletLedger> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
+          child: IndexedStack(
+            index: _selectedIndex,
             children: [
-              Row(
-                children: [
-                  _buildTransferButton(
-                    "Wallet to MT5",
-                    Colors.amber.shade700,
-                    () {
-                      controller.transferWalletList.isEmpty ? null : showTransferWalletDialog("Wallet to MT5", context);
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  _buildTransferButton("MT5 to Wallet", Colors.blue, () {
-                    controller.transferWalletList.isEmpty ? null : showTransferWalletDialog("MT5 to Wallet", context);
-                  }),
-                  const SizedBox(width: 8),
-                  _buildTransferButton("Withdraw Funds", Colors.green, () {
-                    Get.to(() => const WithdrawRequestScreen());
-                  }),
-                ],
+              _buildLedgerBody(), // Index 0
+              _buildTransferTab("Wallet to MT5"), // Index 1
+              _buildTransferTab("MT5 to Wallet"), // Index 2
+              _buildWithdrawTab(), // Index 3
+            ],
+          ),
+        ),
+        bottomNavigationBar: GlassCard(
+          padding: const EdgeInsets.only(top: 10),
+          margin: EdgeInsets.zero,
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            backgroundColor: Colors.transparent,
+            selectedItemColor:  Color(0xff0d6efd),
+            unselectedItemColor: Colors.white60,
+            type: BottomNavigationBarType.fixed,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.receipt_long),
+                label: "Ledger",
               ),
-              const SizedBox(height: 16),
-              Obx(() {
-                if (controller.isLoading.value) {
-                  return LedgerShimmerCard();
-                }
-
-                if (controller.errorMessage.isNotEmpty) {
-                  return Center(
-                    child: Text(
-                      controller.errorMessage.value,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }
-
-                return Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async => refresh(loading: false),
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: controller.ledgerList.length,
-                      itemBuilder: (context, index) {
-                        final item = controller.ledgerList[index];
-
-                        final double credit =
-                            double.tryParse(item.credit?.toString() ?? '0') ??
-                            0;
-                        final double debit =
-                            double.tryParse(item.debit?.toString() ?? '0') ?? 0;
-                        final double balance =
-                            double.tryParse(item.balance?.toString() ?? '0') ??
-                            0;
-
-                        final String note = item.note ?? '';
-                        final isExpanded = expandedMap[index] ?? false;
-
-                        return GlassCard(
-                          child:Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Date: ${item.date ?? '-'}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white54,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Balance: \$${balance.toStringAsFixed(2)}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green.shade700,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 14),
-
-                                // Note (Expandable)
-                                Text(
-                                  note,
-                                  maxLines: isExpanded ? null : 3,
-                                  overflow: TextOverflow.fade,
-                                  textAlign: TextAlign.justify,
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                if (note.length > 100)
-                                  TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        expandedMap[index] = !isExpanded;
-                                      });
-                                    },
-                                    child: Text(
-                                      isExpanded ? 'Show less' : 'Show more',
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-
-                                const SizedBox(height: 8),
-                                Divider(color: Colors.grey.shade300),
-                                const SizedBox(height: 8),
-
-                                // Credit and Debit Row
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.call_received,
-                                          color: Colors.green,
-                                          size: 18,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          "In: \$${credit.toStringAsFixed(2)}",
-                                          style: TextStyle(
-                                            color: Colors.green.shade700,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.call_made,
-                                          color: Colors.red,
-                                          size: 18,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          "Out: \$${debit.toStringAsFixed(2)}",
-                                          style: TextStyle(
-                                            color: Colors.red.shade700,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.swap_horiz),
+                label: "Wallet → MT5",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.swap_horizontal_circle),
+                label: "MT5 → Wallet",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_balance_wallet),
+                label: "Withdraw",
+              ),
             ],
           ),
         ),
@@ -249,28 +129,145 @@ class _WalletLedgerState extends State<WalletLedger> {
     );
   }
 
-  Widget _buildTransferButton(
-    String label,
-    Color bgColor,
-    VoidCallback onPressed,
-  ) {
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bgColor,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+  Widget _buildLedgerBody() {
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return LedgerShimmerCard();
+      }
+
+      if (controller.errorMessage.isNotEmpty) {
+        return Center(
           child: Text(
-            label,
+            controller.errorMessage.value,
             style: const TextStyle(color: Colors.white),
-            textAlign: TextAlign.center,
           ),
+        );
+      }
+
+      return RefreshIndicator(
+        onRefresh: () async => refresh(loading: false),
+        child: ListView.builder(
+          controller: scrollController,
+          itemCount: controller.ledgerList.length,
+          itemBuilder: (context, index) {
+            final item = controller.ledgerList[index];
+            final double credit =
+                double.tryParse(item.credit?.toString() ?? '0') ?? 0;
+            final double debit =
+                double.tryParse(item.debit?.toString() ?? '0') ?? 0;
+            final double balance =
+                double.tryParse(item.balance?.toString() ?? '0') ?? 0;
+            final String note = item.note ?? '';
+            final isExpanded = expandedMap[index] ?? false;
+
+            return GlassCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Ledger Item Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Date: ${item.date ?? '-'}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white54,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        "Balance: \$${balance.toStringAsFixed(2)}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Note Section
+                  Text(
+                    note,
+                    maxLines: isExpanded ? null : 3,
+                    overflow: TextOverflow.fade,
+                    textAlign: TextAlign.justify,
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                  if (note.length > 100)
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          expandedMap[index] = !isExpanded;
+                        });
+                      },
+                      child: Text(
+                        isExpanded ? 'Show less' : 'Show more',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+
+                  const SizedBox(height: 8),
+                  Divider(color: Colors.grey.shade300),
+                  const SizedBox(height: 8),
+
+                  // Credit and Debit Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.call_received,
+                            color: Colors.green,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "In: \$${credit.toStringAsFixed(2)}",
+                            style: TextStyle(
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.call_made,
+                            color: Colors.red,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "Out: \$${debit.toStringAsFixed(2)}",
+                            style: TextStyle(
+                              color: Colors.red.shade700,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
         ),
-      ),
+      );
+    });
+  }
+
+  Widget _buildTransferTab(String title) {
+    return  showTransferWalletDialog(title, context
     );
+  }
+
+  Widget _buildWithdrawTab() {
+    return WithdrawRequestScreen();
   }
 }

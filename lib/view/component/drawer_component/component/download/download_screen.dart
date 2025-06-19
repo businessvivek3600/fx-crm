@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/app_controller.dart';
 import 'package:fx_crm/database/database_index.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
+import 'package:fx_crm/widgets/glass_card.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -101,7 +102,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Download Link For Meta Trader 5",
+                  "Download Files For Meta Trader 5",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -152,11 +153,7 @@ class DownloadCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return GlassCard(
       child: InkWell(
         onTap: () async {
           final uri = Uri.tryParse(url);

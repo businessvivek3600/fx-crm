@@ -9,8 +9,6 @@ import '../../../../../widgets/glass_card.dart';
 import 'support_chat.dart';
 
 class SupportPage extends StatefulWidget {
-
-
   const SupportPage({super.key});
 
   @override
@@ -18,16 +16,15 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
-
   late final SupportController supportController;
+
   @override
   void initState() {
     super.initState();
-    supportController = Get.put(
-      SupportController(dioClient: dioClient),
-    ); // Provide dioClient
-    supportController. getTicketsList();
+    supportController = Get.put(SupportController(dioClient: dioClient));
+    supportController.getTicketsList();
   }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
@@ -47,108 +44,130 @@ class _SupportPageState extends State<SupportPage> {
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              isDismissible: true,
               backgroundColor: Colors.transparent,
-              builder: (context) => CreateSupportTicket(),
+              builder: (context) => const CreateSupportTicket(),
             );
           },
-          label: Text('Open Ticket',style: TextStyle(color: Colors.white),),
-          icon: Icon(Icons.add,color:Colors.white),
-
+          label: const Text('Open Ticket', style: TextStyle(color: Colors.white)),
+          icon: const Icon(Icons.add, color: Colors.white),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Obx(() {
             if (supportController.isLoading.value) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
 
             return Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatusBox('1', 'Open', Colors.red),
-                      _buildStatusBox('0', 'In progress', Colors.green),
-                      _buildStatusBox('0', 'Answered', Colors.blue),
-                      _buildStatusBox('0', 'On Hold', Colors.orange),
-                      _buildStatusBox('0', 'Closed', Colors.grey),
-                    ],
+              children: [
+                GlassCard(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatusBox('1', 'Open', Colors.red),
+                        _buildStatusBox('0', 'In Progress', Colors.green),
+                        _buildStatusBox('0', 'Answered', Colors.blue),
+                        _buildStatusBox('0', 'On Hold', Colors.orange),
+                        _buildStatusBox('0', 'Closed', Colors.grey),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 20),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: supportController.tickets.length,
-                      itemBuilder: (context, index) {
-                        final ticket = supportController.tickets[index];
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigate to chat page
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChatPage(ticketId: ticket.ticketId),
-                              ),
-                            );
-                          },
-                          child: GlassCard(
-                            child:Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      ticket.subject,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    SizedBox(height: 6),
-
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              _buildDetail('Ticket ID',
-                                                  "#${ticket.ticketId}"),
-                                              _buildDetail(
-                                                'Department',
-                                                supportController.getDepartmentName(ticket.department),
-                                              ),
-                                              // _buildDetail('Project', ticket.userId),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(width: 30,),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                            children: [
-                                              _buildDetail('Priority', supportController.getPriorityName(ticket.priority), alignRight: true),
-                                              _buildDetail('Status', supportController.getStatusName(ticket.status), alignRight: true),
-
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    _buildDetail('Last Reply', supportController.formatDateTime(ticket.lastReply ?? '-')),
-                                  ],
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: supportController.tickets.length,
+                    itemBuilder: (context, index) {
+                      final ticket = supportController.tickets[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(ticketId: ticket.ticketId),
+                            ),
+                          );
+                        },
+                        child: GlassCard(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Subject
+                              Text(
+                                ticket.subject,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
 
-                        );
-                      },
-                    ),
+                              const SizedBox(height: 16),
+
+                              // Ticket Info (2 columns)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Left Column
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        _buildDetail('Ticket ID', "#${ticket.ticketId}"),
+                                        _buildDetail(
+                                          'Department',
+                                          supportController.getDepartmentName(ticket.department).toString(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 24),
+
+                                  // Right Column
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        _buildDetail(
+                                          'Priority',
+                                          supportController.getPriorityName(ticket.priority),
+                                          color: _getPriorityColor(ticket.priority),
+                                          alignRight: true,
+                                        ),
+                                        _buildDetail(
+                                          'Status',
+                                          supportController.getStatusName(ticket.status).toString(),
+                                          color: _getStatusColor(ticket.status),
+                                          alignRight: true,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // Last Reply Info
+                              _buildDetail(
+                                'Last Reply',
+                                supportController.formatDateTime(ticket.lastReply ?? '-'),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      );
+                    },
                   ),
-                ],
-              );
-            }
-          ),
+                ),
+              ],
+            );
+          }),
         ),
       ),
     );
@@ -160,59 +179,77 @@ class _SupportPageState extends State<SupportPage> {
         Text(
           count,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
             color: color,
           ),
         ),
+        const SizedBox(height: 4),
         Text(label, style: TextStyle(fontSize: 14, color: color)),
       ],
     );
   }
 
-  Widget _buildDetail(String label, String? value,{bool alignRight = false}) {
-    Color? textColor;
-    if (label == 'Status') {
-      switch (value?.toLowerCase()) {
-        case 'open':
-          textColor = Colors.red;
-          break;
-        case 'in progress':
-          textColor = Colors.green;
-          break;
-        case 'answered':
-          textColor = Colors.blue;
-          break;
-        case 'on hold':
-          textColor = Colors.orange;
-          break;
-        case 'closed':
-          textColor = Colors.grey;
-          break;
-        default:
-          textColor = Colors.white;
-      }
-    }
+  Widget _buildDetail(String label, String value,
+      {Color? color, bool alignRight = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        mainAxisAlignment:
-        alignRight ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$label: ',
-            style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white54),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Align(
+        alignment: alignRight ? Alignment.centerRight : Alignment.centerLeft,
+        child: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: '$label: ',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white70,
+                ),
+              ),
+              TextSpan(
+                text: value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: color ?? Colors.white,
+                ),
+              ),
+            ],
           ),
-          Flexible(
-            child: Text(
-              value ?? '-',
-              style: TextStyle(color: textColor ?? Colors.white70, fontWeight: label == 'Status' ? FontWeight.bold : null,),
-              textAlign: alignRight ? TextAlign.end : TextAlign.start,
-            ),
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'open':
+        return Colors.red;
+      case 'in progress':
+        return Colors.green;
+      case 'answered':
+        return Colors.blue;
+      case 'on hold':
+        return Colors.orange;
+      case 'closed':
+        return Colors.grey;
+      default:
+        return Colors.white;
+    }
+  }
+
+  Color _getPriorityColor(String priority) {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return Colors.redAccent;
+      case 'medium':
+        return Colors.amber;
+      case 'low':
+        return Colors.green;
+      default:
+        return Colors.white;
+    }
   }
 }
