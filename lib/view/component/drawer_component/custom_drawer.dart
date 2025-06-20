@@ -426,36 +426,33 @@ class CustomDrawer extends StatelessWidget {
                             ),
                           ),
                           InkWell(
-                            onTap: () {
-                              Get.closeAllSnackbars();
-                              AwesomeDialog(
-                                context: Get.context!,
-                                dialogType: DialogType.warning,
-                                animType: AnimType.rightSlide,
-                                title: 'Logout',
-                                customHeader: Icon(
-                                  Icons.question_mark_outlined,
-                                  size: 50,
-                                  color: Colors.orange,
-                                ),
-                                headerAnimationLoop: true,
-                                titleTextStyle: Theme.of(context)
-                                    .textTheme
-                                    .headlineLarge!
-                                    .copyWith(fontWeight: FontWeight.bold),
-                                desc: 'Are you sure you want to logout?',
-                                btnCancelOnPress: () {},
-                                btnOkText: 'Logout',
-                                btnOkOnPress: () {
-                                  Future.delayed(
-                                    Duration(milliseconds: 200),
-                                    () {
+                              onTap: () {
+                                Get.closeAllSnackbars();
+                                AwesomeDialog(
+                                  context: Get.context!,
+                                  dialogType: DialogType.warning,
+                                  animType: AnimType.rightSlide,
+                                  title: 'Logout',
+                                  customHeader: Icon(
+                                    Icons.question_mark_outlined,
+                                    size: 50,
+                                    color: Colors.orange,
+                                  ),
+                                  headerAnimationLoop: true,
+                                  titleTextStyle: Theme.of(context)
+                                      .textTheme
+                                      .headlineLarge!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                  desc: 'Are you sure you want to logout?',
+                                  btnCancelOnPress: () {},
+                                  btnOkText: 'Logout',
+                                  btnOkOnPress: () {
+                                    Future.delayed(Duration(milliseconds: 200), () {
                                       Get.find<AuthController>().logout();
-                                    },
-                                  );
-                                },
-                              ).show();
-                            },
+                                    });
+                                  },
+                                ).show();
+                              },
                             child: Icon(Icons.logout, color: Colors.white70),
                           ),
                         ],
