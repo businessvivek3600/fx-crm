@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fx_crm/utils/theme.dart';
 import 'package:fx_crm/view/component/drawer_component/component/profile/edit_profile.dart';
 import 'package:fx_crm/widgets/bg_container.dart';
+import 'package:fx_crm/widgets/glass_card.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../controller/dashboard_controller.dart';
+import 'component/drawer_component/component/Delete/delete_account.dart';
 
 class CustomerProfileScreen extends StatefulWidget {
   const CustomerProfileScreen({super.key});
@@ -15,14 +17,15 @@ class CustomerProfileScreen extends StatefulWidget {
 }
 
 class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
-  final DashBoardController dashBoardController = Get.put(DashBoardController());
+  final DashBoardController dashBoardController = Get.put(
+    DashBoardController(),
+  );
 
   @override
   void initState() {
     super.initState();
     dashBoardController.getUserProfile();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
           backgroundColor: ThemeUtils.primaryColor,
           centerTitle: true,
           title: const Text(
-            "Customer Profile", 
+            "Customer Profile",
             style: TextStyle(
               color: Colors.white,
               fontSize: 23,
@@ -61,7 +64,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
         ),
 
         body: SafeArea(
-          child:Obx(() {
+          child: Obx(() {
             final customer = dashBoardController.profileData.value;
             final networkImage = customer?.image;
             if (dashBoardController.isLoading.value) {
@@ -79,14 +82,15 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   /// Profile Info
                   Column(
                     children: [
-                     CircleAvatar(
+                      CircleAvatar(
                         radius: 40,
-                        backgroundImage:   (networkImage != null && networkImage.isNotEmpty
-                            ? NetworkImage(networkImage)
-                            : const AssetImage(
-                          'assets/images/default_user.png',
-                        ))
-                        as ImageProvider,
+                        backgroundImage:
+                            (networkImage != null && networkImage.isNotEmpty
+                                    ? NetworkImage(networkImage)
+                                    : const AssetImage(
+                                      'assets/images/default_user.png',
+                                    ))
+                                as ImageProvider,
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -105,7 +109,6 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   const SizedBox(height: 20),
 
                   /// Personal Details Card
-
                   _buildCard("Personal Details", {
                     "Username": customer.username ?? '',
                     "Refer By": customer.referencerUsername ?? '',
@@ -124,7 +127,31 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                     "Company": customer.company ?? '',
                     "Date of Birth": customer.dateOfBirth ?? '',
                   }),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(() => const DeleteAccountScreen());
+                    },
+                    child: GlassCard(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "Delete Account",
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Icon(Icons.delete_forever, color: Colors.redAccent),
 
+
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -192,66 +219,58 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   Widget _buildCard(String title, Map<String, String> fields) {
     final entries = fields.entries.toList();
 
-    return  Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+    return GlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            const SizedBox(height: 12),
-            ...List.generate(entries.length, (index) {
-              final entry = entries[index];
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 0,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Text(
-                            entry.key,
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            entry.value,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
+          ),
+          const SizedBox(height: 12),
+          ...List.generate(entries.length, (index) {
+            final entry = entries[index];
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 0,
                   ),
-                  if (index < entries.length - 1)
-                    const Divider(
-                      color: Colors.white24,
-                      thickness: 1,
-                      height: 12,
-                    ),
-                ],
-              );
-            }),
-          ],
-        ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          entry.key,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          entry.value,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (index < entries.length - 1)
+                  const Divider(
+                    color: Colors.white24,
+                    thickness: 1,
+                    height: 12,
+                  ),
+              ],
+            );
+          }),
+        ],
       ),
     );
   }

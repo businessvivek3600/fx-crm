@@ -53,7 +53,7 @@ class _DepositWithdrawHistoryScreenState
     scrollController.removeListener(_listener);
     super.dispose();
   }
-
+  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return BackgroundContainer(
@@ -70,190 +70,192 @@ class _DepositWithdrawHistoryScreenState
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: IndexedStack(
+            index: _selectedIndex,
             children: [
-              // Top Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      controller.transferWalletList.isEmpty ? null :   showTransferWalletDialog("Wallet to MT5", context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber.shade700,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      "Wallet to MT5",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      controller.transferWalletList.isEmpty ? null :  showTransferWalletDialog("MT5 to Wallet", context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      "MT5 to wallet",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
+              _buildHistory(),
+              _buildTransferTab("Wallet to MT5"), // Index 1
+              _buildTransferTab("MT5 to Wallet"), // Index 2
+            ],
+          ),
+        ),
+        bottomNavigationBar: GlassCard(
+          padding: const EdgeInsets.only(top: 10),
+          margin: EdgeInsets.zero,
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            backgroundColor: Colors.transparent,
+            selectedItemColor:  Color(0xff0d6efd),
+            unselectedItemColor: Colors.white60,
+            type: BottomNavigationBarType.fixed,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.receipt_long),
+                label: "History",
               ),
-              const SizedBox(height: 20),
-              Obx(() {
-                if (controller.isLoading.value) {
-                  return LedgerShimmerCard();
-                }
+              BottomNavigationBarItem(
+                icon: Icon(Icons.swap_horiz),
+                label: "Wallet → MT5",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.swap_horizontal_circle),
+                label: "MT5 → Wallet",
+              ),
 
-                if (controller.errorMessage.isNotEmpty) {
-                  return Center(
-                    child: Text(
-                      controller.errorMessage.value,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }
-
-                return Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async => refresh(loading: false),
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: controller.accountStatement.length,
-                      itemBuilder: (context, index) {
-                        final item = controller.accountStatement[index];
-                        return GlassCard(
-                          child:Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // First Row - Ticket ID and Type
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Ticket ID: #${item.ticket}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue.shade400,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            item.type == "DEPOSIT"
-                                                ? Colors.indigo.shade50
-                                                : Colors.redAccent.shade100,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        item.type ?? '',
-                                        style: TextStyle(
-                                          color:
-                                              item.type == "DEPOSIT"
-                                                  ? Colors.indigo.shade600
-                                                  : Colors.redAccent.shade400,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                // Amount and Status
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Amount: \$${item.amount ?? "0.0"}",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.green.shade700,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: controller
-                                            .statusColor(item.status)
-                                            .withOpacity(0.3),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        controller.statusText(item.status),
-                                        style: TextStyle(
-                                          color: controller.statusColor(
-                                            item.status,
-                                          ),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                // Timestamp
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      size: 16,
-                                      color: Colors.white70,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "Transaction Time: ${formatDateTime(item.createdAt.toString())}",
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                // Remarks
-                                Text(
-                                  "Remarks: ${item.comment ?? ""}",
-                                  style: TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }),
             ],
           ),
         ),
       ),
     );
+  }
+  Widget _buildTransferTab(String title) {
+    return  showTransferWalletDialog(title, context
+    );
+  }
+
+  Obx _buildHistory() {
+    return Obx(() {
+              if (controller.isLoading.value) {
+                return LedgerShimmerCard();
+              }
+
+              if (controller.errorMessage.isNotEmpty) {
+                return Center(
+                  child: Text(
+                    controller.errorMessage.value,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              }
+
+              return RefreshIndicator(
+                onRefresh: () async => refresh(loading: false),
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: controller.accountStatement.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.accountStatement[index];
+                    return GlassCard(
+                      child:Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // First Row - Ticket ID and Type
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Ticket ID: #${item.ticket}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue.shade400,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        item.type == "DEPOSIT"
+                                            ? Colors.indigo.shade50
+                                            : Colors.redAccent.shade100,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    item.type ?? '',
+                                    style: TextStyle(
+                                      color:
+                                          item.type == "DEPOSIT"
+                                              ? Colors.indigo.shade600
+                                              : Colors.redAccent.shade400,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Amount and Status
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Amount: \$${item.amount ?? "0.0"}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.green.shade700,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: controller
+                                        .statusColor(item.status)
+                                        .withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    controller.statusText(item.status),
+                                    style: TextStyle(
+                                      color: controller.statusColor(
+                                        item.status,
+                                      ),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Timestamp
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time,
+                                  size: 16,
+                                  color: Colors.white70,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "Transaction Time: ${formatDateTime(item.createdAt.toString())}",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Remarks
+                            Text(
+                              "Remarks: ${item.comment ?? ""}",
+                              style: TextStyle(
+                                color: Colors.white54,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                    );
+                  },
+                ),
+              );
+            });
   }
 
   String formatDateTime(String inputDateTime) {

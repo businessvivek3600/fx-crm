@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // Fade in from transparent to fully visible
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0.4, end: 4.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
 
@@ -44,6 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
         'assets/videos/splash_video.mp4',
       )
       ..initialize().then((_) {
+        if (!mounted) return;
         setState(() {}); // Refresh widget when video is ready
         _videoController.play();
         _videoController.setLooping(false);
