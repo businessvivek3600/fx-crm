@@ -1,4 +1,3 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/wallet_card_shimmer.dart';
 import 'package:get/get.dart';

@@ -1,5 +1,3 @@
-
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/wallet_controller.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/payment_info.dart';
@@ -73,7 +71,7 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
           child: BottomNavigationBar(
             currentIndex: _selectedIndex,
             backgroundColor: Colors.transparent,
-            selectedItemColor: Color(0xff0d6efd),
+            selectedItemColor: const Color(0xff0d6efd),
             unselectedItemColor: Colors.white60,
             type: BottomNavigationBarType.fixed,
             onTap: (index) {
@@ -108,24 +106,20 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
         return Center(child: Text(controller.errorMessage.value));
       }
 
+      if (!controller.isLoading.value && controller.depositList.isEmpty) {
+        return const Center(
+          child: Text(
+            "No Data Found",
+            style: TextStyle(color: Colors.white70, fontSize: 16),
+          ),
+        );
+      }
+
       return ListView.builder(
         controller: scrollController,
         itemCount: controller.depositList.length,
         itemBuilder: (context, index) {
-          if (index == controller.depositList.length) {
-            if (controller.hasMoreData.value) {
-              return const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            } else {
-              return const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(child: Text("No more records")),
-              );
-            }
-          }
-
+          // No need to check index == length since itemCount is length
           final record = controller.depositList[index];
           return Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
@@ -143,7 +137,6 @@ class _DepositFundScreenState extends State<DepositFundScreen> {
                   ),
                 );
               },
-
               borderRadius: BorderRadius.circular(8),
               child: GlassCard(
                 child: Column(
@@ -228,6 +221,7 @@ class _DepositFundDialogState extends State<DepositFundDialog> {
   final accountKindController = TextEditingController();
   final accountKindKey = GlobalKey<FormFieldState<String>>();
   final WalletController controller = Get.put(WalletController());
+
   double getAmount(dynamic value) {
     return value.toString().replaceAll(',', '').toDouble();
   }
@@ -255,7 +249,7 @@ class _DepositFundDialogState extends State<DepositFundDialog> {
                 return 'Amount must be greater than 0';
               }
               if (entered > max) {
-                return 'You cannot enter more than your0 balance (\$$max)';
+                return 'You cannot enter more than your balance (₹$max)';
               }
               return null;
             },
@@ -265,59 +259,32 @@ class _DepositFundDialogState extends State<DepositFundDialog> {
             key: accountKindKey,
             label: 'Payment Type',
             hint: 'Choose Payment Type',
-            fieldStyle: TextStyle(color: Colors.white70),
-            textStyle: TextStyle(color: Colors.white70),
+            fieldStyle: const TextStyle(color: Colors.white70),
+            textStyle: const TextStyle(color: Colors.white70),
             dropdownDisableColor: Colors.white70,
             dropdownEnableColor: Colors.white70,
             controller: accountKindController,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator:
                 (value) =>
-            (value == null || value.isEmpty)
-                ? 'Please select a payment type'
-                : null,
+                    (value == null || value.isEmpty)
+                        ? 'Please select a payment type'
+                        : null,
             onTap:
-            controller.withDrawFundList.isNotEmpty
-                ? () {
-              _showDropdownMenu(
-                context,
-                accountKindKey,
-                controller.withDrawFundList
-                    .map((e) => e.name ?? '')
-                    .toList(),
-                accountKindController,
-                controller,
-              );
-            }
-                : null,
+                controller.withDrawFundList.isNotEmpty
+                    ? () {
+                      _showDropdownMenu(
+                        context,
+                        accountKindKey,
+                        controller.withDrawFundList
+                            .map((e) => e.name ?? '')
+                            .toList(),
+                        accountKindController,
+                        controller,
+                      );
+                    }
+                    : null,
           ),
-          // DropdownButtonFormField<String>(
-          //   value: selectedPaymentType,
-          //   items:
-          //       paymentTypes.map((type) {
-          //         return DropdownMenuItem<String>(
-          //           value: type,
-          //           child: Text(type),
-          //         );
-          //       }).toList(),
-          //   onChanged: (value) {
-          //     setState(() {
-          //       selectedPaymentType = value;
-          //     });
-          //   },
-          //   decoration: InputDecoration(
-          //     labelText: 'Payment Type',
-          //     border: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(8),
-          //     ),
-          //   ),
-          //   validator: (value) {
-          //     if (value == null || value.isEmpty) {
-          //       return 'Please select a payment type';
-          //     }
-          //     return null;
-          //   },
-          // ),
           const SizedBox(height: 24),
           SizedBox(
             height: 45,
@@ -331,21 +298,22 @@ class _DepositFundDialogState extends State<DepositFundDialog> {
                           return;
                         }
 
+                        // Use the selected payment type from dropdown controller
+                        selectedPaymentType = accountKindController.text;
+
                         toast(
                           "Submitting ₹${amountController.text} via $selectedPaymentType",
                         );
-                        var id = await Get.find<WalletController>()
-                            .depositFundRequest(
-                              amount: amountController.text.trim(),
-                              paymentMethod: selectedPaymentType!,
-                            );
+
+                        var id = await controller.depositFundRequest(
+                          amount: amountController.text.trim(),
+                          paymentMethod: selectedPaymentType!,
+                        );
                         if (id == null) {
                           toast("Failed to submit deposit request");
                           return;
                         }
                         if (context.mounted) Navigator.pop(context, true);
-
-                        // Optionally call API or navigate to next screen
                       },
               child: const Text("Submit"),
             ),
@@ -354,15 +322,16 @@ class _DepositFundDialogState extends State<DepositFundDialog> {
       ),
     );
   }
+
   void _showDropdownMenu(
-      BuildContext context,
-      GlobalKey key,
-      List<String> options,
-      TextEditingController controller,
-      WalletController walletController,
-      ) async {
+    BuildContext context,
+    GlobalKey key,
+    List<String> options,
+    TextEditingController controller,
+    WalletController walletController,
+  ) async {
     final RenderBox renderBox =
-    key.currentContext!.findRenderObject() as RenderBox;
+        key.currentContext!.findRenderObject() as RenderBox;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
     final Size size = renderBox.size;
     final selected = await showMenu<String>(
@@ -374,12 +343,12 @@ class _DepositFundDialogState extends State<DepositFundDialog> {
         offset.dy,
       ),
       items:
-      options
-          .map(
-            (option) =>
-            PopupMenuItem<String>(value: option, child: Text(option)),
-      )
-          .toList(),
+          options
+              .map(
+                (option) =>
+                    PopupMenuItem<String>(value: option, child: Text(option)),
+              )
+              .toList(),
     );
     if (selected != null) {
       controller.text = selected;

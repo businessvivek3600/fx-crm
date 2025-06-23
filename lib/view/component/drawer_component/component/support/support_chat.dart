@@ -56,7 +56,7 @@ class _ChatPageState extends State<ChatPage> {
                           baseColor: Colors.grey.shade300,
                           highlightColor: Colors.grey.shade100,
                           child: GlassCard(
-                            child: Container(
+                            child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.6,
 
 

@@ -16,7 +16,7 @@ class CustomTextFormField extends StatelessWidget {
 
   final Color? focusedBorder; // 🛑 border color
   final Color? enabledBorder; // 🛑 border color
-  final String? Function(String?)? validator;       // 🛑 validator callback
+  final String? Function(String?)? validator; // 🛑 validator callback
   final void Function(String)? onChanged;
   final int? maxLines;
 
@@ -29,12 +29,16 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.initialValue,
     this.onTap,
-    this.validator,    // 🛑 initialize
+    this.validator, // 🛑 initialize
     this.onChanged,
     this.textStyle,
     this.icon,
     this.maxLines,
-    this.labelColor, this.fillColor, this.focusNode, this.enabledBorder, this.focusedBorder
+    this.labelColor,
+    this.fillColor,
+    this.focusNode,
+    this.enabledBorder,
+    this.focusedBorder,
   });
 
   @override
@@ -42,7 +46,10 @@ class CustomTextFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: labelColor ?? Colors.white70, fontSize: 14)),
+        Text(
+          label,
+          style: TextStyle(color: labelColor ?? Colors.white70, fontSize: 14),
+        ),
         const SizedBox(height: 6),
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -53,28 +60,36 @@ class CustomTextFormField extends StatelessWidget {
           validator: validator,
           onChanged: onChanged,
           focusNode: focusNode,
-          maxLength: maxLines ,
+          maxLength: maxLines,
           decoration: InputDecoration(
             prefixIcon: icon,
             hintText: hint,
             hintStyle: textStyle ?? const TextStyle(color: Colors.white60),
             filled: true,
             fillColor: Colors.white.withOpacity(0.08),
-            suffixIcon: isDate
-                ? const Icon(Icons.calendar_today, color: Colors.white70, size: 20)
-                : null,
+            suffixIcon:
+                isDate
+                    ? const Icon(
+                      Icons.calendar_today,
+                      color: Colors.white70,
+                      size: 20,
+                    )
+                    : null,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:  BorderSide(color:enabledBorder ?? Colors.white12),
+              borderSide: BorderSide(color: enabledBorder ?? Colors.white12),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:  BorderSide(color:focusedBorder ?? Colors.white30),
+              borderSide: BorderSide(color: focusedBorder ?? Colors.white30),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
-          style:  TextStyle(color: labelColor ?? Colors.white),
-        )
+          style: TextStyle(color: labelColor ?? Colors.white),
+        ),
       ],
     );
   }
@@ -90,7 +105,6 @@ class CustomButton extends StatelessWidget {
     required this.title,
     required this.onPressed,
     this.isFullWidth = true,
-
   });
 
   @override
@@ -100,13 +114,13 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        child: Text(
+          title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
