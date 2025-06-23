@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -60,16 +58,28 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
           ),
           centerTitle: true,
+          actions: [
+            Obx(
+              () => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Center(
+                  child: Text(
+                    "\$${controller.totalBalance}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white, // optional: ensure it's visible
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: IndexedStack(
             index: _selectedIndex,
-            children: [
-              _buildHistory(),
-
-              _buildWithdrawTab(),
-            ],
+            children: [_buildHistory(), _buildWithdrawTab()],
           ),
         ),
         bottomNavigationBar: GlassCard(
@@ -78,7 +88,7 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
           child: BottomNavigationBar(
             currentIndex: _selectedIndex,
             backgroundColor: Colors.transparent,
-            selectedItemColor:  Color(0xff0d6efd),
+            selectedItemColor: Color(0xff0d6efd),
             unselectedItemColor: Colors.white60,
             type: BottomNavigationBarType.fixed,
             onTap: (index) {
@@ -101,116 +111,115 @@ class _WithdrawFundScreenState extends State<WithdrawFundScreen> {
       ),
     );
   }
+
   Widget _buildWithdrawTab() {
     return WithdrawRequestScreen();
   }
+
   Obx _buildHistory() {
     return Obx(() {
-          if (controller.isLoading.value) {
-            return LedgerShimmerCard();
-          }
+      if (controller.isLoading.value) {
+        return LedgerShimmerCard();
+      }
 
-          if (controller.withDrawHistory.isEmpty) {
-            return const Center(
-              child: Text(
-                "No withdrawal history found.",
-                style: TextStyle(color: Colors.white),
-              ),
-            );
-          }
+      if (controller.withDrawHistory.isEmpty) {
+        return const Center(
+          child: Text(
+            "No withdrawal history found.",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      }
 
-          return ListView.builder(
-            controller: scrollController,
-            itemCount: controller.withDrawHistory.length,
-            itemBuilder: (context, index) {
-              final item = controller.withDrawHistory[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => WithdrawInvoiceScreen(data: item),
-                    ),
-                  );
-                },
-                child: GlassCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Top Row: Request ID & Date
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _infoBlock("Request ID", item.requestId.toString()),
-                          _infoBlock(
-                            "Date",
-                            controller.formatDate(item.createdAt.toString()),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-
-                      /// User Info
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _infoBlock("User ID", item.username.toString()),
-                          _infoBlock(
-                            "Name",
-                            item.accountHolderName.toString(),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-
-                      /// Amount and Status
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Amount: \$${item.amount}",
-                            style: TextStyle(
-                              color: Colors.green.shade800,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: controller.statusColor(item.status),
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: controller
-                                      .statusColor(item.status)
-                                      .withOpacity(0.4),
-                                  blurRadius: 6,
-                                  offset: const Offset(2, 4),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              controller.statusText(item.status),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+      return ListView.builder(
+        controller: scrollController,
+        itemCount: controller.withDrawHistory.length,
+        itemBuilder: (context, index) {
+          final item = controller.withDrawHistory[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => WithdrawInvoiceScreen(data: item),
                 ),
               );
             },
+            child: GlassCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Top Row: Request ID & Date
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _infoBlock("Request ID", item.requestId.toString()),
+                      _infoBlock(
+                        "Date",
+                        controller.formatDate(item.createdAt.toString()),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  /// User Info
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _infoBlock("User ID", item.username.toString()),
+                      _infoBlock("Name", item.accountHolderName.toString()),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  /// Amount and Status
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Amount: \$${item.amount}",
+                        style: TextStyle(
+                          color: Colors.green.shade800,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: controller.statusColor(item.status),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: controller
+                                  .statusColor(item.status)
+                                  .withOpacity(0.4),
+                              blurRadius: 6,
+                              offset: const Offset(2, 4),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          controller.statusText(item.status),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           );
-        });
+        },
+      );
+    });
   }
 
   Widget _infoBlock(String title, String value) {

@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:fx_crm/database/notification_db.dart';
 import 'package:fx_crm/view/customer_profile_screen.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import '../controller/app_controller.dart';
 import '../controller/notification_controller.dart';
-import '../utils/theme.dart';
 import '../widgets/bg_container.dart';
 import 'component/drawer_component/custom_drawer.dart';
 import 'component/notification/notification_screen.dart';
@@ -168,7 +166,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       children: [
                         GestureDetector(
                           onTap: () {
-                           Get.to(
+                            Get.to(
                               () => const NotificationScreen(),
                               transition: Transition.rightToLeft,
                             );

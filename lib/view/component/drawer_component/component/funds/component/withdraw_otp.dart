@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/wallet_ledger.dart';
 import 'package:get/get.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:pinput/pinput.dart';
 import '../../../../../../controller/wallet_controller.dart';
 import '../../../../../../widgets/bg_container.dart';
@@ -77,7 +78,7 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
           context,
           MaterialPageRoute(builder: (context) => WalletLedger()),
         );
-      }); // Or your dashboard screen
+      });
     }
   }
 
@@ -109,11 +110,11 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
         ),
       ),
     );
+
     return BackgroundContainer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
@@ -127,7 +128,7 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 30),
+              const SizedBox(height: 8),
               const Text(
                 "Verify Your Identity",
                 style: TextStyle(
@@ -136,12 +137,12 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 15),
               Text(
                 "We’ve sent a 6-digit verification code to your email:",
                 style: TextStyle(color: Colors.grey.shade300),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 18),
               Center(
                 child: Pinput(
                   length: 6,
@@ -152,7 +153,7 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
                   showCursor: true,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               Center(
                 child: Text(
                   _canResend
@@ -162,8 +163,16 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
                 ),
               ),
               if (_canResend)
-                TextButton(onPressed: _resendOtp, child: Text("Resend OTP")),
-              const SizedBox(height: 40),
+                Center(
+                  child: TextButton(
+                    onPressed: _resendOtp,
+                    child: const Text(
+                      "Resend OTP",
+                      style: TextStyle(color: white),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -181,6 +190,7 @@ class _WithdrawOtpScreenState extends State<WithdrawOtpScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 30),
             ],
           ),
         ),

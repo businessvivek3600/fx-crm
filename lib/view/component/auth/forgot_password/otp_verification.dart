@@ -67,9 +67,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => NewPasswordScreen(username: result),
-        ),
+        MaterialPageRoute(builder: (_) => NewPasswordScreen(username: result)),
       );
     } else {}
   }
@@ -117,6 +115,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          automaticallyImplyLeading: false, // <-- This removes the back arrow
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
@@ -179,7 +178,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     onPressed: _resendOtp,
                     child: Text(
                       "Resend OTP",
-                      style: TextStyle(color: white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
