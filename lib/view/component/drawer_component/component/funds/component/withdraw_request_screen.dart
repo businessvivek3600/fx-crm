@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fx_crm/controller/auth_controller.dart';
 import 'package:fx_crm/view/component/drawer_component/component/funds/component/withdraw_otp.dart';
-import 'package:fx_crm/widgets/bg_container.dart';
 import 'package:fx_crm/widgets/custom_text_form.dart';
 import 'package:fx_crm/widgets/glass_card.dart';
 import 'package:get/get.dart';

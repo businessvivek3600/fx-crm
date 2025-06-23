@@ -166,7 +166,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       children: [
                         GestureDetector(
                           onTap: () {
-                           Get.to(
+                            Get.to(
                               () => const NotificationScreen(),
                               transition: Transition.rightToLeft,
                             );

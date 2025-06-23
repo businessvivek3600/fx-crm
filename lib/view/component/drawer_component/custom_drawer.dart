@@ -14,7 +14,6 @@ import '../../../controller/auth_controller.dart';
 import '../../../routes/route_path.dart';
 import '../../../utils/drawer_back_button.dart';
 import '../../../widgets/bg_container.dart';
-import 'component/Delete/delete_account.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
